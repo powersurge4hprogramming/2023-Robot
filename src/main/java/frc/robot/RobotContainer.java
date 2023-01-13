@@ -17,6 +17,8 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -122,6 +124,12 @@ public class RobotContainer {
                 new Pose2d(3, 0, new Rotation2d(0)),
                 // Pass config
                 config);
+        
+        Field2d m_field = new Field2d();
+        SmartDashboard.putData(m_field);
+
+        // Push the trajectory to Field2d.
+        m_field.getObject("traj").setTrajectory(exampleTrajectory);
 
         RamseteCommand ramseteCommand = new RamseteCommand(
                 exampleTrajectory,
