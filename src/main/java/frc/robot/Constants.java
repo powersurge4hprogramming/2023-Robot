@@ -16,10 +16,10 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
  */
 public final class Constants {
   public static final class DriveConstants {
-    public static final int kLeftMotor1Port = 0;
-    public static final int kLeftMotor2Port = 1;
-    public static final int kRightMotor1Port = 2;
-    public static final int kRightMotor2Port = 3;
+    public static final int kLeftMotorleaderPort = 0;
+    public static final int kLeftMotorFollowerPort = 1;
+    public static final int kRightMotorLeaderPort = 2;
+    public static final int kRightMotorFollowerPort = 3;
 
     public static final boolean kLeftEncoderReversed = false;
     public static final boolean kRightEncoderReversed = true;
@@ -58,5 +58,10 @@ public final class Constants {
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2;
     public static final double kRamseteZeta = 0.7;
+  }
+
+  public static final class SmartDashboardConstants {
+    public static final String kAutoSelectionKey = "Auto Selector";
+    public static final String kAutoSelectionDefault = "Template";
   }
 }

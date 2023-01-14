@@ -28,13 +28,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveSubsystemSim extends DriveSubsystemTemplate {
   // The motors on the left side of the drive.
   private final MotorControllerGroup m_leftMotors = new MotorControllerGroup(
-      new PWMSparkMax(DriveConstants.kLeftMotor1Port),
-      new PWMSparkMax(DriveConstants.kLeftMotor2Port));
+      new PWMSparkMax(DriveConstants.kLeftMotorleaderPort),
+      new PWMSparkMax(DriveConstants.kLeftMotorFollowerPort));
 
   // The motors on the right side of the drive.
   private final MotorControllerGroup m_rightMotors = new MotorControllerGroup(
-      new PWMSparkMax(DriveConstants.kRightMotor1Port),
-      new PWMSparkMax(DriveConstants.kRightMotor2Port));
+      new PWMSparkMax(DriveConstants.kRightMotorLeaderPort),
+      new PWMSparkMax(DriveConstants.kRightMotorFollowerPort));
 
   // The robot's drive
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);

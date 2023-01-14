@@ -22,15 +22,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveSubsystemReal extends DriveSubsystemTemplate {
 
   // left motors
-  private final CANSparkMax m_leftMotorLeader = new CANSparkMax(DriveConstants.kLeftMotor1Port, MotorType.kBrushless);
-  private final CANSparkMax m_leftMotorFollower = new CANSparkMax(DriveConstants.kLeftMotor2Port, MotorType.kBrushless);
+  private final CANSparkMax m_leftMotorLeader = new CANSparkMax(DriveConstants.kLeftMotorleaderPort, MotorType.kBrushless);
+  private final CANSparkMax m_leftMotorFollower = new CANSparkMax(DriveConstants.kLeftMotorFollowerPort, MotorType.kBrushless);
 
   // ;eft motor group
   private final MotorControllerGroup m_leftMotors = new MotorControllerGroup(m_leftMotorLeader, m_leftMotorFollower);
 
   // right motors
-  private final CANSparkMax m_rightMotorLeader = new CANSparkMax(DriveConstants.kRightMotor1Port, MotorType.kBrushless);
-  private final CANSparkMax m_rightMotorFollower = new CANSparkMax(DriveConstants.kRightMotor2Port, MotorType.kBrushless);
+  private final CANSparkMax m_rightMotorLeader = new CANSparkMax(DriveConstants.kRightMotorLeaderPort, MotorType.kBrushless);
+  private final CANSparkMax m_rightMotorFollower = new CANSparkMax(DriveConstants.kRightMotorFollowerPort, MotorType.kBrushless);
 
   // right motor group
   private final MotorControllerGroup m_rightMotors = new MotorControllerGroup(m_rightMotorLeader, m_rightMotorFollower);
