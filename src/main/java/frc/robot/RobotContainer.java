@@ -20,10 +20,8 @@ import frc.robot.subsystems.DriveSubsystemSim;
 import frc.robot.subsystems.DriveSubsystemTemplate;
 import frc.robot.utilities.AutoTemplate;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
