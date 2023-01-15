@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.OIConstants;
+import frc.robot.structs.PhotonCameraWrapper;
 import frc.robot.subsystems.DriveSubsystemReal;
 import frc.robot.subsystems.DriveSubsystemSim;
 import frc.robot.subsystems.DriveSubsystemTemplate;
@@ -38,6 +39,9 @@ public class RobotContainer {
         // The robot's subsystems
         private final DriveSubsystemTemplate m_robotDrive;
 
+        // the PhotonCamera global wrapper class
+        private final PhotonCameraWrapper m_photonCamera = new PhotonCameraWrapper();
+
         // The driver's controller
         XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
@@ -52,7 +56,7 @@ public class RobotContainer {
                 if (RobotBase.isSimulation()) {
                         m_robotDrive = new DriveSubsystemSim();
                 } else {
-                        m_robotDrive = new DriveSubsystemReal();
+                        m_robotDrive = new DriveSubsystemReal(m_photonCamera);
                 }
 
 

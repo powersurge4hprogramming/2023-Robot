@@ -54,8 +54,8 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
   // These are our EncoderSim objects, which we will only use in
   // simulation. However, you do not need to comment out these
   // declarations when you are deploying code to the roboRIO.
-  private EncoderSim m_leftEncoderSim = new EncoderSim(m_leftEncoder);
-  private EncoderSim m_rightEncoderSim = new EncoderSim(m_rightEncoder);
+  private final EncoderSim m_leftEncoderSim = new EncoderSim(m_leftEncoder);
+  private final EncoderSim m_rightEncoderSim = new EncoderSim(m_rightEncoder);
 
   // The gyro sensor
   private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
@@ -63,20 +63,20 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
   // Create the simulated gyro object, used for setting the gyro
   // angle. Like EncoderSim, this does not need to be commented out
   // when deploying code to the roboRIO.
-  private ADXRS450_GyroSim m_gyroSim = new ADXRS450_GyroSim(m_gyro);
+  private final ADXRS450_GyroSim m_gyroSim = new ADXRS450_GyroSim(m_gyro);
 
   // Odometry class for tracking robot pose
   private final DifferentialDriveOdometry m_odometry;
 
   // Create the simulation model of our drivetrain.
-  DifferentialDrivetrainSim m_driveSim = DifferentialDrivetrainSim.createKitbotSim(
+  private final DifferentialDrivetrainSim m_driveSim = DifferentialDrivetrainSim.createKitbotSim(
       KitbotMotor.kDoubleNEOPerSide, // 2 NEOs per side.
       KitbotGearing.k7p31, // 7.31:1
       KitbotWheelSize.kSixInch, // 6" diameter wheels.
       VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)); // TODO
 
   // Field for visualizing robot odometry
-  private Field2d m_field = new Field2d();
+  private final Field2d m_field = new Field2d();
 
   /** Creates a new DriveSubsystemSim. */
   public DriveSubsystemSim() {

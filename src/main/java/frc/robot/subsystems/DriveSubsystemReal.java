@@ -4,16 +4,22 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.structs.PhotonCameraWrapper;
 import frc.robot.utilities.MathU;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -22,15 +28,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveSubsystemReal extends DriveSubsystemTemplate {
 
   // left motors
-  private final CANSparkMax m_leftMotorLeader = new CANSparkMax(DriveConstants.kLeftMotorleaderPort, MotorType.kBrushless);
-  private final CANSparkMax m_leftMotorFollower = new CANSparkMax(DriveConstants.kLeftMotorFollowerPort, MotorType.kBrushless);
+  private final CANSparkMax m_leftMotorLeader = new CANSparkMax(DriveConstants.kLeftMotorleaderPort,
+      MotorType.kBrushless);
+  private final CANSparkMax m_leftMotorFollower = new CANSparkMax(DriveConstants.kLeftMotorFollowerPort,
+      MotorType.kBrushless);
 
   // ;eft motor group
   private final MotorControllerGroup m_leftMotors = new MotorControllerGroup(m_leftMotorLeader, m_leftMotorFollower);
 
   // right motors
-  private final CANSparkMax m_rightMotorLeader = new CANSparkMax(DriveConstants.kRightMotorLeaderPort, MotorType.kBrushless);
-  private final CANSparkMax m_rightMotorFollower = new CANSparkMax(DriveConstants.kRightMotorFollowerPort, MotorType.kBrushless);
+  private final CANSparkMax m_rightMotorLeader = new CANSparkMax(DriveConstants.kRightMotorLeaderPort,
+      MotorType.kBrushless);
+  private final CANSparkMax m_rightMotorFollower = new CANSparkMax(DriveConstants.kRightMotorFollowerPort,
+      MotorType.kBrushless);
 
   // right motor group
   private final MotorControllerGroup m_rightMotors = new MotorControllerGroup(m_rightMotorLeader, m_rightMotorFollower);
@@ -46,13 +56,17 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
 
   // Odometry class for tracking robot pose
-  private final DifferentialDriveOdometry m_odometry;
+  private final DifferentialDrivePoseEstimator m_odometry;
 
   // Field for visualizing robot odometry
-  private Field2d m_field = new Field2d();
+  private final Field2d m_field = new Field2d();
+
+  // wrapper for Global! PhotonCamera
+  private final PhotonCameraWrapper m_photonWrapper;
 
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystemReal() {
+  public DriveSubsystemReal(PhotonCameraWrapper photonWrapper) {
+    m_photonWrapper = photonWrapper;
 
     m_leftMotorFollower.follow(m_leftMotorLeader);
     m_rightMotorFollower.follow(m_rightMotorLeader);
@@ -67,8 +81,9 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     m_rightEncoder.setPositionConversionFactor(DriveConstants.kEncoderDistancePerPulse);
 
     resetEncoders();
-    m_odometry = new DifferentialDriveOdometry(
-        m_gyro.getRotation2d(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition());
+    m_odometry = new DifferentialDrivePoseEstimator(DriveConstants.kDriveKinematics,
+        m_gyro.getRotation2d(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
+        new Pose2d());
 
     SmartDashboard.putData(m_field);
     SmartDashboard.putData(m_drive);
@@ -83,12 +98,28 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     m_odometry.update(m_gyro.getRotation2d(),
         m_leftEncoder.getPosition(),
         m_rightEncoder.getPosition());
-    m_field.setRobotPose(m_odometry.getPoseMeters());
+
+    // Also apply vision measurements. We use 0.3 seconds in the past as an example
+    // -- on
+    // a real robot, this must be calculated based either on latency or timestamps.
+    Optional<Pair<Pose3d, Double>> result = m_photonWrapper.getEstimatedGlobalPose(m_odometry.getEstimatedPosition());
+
+    if (result.isPresent() && result.get().getFirst() != null && result.get().getSecond() != null) {
+      Pair<Pose3d, Double> camPose = result.get();
+      m_odometry.addVisionMeasurement(
+          camPose.getFirst().toPose2d(), camPose.getSecond());
+      m_field.getObject("Cam Est Pos").setPose(camPose.getFirst().toPose2d());
+    } else {
+      // move it way off the screen to make it disappear
+      m_field.getObject("Cam Est Pos").setPose(new Pose2d(-100, -100, new Rotation2d()));
+    }
+
+    m_field.setRobotPose(m_odometry.getEstimatedPosition());
   }
 
   @Override
   public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    return m_odometry.getEstimatedPosition();
   }
 
   @Override
@@ -96,6 +127,7 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     return new DifferentialDriveWheelSpeeds(m_leftEncoder.getVelocity(), m_rightEncoder.getVelocity());
   }
 
+  // reset the initial pose to something other than the default constructor used in this classes constructor, for use before auto to know where we are
   @Override
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
