@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.PhotonCameraReader;
 import frc.robot.structs.PhotonCameraWrapper;
 import frc.robot.subsystems.DriveSubsystemReal;
 import frc.robot.subsystems.DriveSubsystemSim;
@@ -42,6 +43,9 @@ public class RobotContainer {
         // the PhotonCamera global wrapper class
         private final PhotonCameraWrapper m_photonCamera = new PhotonCameraWrapper();
 
+        // the PhotonCamera Smartdashboard sending class
+        private final PhotonCameraReader m_photonCameraReader = new PhotonCameraReader(m_photonCamera);
+
         // The driver's controller
         XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
@@ -58,7 +62,6 @@ public class RobotContainer {
                 } else {
                         m_robotDrive = new DriveSubsystemReal(m_photonCamera);
                 }
-
 
                 // add all items to Auto Selector
                 m_chooser.setDefaultOption("Simple Auto", templateAuto());
@@ -81,23 +84,13 @@ public class RobotContainer {
                  * m_robotDrive));
                  */
 
-                if (RobotBase.isSimulation()) {
-                        m_robotDrive.setDefaultCommand(
-                                        // Tank drive
-                                        new RunCommand(
-                                                        () -> m_robotDrive.tankDrive(
-                                                                        -m_driverController.getLeftY(),
-                                                                        -m_driverController.getRightY(), 0.7),
-                                                        m_robotDrive));
-                } else {
-                        m_robotDrive.setDefaultCommand(
-                                        // Tank drive
-                                        new RunCommand(
-                                                        () -> m_robotDrive.tankDrive(
-                                                                        -m_driverController.getLeftY(),
-                                                                        -m_driverController.getRightY(), 0.7),
-                                                        m_robotDrive));
-                }
+                m_robotDrive.setDefaultCommand(
+                                // Tank drive
+                                new RunCommand(
+                                                () -> m_robotDrive.tankDrive(
+                                                                -m_driverController.getLeftY(),
+                                                                -m_driverController.getRightY(), 0.7),
+                                                m_robotDrive));
         }
 
         /**

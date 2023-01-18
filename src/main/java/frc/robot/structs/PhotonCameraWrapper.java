@@ -14,6 +14,7 @@ import java.util.Optional;
 import org.photonvision.PhotonCamera;
 import org.photonvision.RobotPoseEstimator;
 import org.photonvision.RobotPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 public class PhotonCameraWrapper {
   public final PhotonCamera photonCamera;
@@ -49,5 +50,16 @@ public class PhotonCameraWrapper {
   public Optional<Pair<Pose3d, Double>> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
     photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
     return photonPoseEstimator.update();
+  }
+
+  /**
+   * Set the drive mode
+   */
+  public void setDriveMode(boolean driveMode) {
+    photonCamera.setDriverMode(driveMode);
+  }
+
+  public PhotonPipelineResult getResult() {
+    return photonCamera.getLatestResult();
   }
 }
