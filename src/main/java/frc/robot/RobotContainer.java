@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.PhotonCameraReader;
+import frc.robot.structs.PXNArcadeStickController;
 import frc.robot.structs.PhotonCameraWrapper;
 import frc.robot.subsystems.DriveSubsystemReal;
 import frc.robot.subsystems.DriveSubsystemSim;
@@ -48,6 +49,9 @@ public class RobotContainer {
 
         // The driver's controller
         XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+
+        // The PXN arcade stick board
+        PXNArcadeStickController m_arcadeBoard = new PXNArcadeStickController(OIConstants.kArcadeBoardControllerPort);
 
         // A chooser for autonomous commands
         SendableChooser<AutoCombo> m_chooser = new SendableChooser<>();
