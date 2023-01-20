@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.structs.PhotonCameraWrapper;
 
 public class PhotonCameraReader extends CommandBase {
-  PhotonCameraWrapper m_photonCamera;
+  private final PhotonCameraWrapper m_photonCamera;
 
   /** Creates a new PhotonCameraReader. */
   public PhotonCameraReader(PhotonCameraWrapper photonCamera) {

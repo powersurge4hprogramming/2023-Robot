@@ -4,16 +4,20 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Auto Selector": "String Chooser",
       "/SmartDashboard/DifferentialDrive[1]": "DifferentialDrive",
-      "/SmartDashboard/Field": "Field2d"
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/PPRamseteCommand_field": "Field2d"
     },
     "windows": {
+      "/SmartDashboard/Auto Selector": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
+        "image": "C:\\Users\\rubac\\Downloads\\2023-field.png",
         "traj": {
           "arrows": false,
           "style": "Line"
-        },
-        "window": {
-          "visible": true
         }
       }
     }

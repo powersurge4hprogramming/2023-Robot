@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveSubsystemReal extends DriveSubsystemTemplate {
 
   // left motors
-  private final CANSparkMax m_leftMotorLeader = new CANSparkMax(DriveConstants.kLeftMotorleaderPort,
+  private final CANSparkMax m_leftMotorLeader = new CANSparkMax(DriveConstants.kLeftMotorLeaderPort,
       MotorType.kBrushless);
   private final CANSparkMax m_leftMotorFollower = new CANSparkMax(DriveConstants.kLeftMotorFollowerPort,
       MotorType.kBrushless);
@@ -127,7 +127,8 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     return new DifferentialDriveWheelSpeeds(m_leftEncoder.getVelocity(), m_rightEncoder.getVelocity());
   }
 
-  // reset the initial pose to something other than the default constructor used in this classes constructor, for use before auto to know where we are
+  // reset the initial pose to something other than the default constructor used
+  // in this classes constructor, for use before auto to know where we are
   @Override
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
@@ -141,7 +142,7 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   }
 
   @Override
-  public void tankDrive(double left, double right, double max) {
+  public void tankDriveLimit(double left, double right, double max) {
     left = MathU.signLerp(0, max, left);
     right = MathU.signLerp(0, max, right);
     m_drive.tankDrive(left, right);

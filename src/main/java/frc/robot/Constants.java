@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.List;
+
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -23,7 +25,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
  */
 public final class Constants {
   public static final class DriveConstants {
-    public static final int kLeftMotorleaderPort = 0; // TODO
+    public static final int kLeftMotorLeaderPort = 0; // TODO
     public static final int kLeftMotorFollowerPort = 1; // TODO
     public static final int kRightMotorLeaderPort = 2; // TODO
     public static final int kRightMotorFollowerPort = 3; // TOOD
@@ -31,14 +33,17 @@ public final class Constants {
     public static final boolean kLeftEncoderReversed = false;
     public static final boolean kRightEncoderReversed = true;
 
-    public static final double kTrackwidthMeters = 0.530352;
+    public static final double kTrackWidthMeters = 0.530352;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
-        kTrackwidthMeters);
+        kTrackWidthMeters);
 
     // public static final int kEncoderCPR = 42;
     public static final double kGearRatio = 7.35;
     public static final double kWheelRadiusMeters = 0.0762; // 3 inches
-    public static final double kEncoderDistancePerPulse = (2 * kWheelRadiusMeters * Math.PI) / kGearRatio; // CPR already taken into account!
+    public static final double kEncoderDistancePerPulse = (2 * kWheelRadiusMeters * Math.PI) / kGearRatio; // CPR
+                                                                                                           // already
+                                                                                                           // taken into
+                                                                                                           // account!
 
     // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
     // These characterization values MUST be determined either experimentally or
@@ -56,7 +61,7 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static int kArcadeBoardControllerPort = 2;
+    public static final int kArcadeBoardControllerPort = 2;
   }
 
   public static final class AutoConstants {
@@ -67,10 +72,13 @@ public final class Constants {
     // seconds
     public static final double kRamseteB = 2;
     public static final double kRamseteZeta = 0.7;
-  }
 
-  public static final class SmartDashboardConstants {
     public static final String kAutoSelectionKey = "Auto Selector";
+
+    // auto selections based on PathPlanner, from ./deploy/pathplanner dir
+    public static final String kDefaultAuto = "S1H-P1C-S2H-C";
+    public static final List<String> kAutoList = List.of("S1H-P1-S2H-P1-S3H");
+
   }
 
   public static final class VisionConstants {

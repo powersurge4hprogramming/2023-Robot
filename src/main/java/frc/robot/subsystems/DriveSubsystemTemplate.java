@@ -8,7 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public abstract class DriveSubsystemTemplate extends SubsystemBase{
+public abstract class DriveSubsystemTemplate extends SubsystemBase {
   /**
    * Returns the currently-estimated pose of the robot.
    *
@@ -41,10 +41,11 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase{
   /**
    * Drives the robot using tank controls.
    *
-   * @param fwd the left movement
-   * @param rot the right movement
+   * @param left  the left movement
+   * @param right the right movement
+   * @param max   the max speed (-1 to 1)
    */
-  public abstract void tankDrive(double left, double right, double max);
+  public abstract void tankDriveLimit(double left, double right, double max);
 
   /**
    * Controls the left and right sides of the drive directly with voltages.

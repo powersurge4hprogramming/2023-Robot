@@ -17,8 +17,8 @@ import org.photonvision.RobotPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class PhotonCameraWrapper {
-  public final PhotonCamera photonCamera;
-  public final RobotPoseEstimator photonPoseEstimator;
+  private final PhotonCamera photonCamera;
+  private final RobotPoseEstimator photonPoseEstimator;
 
   public PhotonCameraWrapper() {
     // load the april tag field layout

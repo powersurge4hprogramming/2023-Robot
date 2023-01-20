@@ -4,16 +4,14 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.PhotonCameraReader;
 import frc.robot.structs.PXNArcadeStickController;
@@ -21,12 +19,21 @@ import frc.robot.structs.PhotonCameraWrapper;
 import frc.robot.subsystems.DriveSubsystemReal;
 import frc.robot.subsystems.DriveSubsystemSim;
 import frc.robot.subsystems.DriveSubsystemTemplate;
-import frc.robot.utilities.AutoTemplate;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
+import java.util.HashMap;
 import java.util.List;
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
+import com.pathplanner.lib.auto.RamseteAutoBuilder;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -43,18 +50,19 @@ public class RobotContainer {
 
         // the PhotonCamera global wrapper class
         private final PhotonCameraWrapper m_photonCamera = new PhotonCameraWrapper();
-
         // the PhotonCamera Smartdashboard sending class
         private final PhotonCameraReader m_photonCameraReader = new PhotonCameraReader(m_photonCamera);
 
         // The driver's controller
-        XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-
+        private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
         // The PXN arcade stick board
-        PXNArcadeStickController m_arcadeBoard = new PXNArcadeStickController(OIConstants.kArcadeBoardControllerPort);
+        private final PXNArcadeStickController m_arcadeBoard = new PXNArcadeStickController(OIConstants.kArcadeBoardControllerPort);
 
         // A chooser for autonomous commands
-        SendableChooser<AutoCombo> m_chooser = new SendableChooser<>();
+        private final SendableChooser<String> m_chooser = new SendableChooser<>();
+
+        // the Autonomous builder for Path planning, doesn't have trajectory constructor, just run .fullAuto(trajectory)
+        private final RamseteAutoBuilder m_autoBuilder;
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -68,7 +76,28 @@ public class RobotContainer {
                 }
 
                 // add all items to Auto Selector
-                m_chooser.setDefaultOption("Simple Auto", templateAuto());
+                m_chooser.setDefaultOption(AutoConstants.kDefaultAuto, AutoConstants.kDefaultAuto);
+
+                for (String opt : AutoConstants.kAutoList) {
+                        m_chooser.addOption(opt, opt);
+                }
+
+                m_autoBuilder = new RamseteAutoBuilder(
+                                m_robotDrive::getPose,
+                                m_robotDrive::resetOdometry,
+                                new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+                                DriveConstants.kDriveKinematics,
+                                new SimpleMotorFeedforward(
+                                                DriveConstants.ksVolts,
+                                                DriveConstants.kvVoltSecondsPerMeter,
+                                                DriveConstants.kaVoltSecondsSquaredPerMeter),
+                                m_robotDrive::getWheelSpeeds,
+                                new PIDConstants(0, 0, 0),
+                                m_robotDrive::tankDriveVolts,
+                                eventMap(),
+                                true,
+                                m_robotDrive
+                );
 
                 SmartDashboard.putData("Auto Selector", m_chooser);
 
@@ -76,6 +105,7 @@ public class RobotContainer {
                 configureButtonBindings();
 
                 // Configure default commands
+
                 // Set the default drive command to split-stick arcade drive
                 /*
                  * m_robotDrive.setDefaultCommand(
@@ -88,10 +118,10 @@ public class RobotContainer {
                  * m_robotDrive));
                  */
 
+                // Tank drive (each stick is one side)
                 m_robotDrive.setDefaultCommand(
-                                // Tank drive
                                 new RunCommand(
-                                                () -> m_robotDrive.tankDrive(
+                                                () -> m_robotDrive.tankDriveLimit(
                                                                 -m_driverController.getLeftY(),
                                                                 -m_driverController.getRightY(), 0.7),
                                                 m_robotDrive));
@@ -117,60 +147,35 @@ public class RobotContainer {
          */
         public Command getAutonomousCommand() {
 
-                AutoCombo runAuto = m_chooser.getSelected();
+                // Get the PathPlanner key from the SendableChooser
+                final String runAuto = m_chooser.getSelected();
 
-                Field2d m_field = new Field2d();
-                SmartDashboard.putData(m_field);
+                // load the Path group from the deploy pathplanner directory, with the default
+                // constraints outlined in AutoConstants
+                final List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(runAuto,
+                                new PathConstraints(AutoConstants.kMaxSpeedMetersPerSecond,
+                                                AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
-                // Push the trajectory to Field2d.
-                m_field.getObject("traj").setTrajectory(runAuto.concatTrajectories);
-                SmartDashboard.putNumber("Drive ETA", runAuto.concatTrajectories.getTotalTimeSeconds());
-
-                // Reset odometry to the starting pose of the trajectory.
-                m_robotDrive.resetOdometry(runAuto.initialPose);
-
-                return runAuto.auto.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+                return m_autoBuilder.fullAuto(pathGroup).andThen(() -> m_robotDrive.tankDriveVolts(0, 0), m_robotDrive);
         }
 
-        AutoCombo templateAuto() {
-                Pose2d mid12 = new Pose2d(3, 0, new Rotation2d(0));
-                Trajectory traj1 = TrajectoryGenerator.generateTrajectory(
-                                // Start at the origin facing the +X direction
-                                new Pose2d(0, 0, new Rotation2d(0)),
-                                // Pass through these two interior waypoints, making an 's' curve path
-                                List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-                                // End 3 meters straight ahead of where we started, facing forward
-                                mid12,
-                                // Pass config
-                                AutoTemplate.kDefaultAutoTrajConfig);
+        /*
+         * The map of events for PathPlanner usage. Each key corresponds to a command
+         * that can be used at a waypoint.
+         */
+        private HashMap<String, Command> eventMap() {
+                HashMap<String, Command> eventMap = new HashMap<>();
 
-                RamseteCommand move1 = AutoTemplate.ramseteCommandWithDefaults(traj1, m_robotDrive);
+                eventMap.put("printHelloAfter3sec", new SequentialCommandGroup(
+                                new WaitCommand(3),
+                                new PrintCommand("Hello World")));
 
-                Trajectory traj2 = TrajectoryGenerator.generateTrajectory(
-                                // Start at the origin facing the +X direction
-                                mid12,
-                                // Pass through these two interior waypoints, making an 's' curve path
-                                List.of(new Translation2d(2, 1), new Translation2d(4, 4)),
-                                // End 3 meters straight ahead of where we started, facing forward
-                                new Pose2d(3, 2, new Rotation2d(0)),
-                                // Pass config
-                                AutoTemplate.kDefaultAutoTrajConfig);
+                eventMap.put("collect0Cu", new PrintCommand("collect0Cu"));
+                eventMap.put("collect0Co", new PrintCommand("collect0Co"));
+                eventMap.put("place180H", new PrintCommand("place180H"));
+                eventMap.put("place90H", new PrintCommand("place90H"));
 
-                RamseteCommand move2 = AutoTemplate.ramseteCommandWithDefaults(traj2, m_robotDrive);
-
-                return new AutoCombo(traj1.getInitialPose(), traj1.concatenate(traj2), move1.andThen(move2));
-        }
-
-        class AutoCombo {
-                public final Pose2d initialPose;
-                public final Trajectory concatTrajectories;
-                public final Command auto;
-
-                AutoCombo(Pose2d initialPose, Trajectory concatTrajectories, Command auto) {
-                        this.initialPose = initialPose;
-                        this.concatTrajectories = concatTrajectories;
-                        this.auto = auto;
-                }
+                return eventMap;
         }
 
 }

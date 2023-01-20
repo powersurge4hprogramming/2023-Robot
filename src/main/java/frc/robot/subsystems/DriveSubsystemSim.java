@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveSubsystemSim extends DriveSubsystemTemplate {
   // The motors on the left side of the drive.
   private final MotorControllerGroup m_leftMotors = new MotorControllerGroup(
-      new PWMSparkMax(DriveConstants.kLeftMotorleaderPort),
+      new PWMSparkMax(DriveConstants.kLeftMotorLeaderPort),
       new PWMSparkMax(DriveConstants.kLeftMotorFollowerPort));
 
   // The motors on the right side of the drive.
@@ -152,7 +152,7 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
   }
 
   @Override
-  public void tankDrive(double left, double right, double max) {
+  public void tankDriveLimit(double left, double right, double max) {
     left = MathU.signLerp(0, max, left);
     right = MathU.signLerp(0, max, right);
     m_drive.tankDrive(left, right);
