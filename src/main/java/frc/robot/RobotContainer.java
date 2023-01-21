@@ -56,13 +56,21 @@ public class RobotContainer {
         // The driver's controller
         private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
         // The PXN arcade stick board
-        private final PXNArcadeStickController m_arcadeBoard = new PXNArcadeStickController(OIConstants.kArcadeBoardControllerPort);
+        private final PXNArcadeStickController m_arcadeBoard = new PXNArcadeStickController(
+                        OIConstants.kArcadeBoardControllerPort);
 
         // A chooser for autonomous commands
         private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-        // the Autonomous builder for Path planning, doesn't have trajectory constructor, just run .fullAuto(trajectory)
+        // the Autonomous builder for Path planning, doesn't have trajectory
+        // constructor, just run .fullAuto(trajectory)
         private final RamseteAutoBuilder m_autoBuilder;
+
+        /*
+         * The map of events for PathPlanner usage. Each key corresponds to a command
+         * that can be used at a waypoint.
+         */
+        private final HashMap<String, Command> m_hashMap = new HashMap<>();
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -75,29 +83,31 @@ public class RobotContainer {
                         m_robotDrive = new DriveSubsystemReal(m_photonCamera);
                 }
 
+                m_hashMap.put("printHelloAfter3sec", new SequentialCommandGroup(
+                                new WaitCommand(3),
+                                new PrintCommand("Hello World")));
+
+                m_hashMap.put("collect0Cu", new PrintCommand("collect0Cu"));
+                m_hashMap.put("collect0Co", new PrintCommand("collect0Co"));
+                m_hashMap.put("place180H", new PrintCommand("place180H"));
+                m_hashMap.put("place90H", new PrintCommand("place90H"));
+
                 // add all items to Auto Selector
                 m_chooser.setDefaultOption(AutoConstants.kDefaultAuto, AutoConstants.kDefaultAuto);
 
-                for (String opt : AutoConstants.kAutoList) {
+                for (
+
+                String opt : AutoConstants.kAutoList) {
                         m_chooser.addOption(opt, opt);
                 }
 
-                m_autoBuilder = new RamseteAutoBuilder(
-                                m_robotDrive::getPose,
-                                m_robotDrive::resetOdometry,
+                m_autoBuilder = new RamseteAutoBuilder(m_robotDrive::getPose, m_robotDrive::resetOdometry,
                                 new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
                                 DriveConstants.kDriveKinematics,
-                                new SimpleMotorFeedforward(
-                                                DriveConstants.ksVolts,
-                                                DriveConstants.kvVoltSecondsPerMeter,
+                                new SimpleMotorFeedforward(DriveConstants.ksVolts, DriveConstants.kvVoltSecondsPerMeter,
                                                 DriveConstants.kaVoltSecondsSquaredPerMeter),
-                                m_robotDrive::getWheelSpeeds,
-                                new PIDConstants(0, 0, 0),
-                                m_robotDrive::tankDriveVolts,
-                                eventMap(),
-                                true,
-                                m_robotDrive
-                );
+                                m_robotDrive::getWheelSpeeds, new PIDConstants(0, 0, 0), m_robotDrive::tankDriveVolts,
+                                m_hashMap, true, m_robotDrive);
 
                 SmartDashboard.putData("Auto Selector", m_chooser);
 
@@ -120,11 +130,9 @@ public class RobotContainer {
 
                 // Tank drive (each stick is one side)
                 m_robotDrive.setDefaultCommand(
-                                new RunCommand(
-                                                () -> m_robotDrive.tankDriveLimit(
-                                                                -m_driverController.getLeftY(),
-                                                                -m_driverController.getRightY(), 0.7),
-                                                m_robotDrive));
+                                new RunCommand(() -> m_robotDrive.tankDriveLimit(-m_driverController.getLeftY(),
+                                                -m_driverController.getRightY(), 0.7), m_robotDrive));
+
         }
 
         /**
@@ -157,25 +165,6 @@ public class RobotContainer {
                                                 AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
                 return m_autoBuilder.fullAuto(pathGroup).andThen(() -> m_robotDrive.tankDriveVolts(0, 0), m_robotDrive);
-        }
-
-        /*
-         * The map of events for PathPlanner usage. Each key corresponds to a command
-         * that can be used at a waypoint.
-         */
-        private HashMap<String, Command> eventMap() {
-                HashMap<String, Command> eventMap = new HashMap<>();
-
-                eventMap.put("printHelloAfter3sec", new SequentialCommandGroup(
-                                new WaitCommand(3),
-                                new PrintCommand("Hello World")));
-
-                eventMap.put("collect0Cu", new PrintCommand("collect0Cu"));
-                eventMap.put("collect0Co", new PrintCommand("collect0Co"));
-                eventMap.put("place180H", new PrintCommand("place180H"));
-                eventMap.put("place90H", new PrintCommand("place90H"));
-
-                return eventMap;
         }
 
 }

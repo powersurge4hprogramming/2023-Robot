@@ -6,14 +6,14 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
+import org.photonvision.EstimatedRobotPose;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -102,13 +102,12 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     // Also apply vision measurements. We use 0.3 seconds in the past as an example
     // -- on
     // a real robot, this must be calculated based either on latency or timestamps.
-    Optional<Pair<Pose3d, Double>> result = m_photonWrapper.getEstimatedGlobalPose(m_odometry.getEstimatedPosition());
+    Optional<EstimatedRobotPose> result = m_photonWrapper.getEstimatedGlobalPose(m_odometry.getEstimatedPosition());
 
-    if (result.isPresent() && result.get().getFirst() != null && result.get().getSecond() != null) {
-      Pair<Pose3d, Double> camPose = result.get();
-      m_odometry.addVisionMeasurement(
-          camPose.getFirst().toPose2d(), camPose.getSecond());
-      m_field.getObject("Cam Est Pos").setPose(camPose.getFirst().toPose2d());
+    if (result.isPresent()) {
+      EstimatedRobotPose camPose = result.get();
+      m_odometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
+      m_field.getObject("Cam Est Pos").setPose(camPose.estimatedPose.toPose2d());
     } else {
       // move it way off the screen to make it disappear
       m_field.getObject("Cam Est Pos").setPose(new Pose2d(-100, -100, new Rotation2d()));

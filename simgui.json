@@ -14,10 +14,12 @@
         }
       },
       "/SmartDashboard/Field": {
-        "image": "C:\\Users\\rubac\\Downloads\\2023-field.png",
         "traj": {
           "arrows": false,
           "style": "Line"
+        },
+        "window": {
+          "visible": true
         }
       }
     }

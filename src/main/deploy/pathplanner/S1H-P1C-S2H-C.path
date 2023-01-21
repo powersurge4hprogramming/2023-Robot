@@ -71,7 +71,7 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "place90H"
+          "place270H"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -80,12 +80,12 @@
     },
     {
       "anchorPoint": {
-        "x": 3.8956873377956547,
-        "y": 2.289547258045615
+        "x": 4.141583320760627,
+        "y": 2.2702679991826162
       },
       "prevControl": {
-        "x": 3.1173548952342425,
-        "y": 2.289547258045615
+        "x": 3.3632508781992145,
+        "y": 2.2702679991826162
       },
       "nextControl": null,
       "holonomicAngle": 0,
