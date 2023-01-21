@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.drivetrain;
 
 import java.util.Optional;
 
@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.structs.PhotonCameraWrapper;
 import frc.robot.utilities.MathU;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -33,20 +32,14 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   private final CANSparkMax m_leftMotorFollower = new CANSparkMax(DriveConstants.kLeftMotorFollowerPort,
       MotorType.kBrushless);
 
-  // ;eft motor group
-  private final MotorControllerGroup m_leftMotors = new MotorControllerGroup(m_leftMotorLeader, m_leftMotorFollower);
-
   // right motors
   private final CANSparkMax m_rightMotorLeader = new CANSparkMax(DriveConstants.kRightMotorLeaderPort,
       MotorType.kBrushless);
   private final CANSparkMax m_rightMotorFollower = new CANSparkMax(DriveConstants.kRightMotorFollowerPort,
       MotorType.kBrushless);
 
-  // right motor group
-  private final MotorControllerGroup m_rightMotors = new MotorControllerGroup(m_rightMotorLeader, m_rightMotorFollower);
-
   // The robot's drive
-  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
+  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotorLeader, m_rightMotorLeader);
 
   // The drive encoders
   private final RelativeEncoder m_leftEncoder = m_leftMotorLeader.getEncoder(); // TODO multiple encoders?
@@ -56,7 +49,10 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
 
   // Odometry class for tracking robot pose
-  private final DifferentialDrivePoseEstimator m_odometry;
+  private final DifferentialDrivePoseEstimator m_odometry = new DifferentialDrivePoseEstimator(
+      DriveConstants.kDriveKinematics,
+      m_gyro.getRotation2d(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
+      new Pose2d());
 
   // Field for visualizing robot odometry
   private final Field2d m_field = new Field2d();
@@ -74,16 +70,14 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
-    m_rightMotors.setInverted(true);
+    m_rightMotorLeader.setInverted(true);
 
     // Sets the distance per pulse for the encoders
     m_leftEncoder.setPositionConversionFactor(DriveConstants.kEncoderDistancePerPulse);
     m_rightEncoder.setPositionConversionFactor(DriveConstants.kEncoderDistancePerPulse);
 
-    resetEncoders();
-    m_odometry = new DifferentialDrivePoseEstimator(DriveConstants.kDriveKinematics,
-        m_gyro.getRotation2d(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
-        new Pose2d());
+    // reset robot to (0,0) and encoders
+    resetOdometry(new Pose2d());
 
     SmartDashboard.putData(m_field);
     SmartDashboard.putData(m_drive);
@@ -149,8 +143,8 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
 
   @Override
   public void tankDriveVolts(double leftVolts, double rightVolts) {
-    m_leftMotors.setVoltage(leftVolts);
-    m_rightMotors.setVoltage(rightVolts);
+    m_leftMotorLeader.setVoltage(leftVolts);
+    m_rightMotorLeader.setVoltage(rightVolts);
     m_drive.feed();
   }
 
