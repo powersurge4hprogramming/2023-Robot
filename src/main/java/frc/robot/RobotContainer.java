@@ -14,7 +14,6 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.PhotonCameraReader;
-import frc.robot.structs.PXNArcadeStickController;
 import frc.robot.structs.PhotonCameraWrapper;
 import frc.robot.subsystems.drivetrain.DriveSubsystemReal;
 import frc.robot.subsystems.drivetrain.DriveSubsystemSim;
@@ -55,9 +54,6 @@ public class RobotContainer {
 
         // The driver's controller
         private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-        // The PXN arcade stick board
-        private final PXNArcadeStickController m_arcadeBoard = new PXNArcadeStickController(
-                        OIConstants.kArcadeBoardControllerPort);
 
         // A chooser for autonomous commands
         private final SendableChooser<String> m_chooser = new SendableChooser<>();
