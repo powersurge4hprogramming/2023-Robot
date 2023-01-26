@@ -25,10 +25,10 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
  */
 public final class Constants {
   public static final class DriveConstants {
-    public static final int kLeftMotorLeaderPort = 0; // TODO
-    public static final int kLeftMotorFollowerPort = 1; // TODO
-    public static final int kRightMotorLeaderPort = 2; // TODO
-    public static final int kRightMotorFollowerPort = 3; // TOOD
+    public static final int kLeftMotorLeaderPort = 6; // TODO
+    public static final int kLeftMotorFollowerPort = 8; // TODO
+    public static final int kRightMotorLeaderPort = 13; // TODO
+    public static final int kRightMotorFollowerPort = 4; // TODO
 
     public static final boolean kLeftEncoderReversed = false;
     public static final boolean kRightEncoderReversed = true;
@@ -38,7 +38,7 @@ public final class Constants {
         kTrackWidthMeters);
 
     // public static final int kEncoderCPR = 42;
-    public static final double kGearRatio = 7.35;
+    public static final double kGearRatio = 7.31;
     public static final double kWheelRadiusMeters = 0.0762; // 3 inches
     public static final double kEncoderDistancePerPulse = (2 * kWheelRadiusMeters * Math.PI) / kGearRatio; // CPR
                                                                                                            // already
@@ -65,7 +65,7 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 3; // TODO
+    public static final double kMaxSpeedMetersPerSecond = 4.48056*0.7; // TODO, 4.48056 is actual
     public static final double kMaxAccelerationMetersPerSecondSquared = 1; // TODO
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and
