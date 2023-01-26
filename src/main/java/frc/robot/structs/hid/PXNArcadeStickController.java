@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.structs;
+package frc.robot.structs.hid;
 
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
@@ -14,10 +14,11 @@ import edu.wpi.first.wpilibj.event.EventLoop;
  * Handle input from X Series Six PXN Flight Arcade Controller connected to the
  * Driver Station.
  * 
- * This is in JOYSTICK form, POV form not supported! - ye olde Kaleb
+ * This is in JOYSTICK form, POV form not supported!
  *
  * <p>
- * This class handles Xbox input that comes from the Driver Station. Each time a
+ * This class handles arcade input that comes from the Driver Station. Each time
+ * a
  * value is
  * requested the most recent value is returned. There is a single class instance
  * for each controller
@@ -45,7 +46,7 @@ public class PXNArcadeStickController extends GenericHID {
         /**
          * Get the human-friendly name of the button, matching the relevant methods.
          * This is done by
-         * stripping the leading `k`, and if not a Bumper button append `Button`.
+         * stripping the leading `k`, and appending `Button`.
          *
          * <p>
          * Primarily used for automated unit tests.
@@ -55,14 +56,12 @@ public class PXNArcadeStickController extends GenericHID {
         @Override
         public String toString() {
             var name = this.name().substring(1); // Remove leading `k`
-            if (name.endsWith("Bumper")) {
-                return name;
-            }
+
             return name + "Button";
         }
     }
 
-    /** Represents an axis on an XboxController. */
+    /** Represents an axis on an PXNArcadeStickController.*/
     public enum Axis {
         kJoystickX(0),
         kJoystickY(1),
@@ -338,7 +337,7 @@ public class PXNArcadeStickController extends GenericHID {
      *         loop.
      */
     @SuppressWarnings("MethodName")
-    public BooleanEvent left(EventLoop loop) {
+    public BooleanEvent leftBumper(EventLoop loop) {
         return new BooleanEvent(loop, this::getLeftBumper);
     }
 
@@ -378,7 +377,7 @@ public class PXNArcadeStickController extends GenericHID {
      *         loop.
      */
     @SuppressWarnings("MethodName")
-    public BooleanEvent right(EventLoop loop) {
+    public BooleanEvent rightBumper(EventLoop loop) {
         return new BooleanEvent(loop, this::getRightBumper);
     }
 
@@ -452,7 +451,7 @@ public class PXNArcadeStickController extends GenericHID {
      * Constructs an event instance around the options button's digital signal.
      *
      * @param loop the event loop instance to attach the event to.
-     * @return an event instance representing the start button's digital signal
+     * @return an event instance representing the options button's digital signal
      *         attached to the given
      *         loop.
      */
