@@ -29,13 +29,13 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   private final CANSparkMax m_leftMotorLeader = new CANSparkMax(DriveConstants.kLeftMotorLeaderPort,
       MotorType.kBrushless);
   private final CANSparkMax m_leftMotorFollower = new CANSparkMax(DriveConstants.kLeftMotorFollowerPort,
-      MotorType.kBrushless);
+      MotorType.kBrushless); // should not be called outside of the constructor
 
   // right motors
   private final CANSparkMax m_rightMotorLeader = new CANSparkMax(DriveConstants.kRightMotorLeaderPort,
       MotorType.kBrushless);
   private final CANSparkMax m_rightMotorFollower = new CANSparkMax(DriveConstants.kRightMotorFollowerPort,
-      MotorType.kBrushless);
+      MotorType.kBrushless); // should not be called outside of the constructor
 
   
 

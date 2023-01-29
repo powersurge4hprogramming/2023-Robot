@@ -24,6 +24,36 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final class QuartetConstant {
+    public static final class TurretConstants {
+      // for encoder
+      private static final double kGearToothRatio = 20.0 / 147;
+      private static final double kGearboxRatio = 1.0 / 12;
+      public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
+
+    }
+
+    public static final class ShoulderConstants {
+      // for encoder
+      private static final double kGearToothRatio = 1 / 20.0;
+      private static final double kGearboxRatio = 1 / 6.0;
+      public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
+
+    }
+
+    public static final class ArmConstants {
+      // for enconder
+      private static final double kGearRatio = 1.0 / 100;
+      private static final double kSpoolRadius = 3.0 / 4;
+      public static final double kDistancePerRevInches = kGearRatio * kSpoolRadius;
+
+    }
+
+    public static final class ClawConstants {
+
+    }
+  }
+
   public static final class DriveConstants {
     public static final int kLeftMotorLeaderPort = 6; // TODO
     public static final int kLeftMotorFollowerPort = 8; // TODO
@@ -39,9 +69,9 @@ public final class Constants {
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
         kTrackWidthMeters);
 
-    // public static final int kEncoderCPR = 42;
-    public static final double kGearRatio = 7.31;
-    public static final double kWheelRadiusMeters = 0.0762; // 3 inches
+    // private static final int kEncoderCPR = 42;
+    private static final double kGearRatio = 7.31;
+    private static final double kWheelRadiusMeters = 0.0762; // 3 inches
     public static final double kEncoderDistancePerPulse = (2 * kWheelRadiusMeters * Math.PI) / kGearRatio; // CPR
                                                                                                            // already
                                                                                                            // taken into
@@ -63,7 +93,6 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final int kArcadeBoardControllerPort = 2;
   }
 
   public static final class AutoConstants {
@@ -79,7 +108,8 @@ public final class Constants {
 
     // auto selections based on PathPlanner, from ./deploy/pathplanner dir
     public static final String kDefaultAuto = "S1H-P1Cu-S2H-C";
-    public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-P1Co-S3H", "S9H-P1Cu-S8H-C", "S9H-P4Cu-S8H-P3Co-S7H");
+    public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-P1Co-S3H", "S9H-P1Cu-S8H-C",
+        "S9H-P4Cu-S8H-P3Co-S7H");
 
   }
 
