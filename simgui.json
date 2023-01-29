@@ -1,4 +1,28 @@
 {
+  "HALProvider": {
+    "Encoders": {
+      "0": {
+        "header": {
+          "open": true
+        }
+      },
+      "1": {
+        "header": {
+          "open": true
+        }
+      },
+      "window": {
+        "visible": true
+      }
+    },
+    "Other Devices": {
+      "ADXRS450[0]": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -13,7 +37,17 @@
           "visible": true
         }
       },
+      "/SmartDashboard/DifferentialDrive[1]": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
+        "Robot": {
+          "length": 0.6600000262260437,
+          "width": 0.6600000262260437
+        },
+        "image": "C:\\Users\\power\\PathWeaver\\Games\\Charged Up\\field-image.png",
         "traj": {
           "arrows": false,
           "style": "Line"

@@ -8,7 +8,6 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -22,7 +21,6 @@ import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotGearing;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSize;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveSubsystemSim extends DriveSubsystemTemplate {
@@ -57,9 +55,6 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
   private final EncoderSim m_leftEncoderSim = new EncoderSim(m_leftEncoder);
   private final EncoderSim m_rightEncoderSim = new EncoderSim(m_rightEncoder);
 
-  // The gyro sensor
-  private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
-
   // Create the simulated gyro object, used for setting the gyro
   // angle. Like EncoderSim, this does not need to be commented out
   // when deploying code to the roboRIO.
@@ -75,9 +70,6 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
       KitbotWheelSize.kSixInch, // 6" diameter wheels.
       VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)); // TODO
 
-  // Field for visualizing robot odometry
-  private final Field2d m_field = new Field2d();
-
   /** Creates a new DriveSubsystemSim. */
   public DriveSubsystemSim() {
     // We need to invert one side of the drivetrain so that positive voltages
@@ -88,6 +80,7 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
     // Sets the distance per pulse for the encoders
     m_leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+
 
     resetEncoders();
     m_odometry = new DifferentialDriveOdometry(
@@ -159,10 +152,20 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
   }
 
   @Override
+  public void tankDrive(double left, double right) {
+    m_drive.tankDrive(left, right);
+  }
+
+  @Override
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     m_leftMotors.setVoltage(leftVolts);
     m_rightMotors.setVoltage(rightVolts);
     m_drive.feed();
+  }
+
+  @Override
+  public void limit(double limit) {
+    m_drive.setMaxOutput(limit);
   }
 
   @Override

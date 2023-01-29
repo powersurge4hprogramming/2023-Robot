@@ -33,6 +33,8 @@ public final class Constants {
     public static final boolean kLeftEncoderReversed = false;
     public static final boolean kRightEncoderReversed = true;
 
+    public static final double kDriveSpeedLimit = 0.15;
+
     public static final double kTrackWidthMeters = 0.530352;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
         kTrackWidthMeters);
@@ -65,8 +67,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 4.48056*0.7; // TODO, 4.48056 is actual
-    public static final double kMaxAccelerationMetersPerSecondSquared = 1; // TODO
+    public static final double kMaxSpeedMetersPerSecond = 2.0; // TODO, 4.48056*0.7 is actual
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0.75; // TODO
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and
     // seconds
@@ -76,8 +78,8 @@ public final class Constants {
     public static final String kAutoSelectionKey = "Auto Selector";
 
     // auto selections based on PathPlanner, from ./deploy/pathplanner dir
-    public static final String kDefaultAuto = "S1H-P1C-S2H-C";
-    public static final List<String> kAutoList = List.of("S1H-P1-S2H-P1-S3H");
+    public static final String kDefaultAuto = "S1H-P1Cu-S2H-C";
+    public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-P1Co-S3H", "S9H-P1Cu-S8H-C", "S9H-P4Cu-S8H-P3Co-S7H");
 
   }
 

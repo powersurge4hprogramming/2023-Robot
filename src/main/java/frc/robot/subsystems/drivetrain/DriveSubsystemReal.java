@@ -10,18 +10,17 @@ import org.photonvision.EstimatedRobotPose;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.structs.PhotonCameraWrapper;
 import frc.robot.utilities.MathU;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveSubsystemReal extends DriveSubsystemTemplate {
@@ -38,15 +37,12 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   private final CANSparkMax m_rightMotorFollower = new CANSparkMax(DriveConstants.kRightMotorFollowerPort,
       MotorType.kBrushless);
 
-  // The robot's drive
-  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotorLeader, m_rightMotorLeader);
+  
 
   // The drive encoders
   private final RelativeEncoder m_leftEncoder = m_leftMotorLeader.getEncoder(); // TODO multiple encoders?
   private final RelativeEncoder m_rightEncoder = m_rightMotorLeader.getEncoder(); // TODO multiple encoders?
 
-  // The gyro sensor
-  private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
 
   // Odometry class for tracking robot pose
   private final DifferentialDrivePoseEstimator m_odometry = new DifferentialDrivePoseEstimator(
@@ -54,11 +50,11 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
       m_gyro.getRotation2d(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
       new Pose2d());
 
-  // Field for visualizing robot odometry
-  private final Field2d m_field = new Field2d();
-
   // wrapper for Global! PhotonCamera
   private final PhotonCameraWrapper m_photonWrapper;
+
+  // The robot's drive
+  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotorLeader, m_rightMotorLeader);
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystemReal(PhotonCameraWrapper photonWrapper) {
@@ -66,6 +62,11 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
 
     m_leftMotorFollower.follow(m_leftMotorLeader);
     m_rightMotorFollower.follow(m_rightMotorLeader);
+
+    m_leftMotorLeader.setIdleMode(IdleMode.kCoast);
+    m_leftMotorFollower.setIdleMode(IdleMode.kCoast);
+    m_rightMotorLeader.setIdleMode(IdleMode.kCoast);
+    m_rightMotorFollower.setIdleMode(IdleMode.kCoast);
 
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
@@ -142,10 +143,20 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   }
 
   @Override
+  public void tankDrive(double left, double right) {
+    m_drive.tankDrive(left, right);
+  }
+
+  @Override
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     m_leftMotorLeader.setVoltage(leftVolts);
     m_rightMotorLeader.setVoltage(rightVolts);
     m_drive.feed();
+  }
+
+  @Override
+  public void limit(double limit) {
+    m_drive.setMaxOutput(limit);
   }
 
   @Override
