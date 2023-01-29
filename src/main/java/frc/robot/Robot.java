@@ -32,6 +32,9 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     PathPlannerServer.startServer(5811); // TODO disable for competition
+
+    // calibrate rio gyro while disabled and not moving
+    m_robotContainer.calibrateRioGyro();
   }
 
   /**

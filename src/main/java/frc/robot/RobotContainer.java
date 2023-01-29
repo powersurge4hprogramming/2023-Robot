@@ -161,4 +161,11 @@ public class RobotContainer {
                 return m_autoBuilder.fullAuto(pathGroup).andThen(() -> m_robotDrive.tankDriveVolts(0, 0), m_robotDrive);
         }
 
+        /**
+         * Calibrate the encoder, takes 5 seconds and can be done while disabled
+         */
+        public void calibrateRioGyro() {
+                m_robotDrive.calibrateGyro();
+        }
+
 }

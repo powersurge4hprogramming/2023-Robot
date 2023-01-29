@@ -16,7 +16,7 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
 
   // Field for visualizing robot odometry
   protected final Field2d m_field = new Field2d();
-  
+
   /**
    * Returns the currently-estimated pose of the robot.
    *
@@ -76,4 +76,9 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
 
   /** Resets the drive encoders to currently read a position of 0. */
   public abstract void resetEncoders();
+
+  /** Calibrate gyro (takes 5 seconds, robot MUST not move) */
+  public void calibrateGyro() {
+    m_gyro.calibrate();
+  }
 }
