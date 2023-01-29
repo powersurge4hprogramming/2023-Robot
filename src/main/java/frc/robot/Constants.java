@@ -24,12 +24,16 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final class QuartetConstant {
+  public static final class QuartetConstants {
     public static final class TurretConstants {
       // for encoder
       private static final double kGearToothRatio = 20.0 / 147;
       private static final double kGearboxRatio = 1.0 / 12;
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
+
+      public static final int kMotorPort = 7; // TODO
+
+      public static final double kMaxRotations = 4; // TODO
 
     }
 
@@ -39,13 +43,23 @@ public final class Constants {
       private static final double kGearboxRatio = 1 / 6.0;
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
 
+      public static final int kMotorPort = 7; // TODO
+
+      public static final int kMaxDegrees = 120; // TODO
+      public static final int kMinDegrees = 0; // TODO
+
     }
 
     public static final class ArmConstants {
       // for enconder
       private static final double kGearRatio = 1.0 / 100;
-      private static final double kSpoolRadius = 3.0 / 4;
+      private static final double kSpoolRadius = (3.0 / 4)  + 0.040;
       public static final double kDistancePerRevInches = kGearRatio * kSpoolRadius;
+
+      public static final int kMotorPort = 7; // TODO
+
+      public static final double kMaxPosInches = 48.23; // TODO (49.23 is absolute max)
+      public static final double kMinPosInches = 0.0; // TODO
 
     }
 
@@ -109,7 +123,7 @@ public final class Constants {
     // auto selections based on PathPlanner, from ./deploy/pathplanner dir
     public static final String kDefaultAuto = "S1H-P1Cu-S2H-C";
     public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-P1Co-S3H", "S9H-P1Cu-S8H-C",
-        "S9H-P4Cu-S8H-P3Co-S7H");
+        "S9H-P4Cu-S8H-P3Co-S7H"); // TODO
 
   }
 
