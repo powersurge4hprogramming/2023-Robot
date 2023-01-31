@@ -15,6 +15,10 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.PhotonCameraReader;
 import frc.robot.structs.PhotonCameraWrapper;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClawSubsystem;
+import frc.robot.subsystems.ShoulderSubsystem;
+import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.subsystems.drivetrain.DriveSubsystemReal;
 import frc.robot.subsystems.drivetrain.DriveSubsystemSim;
 import frc.robot.subsystems.drivetrain.DriveSubsystemTemplate;
@@ -44,16 +48,38 @@ import com.pathplanner.lib.auto.RamseteAutoBuilder;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-        // The robot's subsystems
-        private final DriveSubsystemTemplate m_robotDrive;
+        // <-- SUBSYSTEMS -->
+        private final DriveSubsystemTemplate m_driveSubsystem;
+
+        private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+        private final ClawSubsystem m_clawSubsystem = new ClawSubsystem();
+        private final ShoulderSubsystem m_shoulderSubsystem = new ShoulderSubsystem();
+        private final TurretSubsystem m_turretSubsystem = new TurretSubsystem();
+
+        // <-- END SUBSYSTEMS -->
+
+        // <-- STRUCTS --> (HID, controllers, etc)
 
         // the PhotonCamera global wrapper class
         private final PhotonCameraWrapper m_photonCamera = new PhotonCameraWrapper();
-        // the PhotonCamera Smartdashboard sending class
-        private final PhotonCameraReader m_photonCameraReader = new PhotonCameraReader(m_photonCamera);
 
         // The driver's controller
         private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+
+        // <-- END STRUCTS --> (HID, controllers, etc)
+
+        // <-- COMMANDS -->
+
+        // the PhotonCamera Smartdashboard sending class
+        private final PhotonCameraReader m_photonCameraReader = new PhotonCameraReader(m_photonCamera);
+
+        // <-- END COMMANDS -->
+
+        /*
+         * The map of events for PathPlanner usage. Each key corresponds to a command
+         * that can be used at a waypoint.
+         */
+        private final HashMap<String, Command> m_hashMap = new HashMap<>();
 
         // A chooser for autonomous commands
         private final SendableChooser<String> m_chooser = new SendableChooser<>();
@@ -62,21 +88,15 @@ public class RobotContainer {
         // constructor, just run .fullAuto(trajectory)
         private final RamseteAutoBuilder m_autoBuilder;
 
-        /*
-         * The map of events for PathPlanner usage. Each key corresponds to a command
-         * that can be used at a waypoint.
-         */
-        private final HashMap<String, Command> m_hashMap = new HashMap<>();
-
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
                 // create sim or real object
                 if (RobotBase.isSimulation()) {
-                        m_robotDrive = new DriveSubsystemSim();
+                        m_driveSubsystem = new DriveSubsystemSim();
                 } else {
-                        m_robotDrive = new DriveSubsystemReal(m_photonCamera);
+                        m_driveSubsystem = new DriveSubsystemReal(m_photonCamera);
                 }
 
                 m_hashMap.put("printHelloAfter3sec", new SequentialCommandGroup(
@@ -90,18 +110,18 @@ public class RobotContainer {
 
                 // add all items to Auto Selector
                 m_chooser.setDefaultOption(AutoConstants.kDefaultAuto, AutoConstants.kDefaultAuto);
-
                 for (String opt : AutoConstants.kAutoList) {
                         m_chooser.addOption(opt, opt);
                 }
 
-                m_autoBuilder = new RamseteAutoBuilder(m_robotDrive::getPose, m_robotDrive::resetOdometry,
+                m_autoBuilder = new RamseteAutoBuilder(m_driveSubsystem::getPose, m_driveSubsystem::resetOdometry,
                                 new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
                                 DriveConstants.kDriveKinematics,
                                 new SimpleMotorFeedforward(DriveConstants.ksVolts, DriveConstants.kvVoltSecondsPerMeter,
                                                 DriveConstants.kaVoltSecondsSquaredPerMeter),
-                                m_robotDrive::getWheelSpeeds, new PIDConstants(0, 0, 0), m_robotDrive::tankDriveVolts,
-                                m_hashMap, true, m_robotDrive);
+                                m_driveSubsystem::getWheelSpeeds, new PIDConstants(0, 0, 0),
+                                m_driveSubsystem::tankDriveVolts,
+                                m_hashMap, true, m_driveSubsystem);
 
                 SmartDashboard.putData("Auto Selector", m_chooser);
 
@@ -111,16 +131,16 @@ public class RobotContainer {
                 // Configure default commands
 
                 // Set the drive limit
-                m_robotDrive.limit(Constants.DriveConstants.kDriveSpeedLimit);
+                m_driveSubsystem.limit(DriveConstants.kDriveSpeedLimit);
 
-                m_robotDrive.setDefaultCommand(
+                m_driveSubsystem.setDefaultCommand(
                                 // A split-stick arcade command, with forward/backward controlled by the left
                                 // hand, and turning controlled by the right.
                                 new RunCommand(
-                                                () -> m_robotDrive.arcadeDrive(
+                                                () -> m_driveSubsystem.arcadeDrive(
                                                                 -m_driverController.getLeftY(),
                                                                 -m_driverController.getRightX()),
-                                                m_robotDrive));
+                                                m_driveSubsystem));
 
                 // Tank drive (each stick is one side)
                 // m_robotDrive.setDefaultCommand(
@@ -158,14 +178,15 @@ public class RobotContainer {
                                 new PathConstraints(AutoConstants.kMaxSpeedMetersPerSecond,
                                                 AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
-                return m_autoBuilder.fullAuto(pathGroup).andThen(() -> m_robotDrive.tankDriveVolts(0, 0), m_robotDrive);
+                return m_autoBuilder.fullAuto(pathGroup).andThen(() -> m_driveSubsystem.tankDriveVolts(0, 0),
+                                m_driveSubsystem);
         }
 
         /**
          * Calibrate the encoder, takes 5 seconds and can be done while disabled
          */
         public void calibrateRioGyro() {
-                m_robotDrive.calibrateGyro();
+                m_driveSubsystem.calibrateGyro();
         }
 
 }

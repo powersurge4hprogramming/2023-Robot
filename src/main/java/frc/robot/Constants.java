@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.List;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -53,7 +54,7 @@ public final class Constants {
     public static final class ArmConstants {
       // for enconder
       private static final double kGearRatio = 1.0 / 100;
-      private static final double kSpoolRadius = (3.0 / 4)  + 0.040;
+      private static final double kSpoolRadius = (3.0 / 4) + 0.040;
       public static final double kDistancePerRevInches = kGearRatio * kSpoolRadius;
 
       public static final int kMotorPort = 7; // TODO
@@ -64,6 +65,17 @@ public final class Constants {
     }
 
     public static final class ClawConstants {
+      public static final int kYellowLEDPort = 7; // TODO
+      public static final int kPurpleLEDPort = 7; // TODO
+
+      // foward, reverse for double solenoid
+      public static final Pair<Integer, Integer> kDoubleSolenoidClawUpstream = new Pair<Integer, Integer>(1, 0); // TODO
+      public static final Pair<Integer, Integer> kDoubleSolenoidClawDownstream = new Pair<Integer, Integer>(3, 2); // TODO
+
+      public static final int kSwivelMotor = 7; // TODO
+
+      public static final double kSwivelFastSpeed = 1.0; // TODO
+      public static final double kSwivelSlowSpeed = 0.5; // TODO
 
     }
   }
