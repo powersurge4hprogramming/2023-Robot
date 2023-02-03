@@ -34,4 +34,12 @@ public class ShoulderSubsystem extends SubsystemBase {
     }
     SmartDashboard.putNumber("Shoulder Angle", deg);
   }
+
+  public void run(double speed) {
+    m_motor.set(speed);
+  }
+
+  public double getAngle() {
+    return m_encoder.getPosition();
+  }
 }

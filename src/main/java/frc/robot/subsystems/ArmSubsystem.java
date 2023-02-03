@@ -34,4 +34,12 @@ public class ArmSubsystem extends SubsystemBase {
     }
     SmartDashboard.putNumber("Arm Length", pos);
   }
+
+  public void run(double speed) {
+    m_motor.set(speed);
+  }
+
+  public double getLength() {
+    return m_encoder.getPosition();
+  }
 }

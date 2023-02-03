@@ -37,6 +37,13 @@ public class TurretSubsystem extends SubsystemBase {
     m_motor.set(speed);
   }
 
+  /** Get angle, partially so its not past +-360 */
+  public double getAngle() {
+    double angle = m_encoder.getPosition();
+    double sign = Math.signum(angle);
+    return sign * (Math.abs(angle) - (360 * (Math.abs(angle) % 360.0)));
+  }
+
   private double getRotations() {
     return m_encoder.getPosition() / 360.0;
   }

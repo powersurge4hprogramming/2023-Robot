@@ -37,12 +37,9 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   private final CANSparkMax m_rightMotorFollower = new CANSparkMax(DriveConstants.kRightMotorFollowerPort,
       MotorType.kBrushless); // should not be called outside of the constructor
 
-  
-
   // The drive encoders
   private final RelativeEncoder m_leftEncoder = m_leftMotorLeader.getEncoder(); // TODO multiple encoders?
   private final RelativeEncoder m_rightEncoder = m_rightMotorLeader.getEncoder(); // TODO multiple encoders?
-
 
   // Odometry class for tracking robot pose
   private final DifferentialDrivePoseEstimator m_odometry = new DifferentialDrivePoseEstimator(
@@ -163,5 +160,20 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   public void resetEncoders() {
     m_leftEncoder.setPosition(0);
     m_rightEncoder.setPosition(0);
+  }
+
+  @Override
+  public void tractionMode(boolean brakeMode) {
+    if (brakeMode) {
+      m_leftMotorLeader.setIdleMode(IdleMode.kBrake);
+      m_leftMotorFollower.setIdleMode(IdleMode.kBrake);
+      m_rightMotorLeader.setIdleMode(IdleMode.kBrake);
+      m_rightMotorFollower.setIdleMode(IdleMode.kBrake);
+    } else {
+      m_leftMotorLeader.setIdleMode(IdleMode.kCoast);
+      m_leftMotorFollower.setIdleMode(IdleMode.kCoast);
+      m_rightMotorLeader.setIdleMode(IdleMode.kCoast);
+      m_rightMotorFollower.setIdleMode(IdleMode.kCoast);
+    }
   }
 }

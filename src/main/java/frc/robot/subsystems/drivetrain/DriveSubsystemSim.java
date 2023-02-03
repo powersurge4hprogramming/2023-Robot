@@ -81,7 +81,6 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
     m_leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
 
-
     resetEncoders();
     m_odometry = new DifferentialDriveOdometry(
         m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
@@ -172,5 +171,10 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
   public void resetEncoders() {
     m_leftEncoder.reset();
     m_rightEncoder.reset();
+  }
+
+  @Override
+  public void tractionMode(boolean brakeMode) {
+    return;
   }
 }

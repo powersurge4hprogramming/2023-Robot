@@ -77,6 +77,9 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
   /** Resets the drive encoders to currently read a position of 0. */
   public abstract void resetEncoders();
 
+  /** Toggles break mode to true or false */
+  public abstract void tractionMode(boolean breakMode);
+
   /** Calibrate gyro (takes 5 seconds, robot MUST not move) */
   public void calibrateGyro() {
     m_gyro.calibrate();

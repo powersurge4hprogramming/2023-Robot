@@ -47,7 +47,7 @@ public class ClawSubsystem extends SubsystemBase {
     SmartDashboard.putString("CLAW MODE", m_pickupMode.name());
   }
 
-  /** run fast (ex for going 90 degrees) */
+  /** run fast (ex for going 90 degrees) or not fast*/
   public void runSwivel(boolean fast) {
     if (fast) {
       m_swivelMotor.set(ClawConstants.kSwivelFastSpeed);
