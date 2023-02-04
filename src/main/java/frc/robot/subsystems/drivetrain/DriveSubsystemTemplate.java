@@ -78,7 +78,7 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
   public abstract void resetEncoders();
 
   /** Toggles break mode to true or false */
-  public abstract void tractionMode(boolean breakMode);
+  public abstract void tractionMode(boolean brakeMode);
 
   /** Calibrate gyro (takes 5 seconds, robot MUST not move) */
   public void calibrateGyro() {

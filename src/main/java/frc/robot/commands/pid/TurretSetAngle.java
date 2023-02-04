@@ -13,7 +13,7 @@ import frc.robot.subsystems.TurretSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TurretSetAngle extends PIDCommand {
   /** Creates a new TurretSetAngle. */
-  public TurretSetAngle(int setpointAngle, TurretSubsystem turret) {
+  public TurretSetAngle(double setpointAngle, TurretSubsystem turret) {
     super(
         // The controller that the command will use
         new PIDController(0, 0, 0), // TODO constantify

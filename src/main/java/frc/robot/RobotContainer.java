@@ -13,20 +13,27 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.PhotonCameraReader;
+import frc.robot.Constants.QuartetConstants.ArmConstants;
+import frc.robot.Constants.QuartetConstants.ShoulderConstants;
+import frc.robot.commands.pid.ArmSetLength;
+import frc.robot.commands.pid.ShoulderSetAngle;
+import frc.robot.commands.pid.TurretSetAngle;
 import frc.robot.structs.PhotonCameraWrapper;
+import frc.robot.structs.hid.CommandPXNArcadeStickController;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.ShoulderSubsystem;
+import frc.robot.subsystems.StoppyBarSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
+import frc.robot.subsystems.ClawSubsystem.PickupMode;
 import frc.robot.subsystems.drivetrain.DriveSubsystemReal;
 import frc.robot.subsystems.drivetrain.DriveSubsystemSim;
 import frc.robot.subsystems.drivetrain.DriveSubsystemTemplate;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.util.HashMap;
@@ -56,6 +63,8 @@ public class RobotContainer {
         private final ShoulderSubsystem m_shoulderSubsystem = new ShoulderSubsystem();
         private final TurretSubsystem m_turretSubsystem = new TurretSubsystem();
 
+        private final StoppyBarSubsystem m_stoppyBarSubsystem = new StoppyBarSubsystem();
+
         // <-- END SUBSYSTEMS -->
 
         // <-- STRUCTS --> (HID, controllers, etc)
@@ -64,14 +73,24 @@ public class RobotContainer {
         private final PhotonCameraWrapper m_photonCamera = new PhotonCameraWrapper();
 
         // The driver's controller
-        private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+        private final CommandXboxController m_driverController = new CommandXboxController(
+                        OIConstants.kDriverControllerPort);
+
+        // The operator's controller
+        private final CommandXboxController m_operatorController = new CommandXboxController(
+                        OIConstants.kOperatorControllerPort);
+
+        // The arcade pad
+        private final CommandPXNArcadeStickController m_arcadePad = new CommandPXNArcadeStickController(
+                        OIConstants.kOperatorArcadePort);
 
         // <-- END STRUCTS --> (HID, controllers, etc)
 
         // <-- COMMANDS -->
 
         // the PhotonCamera Smartdashboard sending class
-        private final PhotonCameraReader m_photonCameraReader = new PhotonCameraReader(m_photonCamera);
+        // private final PhotonCameraReader m_photonCameraReader = new
+        // PhotonCameraReader(m_photonCamera);
 
         // <-- END COMMANDS -->
 
@@ -99,14 +118,37 @@ public class RobotContainer {
                         m_driveSubsystem = new DriveSubsystemReal(m_photonCamera);
                 }
 
-                m_hashMap.put("printHelloAfter3sec", new SequentialCommandGroup(
-                                new WaitCommand(3),
-                                new PrintCommand("Hello World")));
-
-                m_hashMap.put("collect0Cu", new PrintCommand("collect0Cu"));
-                m_hashMap.put("collect0Co", new PrintCommand("collect0Co"));
-                m_hashMap.put("place180H", new PrintCommand("place180H"));
-                m_hashMap.put("place90H", new PrintCommand("place90H"));
+                m_hashMap.put("collect0GPrep", new ParallelCommandGroup(
+                                new TurretSetAngle(0, m_turretSubsystem),
+                                new ArmSetLength(ArmConstants.kGroundPickupArmLength, m_armSubsystem),
+                                new ShoulderSetAngle(ShoulderConstants.kGroundPickupShoulderAngle,
+                                                m_shoulderSubsystem)));
+                m_hashMap.put("place180HPrep",
+                                new ParallelCommandGroup(
+                                                new TurretSetAngle(180, m_turretSubsystem),
+                                                new ArmSetLength(ArmConstants.kHighGoalArmLength, m_armSubsystem),
+                                                new ShoulderSetAngle(ShoulderConstants.kHighGoalShoulderAngle,
+                                                                m_shoulderSubsystem)));
+                m_hashMap.put("place270HPrep",
+                                new ParallelCommandGroup(
+                                                new TurretSetAngle(270, m_turretSubsystem),
+                                                new ArmSetLength(ArmConstants.kHighGoalArmLength, m_armSubsystem),
+                                                new ShoulderSetAngle(ShoulderConstants.kHighGoalShoulderAngle,
+                                                                m_shoulderSubsystem)));
+                m_hashMap.put("place0HPrep",
+                                new ParallelCommandGroup(
+                                                new TurretSetAngle(0, m_turretSubsystem),
+                                                new ArmSetLength(ArmConstants.kHighGoalArmLength, m_armSubsystem),
+                                                new ShoulderSetAngle(ShoulderConstants.kHighGoalShoulderAngle,
+                                                                m_shoulderSubsystem)));
+                m_hashMap.put("grabCu",
+                                new InstantCommand(() -> m_clawSubsystem.grab(PickupMode.Cube), m_clawSubsystem));
+                m_hashMap.put("grabCo", new RunCommand(() -> m_clawSubsystem.grab(PickupMode.Cube), m_clawSubsystem));
+                m_hashMap.put("release", new InstantCommand(() -> m_clawSubsystem.release(), m_clawSubsystem));
+                m_hashMap.put("tractionOn",
+                                new InstantCommand(() -> m_driveSubsystem.tractionMode(true), m_driveSubsystem));
+                m_hashMap.put("tractionOff",
+                                new InstantCommand(() -> m_driveSubsystem.tractionMode(false), m_driveSubsystem));
 
                 // add all items to Auto Selector
                 m_chooser.setDefaultOption(AutoConstants.kDefaultAuto, AutoConstants.kDefaultAuto);
@@ -142,11 +184,6 @@ public class RobotContainer {
                                                                 -m_driverController.getRightX()),
                                                 m_driveSubsystem));
 
-                // Tank drive (each stick is one side)
-                // m_robotDrive.setDefaultCommand(
-                // new RunCommand(() -> m_robotDrive.tankDrive(-m_driverController.getLeftY(),
-                // -m_driverController.getRightY()), m_robotDrive));
-
         }
 
         /**
@@ -159,6 +196,47 @@ public class RobotContainer {
          * {@link JoystickButton}.
          */
         private void configureButtonBindings() {
+                // nuclear codes (for endgame solenoids)
+                m_operatorController.rightStick().and(m_driverController.back()).onTrue(
+                                new InstantCommand(() -> {
+                                        m_stoppyBarSubsystem.setStop(true);
+                                        m_clawSubsystem.setPickupMode(PickupMode.Error);
+                                }, m_stoppyBarSubsystem));
+                m_driverController.start().onTrue(
+                                new InstantCommand(() -> {
+                                        m_stoppyBarSubsystem.setStop(false);
+                                        m_clawSubsystem.setPickupMode(PickupMode.None);
+                                }, m_stoppyBarSubsystem));
+
+                // Dumb bindings (non distance based)
+                // Drive bindings
+
+                // Operator controller bindings
+                m_operatorController.leftBumper()
+                                .whileTrue(new RunCommand(() -> m_turretSubsystem.run(-0.25), m_turretSubsystem));
+                m_operatorController.rightBumper()
+                                .whileTrue(new RunCommand(() -> m_turretSubsystem.run(0.25), m_turretSubsystem));
+                m_operatorController.leftTrigger()
+                                .whileTrue(new RunCommand(() -> m_armSubsystem.run(-0.01), m_armSubsystem));
+                m_operatorController.rightTrigger()
+                                .whileTrue(new RunCommand(() -> m_armSubsystem.run(0.01), m_armSubsystem));
+                m_operatorController.x().onTrue(new InstantCommand(() -> m_clawSubsystem.grab(), m_clawSubsystem));
+                m_operatorController.b().onTrue(new InstantCommand(() -> m_clawSubsystem.release(), m_clawSubsystem));
+                m_operatorController.pov(270)
+                                .whileTrue(new InstantCommand(() -> m_clawSubsystem.runSwivel(-0.5), m_clawSubsystem));
+                m_operatorController.pov(90)
+                                .whileTrue(new InstantCommand(() -> m_clawSubsystem.runSwivel(0.5), m_clawSubsystem));
+                m_operatorController.y().onTrue(new InstantCommand(() -> m_clawSubsystem.setPickupMode(PickupMode.Cone),
+                                m_clawSubsystem));
+                m_operatorController.a().onTrue(new InstantCommand(() -> m_clawSubsystem.setPickupMode(PickupMode.Cube),
+                                m_clawSubsystem));
+
+                // Arcade pad bindings
+                m_arcadePad.pov(270).whileTrue(new RunCommand(() -> m_shoulderSubsystem.run(0.1), m_shoulderSubsystem));
+                m_arcadePad.pov(90).whileTrue(new RunCommand(() -> m_shoulderSubsystem.run(-0.1), m_shoulderSubsystem));
+
+                // Smart bindings -->
+                // Operator controller bindings
 
         }
 
@@ -187,6 +265,13 @@ public class RobotContainer {
          */
         public void calibrateRioGyro() {
                 m_driveSubsystem.calibrateGyro();
+        }
+
+        /**
+         * Turn off tractionMode in driveSubsystem
+         */
+        public void setTractionMode(boolean brakeMode) {
+                m_driveSubsystem.tractionMode(brakeMode);
         }
 
 }

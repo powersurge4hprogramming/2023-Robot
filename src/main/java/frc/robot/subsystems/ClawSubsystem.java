@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,6 +38,8 @@ public class ClawSubsystem extends SubsystemBase {
 
   private PickupMode m_pickupMode = PickupMode.None;
 
+  private final Timer m_strobeTimer = new Timer();
+
   /** Creates a new ClawSubsystem. */
   public ClawSubsystem() {
 
@@ -45,15 +48,22 @@ public class ClawSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putString("CLAW MODE", m_pickupMode.name());
+
+    if (m_pickupMode == PickupMode.Error) {
+      if (m_strobeTimer.get() >= 0.27 && m_strobeTimer.get() <= 0.54) {
+        m_yellowLED.set(false);
+        m_purpleLED.set(true);
+      } else {
+        m_yellowLED.set(true);
+        m_purpleLED.set(false);
+        m_strobeTimer.reset();
+      }
+    }
   }
 
-  /** run fast (ex for going 90 degrees) or not fast*/
-  public void runSwivel(boolean fast) {
-    if (fast) {
-      m_swivelMotor.set(ClawConstants.kSwivelFastSpeed);
-    } else {
-      m_swivelMotor.set(ClawConstants.kSwivelSlowSpeed);
-    }
+  /** run the swivel claw */
+  public void runSwivel(double speed) {
+    m_swivelMotor.set(speed);
   }
 
   public void setPickupMode(PickupMode mode) {
@@ -61,6 +71,14 @@ public class ClawSubsystem extends SubsystemBase {
     updateLEDs();
   }
 
+  /** Save pickup mode then grab */
+  public void grab(PickupMode mode) {
+    m_pickupMode = mode;
+    updateLEDs();
+    grab();
+  }
+
+  /** Grab using saved pickup mode */
   public void grab() {
     switch (m_pickupMode) {
       case Cone:
@@ -85,6 +103,8 @@ public class ClawSubsystem extends SubsystemBase {
   }
 
   private void updateLEDs() {
+    m_strobeTimer.reset();
+    m_strobeTimer.stop();
     switch (m_pickupMode) {
       case Cone:
         m_yellowLED.set(true);
@@ -97,6 +117,7 @@ public class ClawSubsystem extends SubsystemBase {
       case Error:
         m_yellowLED.set(true);
         m_purpleLED.set(true);
+        m_strobeTimer.start();
         break;
       case None:
       default:

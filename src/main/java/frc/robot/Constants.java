@@ -49,6 +49,9 @@ public final class Constants {
       public static final int kMaxDegrees = 120; // TODO
       public static final int kMinDegrees = 0; // TODO
 
+      public static final double kHighGoalShoulderAngle = 0; // TODO
+      public static final double kGroundPickupShoulderAngle = 0; // TODO
+
     }
 
     public static final class ArmConstants {
@@ -61,6 +64,9 @@ public final class Constants {
 
       public static final double kMaxPosInches = 48.23; // TODO (49.23 is absolute max)
       public static final double kMinPosInches = 0.0; // TODO
+
+      public static final double kHighGoalArmLength = 0; // TODO
+      public static final double kGroundPickupArmLength = 0; // TODO
 
     }
 
@@ -89,7 +95,7 @@ public final class Constants {
     public static final boolean kLeftEncoderReversed = false;
     public static final boolean kRightEncoderReversed = true;
 
-    public static final double kDriveSpeedLimit = 0.15;
+    public static final double kDriveSpeedLimit = 0.70;  // TODO
 
     public static final double kTrackWidthMeters = 0.530352;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
@@ -117,8 +123,15 @@ public final class Constants {
     public static final double kPDriveVel = 8.5; // TODO
   }
 
+  public static final class StoppyBarConstants {
+    public static final int kFowardSolenoidPort = 7; // TODO
+    public static final int kBackwardSolenoidPort = 7; // TODO
+  }
+
   public static final class OIConstants {
-    public static final int kDriverControllerPort = 0;
+    public static final int kDriverControllerPort = 0; 
+    public static final int kOperatorControllerPort = 1;
+    public static final int kOperatorArcadePort = 2;
   }
 
   public static final class AutoConstants {

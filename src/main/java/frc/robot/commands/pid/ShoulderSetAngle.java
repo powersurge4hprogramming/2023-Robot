@@ -13,7 +13,7 @@ import frc.robot.subsystems.ShoulderSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShoulderSetAngle extends PIDCommand {
   /** Creates a new TurretSetAngle. */
-  public ShoulderSetAngle(int setpointAngle, ShoulderSubsystem shoulder) {
+  public ShoulderSetAngle(double setpointAngle, ShoulderSubsystem shoulder) {
     super(
         // The controller that the command will use
         new PIDController(0, 0, 0), // TODO constantify

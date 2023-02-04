@@ -35,7 +35,9 @@ public class PXNArcadeStickController extends GenericHID {
         kLb(5),
         kRb(6),
         kShare(7),
-        kOptions(8);
+        kOptions(8),
+        kL3(9),
+        kR3(10);
 
         public final int value;
 
@@ -61,7 +63,7 @@ public class PXNArcadeStickController extends GenericHID {
         }
     }
 
-    /** Represents an axis on an PXNArcadeStickController.*/
+    /** Represents an axis on an PXNArcadeStickController. */
     public enum Axis {
         kJoystickX(0),
         kJoystickY(1),
@@ -115,6 +117,11 @@ public class PXNArcadeStickController extends GenericHID {
         return getRawAxis(Axis.kJoystickX.value);
     }
 
+    /**
+     * Get the Y axis value of the controller joystick.
+     *
+     * @return The axis value.
+     */
     public double getJoystickY() {
         return getRawAxis(Axis.kJoystickY.value);
     }
@@ -457,6 +464,84 @@ public class PXNArcadeStickController extends GenericHID {
      */
     public BooleanEvent options(EventLoop loop) {
         return new BooleanEvent(loop, this::getOptionsButton);
+    }
+
+    /**
+     * Read the value of the L3 button on the controller.
+     *
+     * @return The state of the button.
+     */
+    public boolean getL3Button() {
+        return getRawButton(Button.kL3.value);
+    }
+
+    /**
+     * Whether the L3 button was pressed since the last check.
+     *
+     * @return Whether the button was pressed since the last check.
+     */
+    public boolean getL3ButtonPressed() {
+        return getRawButtonPressed(Button.kL3.value);
+    }
+
+    /**
+     * Whether the L3 button was released since the last check.
+     *
+     * @return Whether the button was released since the last check.
+     */
+    public boolean getL3ButtonReleased() {
+        return getRawButtonReleased(Button.kL3.value);
+    }
+
+    /**
+     * Constructs an event instance around the L3 button's digital signal.
+     *
+     * @param loop the event loop instance to attach the event to.
+     * @return an event instance representing the L3 button's digital signal
+     *         attached to the given
+     *         loop.
+     */
+    public BooleanEvent L3(EventLoop loop) {
+        return new BooleanEvent(loop, this::getL3Button);
+    }
+
+    /**
+     * Read the value of the R3 button on the controller.
+     *
+     * @return The state of the button.
+     */
+    public boolean getR3Button() {
+        return getRawButton(Button.kR3.value);
+    }
+
+    /**
+     * Whether the R3 button was pressed since the last check.
+     *
+     * @return Whether the button was pressed since the last check.
+     */
+    public boolean getR3ButtonPressed() {
+        return getRawButtonPressed(Button.kR3.value);
+    }
+
+    /**
+     * Whether the R3 button was released since the last check.
+     *
+     * @return Whether the button was released since the last check.
+     */
+    public boolean getR3ButtonReleased() {
+        return getRawButtonReleased(Button.kR3.value);
+    }
+
+    /**
+     * Constructs an event instance around the R3 button's digital signal.
+     *
+     * @param loop the event loop instance to attach the event to.
+     * @return an event instance representing the L3 button's digital signal
+     *         attached to the given
+     *         loop.
+     */
+    public BooleanEvent R3(EventLoop loop) {
+        return new BooleanEvent(loop, this::getR3Button);
     }
 
     /**

@@ -21,6 +21,7 @@ public class TurretSubsystem extends SubsystemBase {
   /** Creates a new TurretSubsystem. */
   public TurretSubsystem() {
     m_encoder.setPositionConversionFactor(TurretConstants.kDegreesPerRev);
+    m_encoder.setPosition(180); // TODO confirm starting opposite robot front
     m_motor.setIdleMode(IdleMode.kBrake);
   }
 

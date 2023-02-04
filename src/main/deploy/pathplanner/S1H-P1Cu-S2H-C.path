@@ -17,7 +17,9 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "place180H"
+          "grabCo",
+          "place180HPrep",
+          "release"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -44,7 +46,7 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "collect0Cu"
+          "grabCu"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -71,7 +73,7 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "place270H"
+          "release"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -104,5 +106,19 @@
   "maxVelocity": 2.0,
   "maxAcceleration": 1.0,
   "isReversed": false,
-  "markers": []
+  "markers": [
+    {
+      "position": 0.12727272727275413,
+      "names": [
+        "event",
+        "collect0Prep"
+      ]
+    },
+    {
+      "position": 1.1454545454545704,
+      "names": [
+        "place270HPrep"
+      ]
+    }
+  ]
 }
