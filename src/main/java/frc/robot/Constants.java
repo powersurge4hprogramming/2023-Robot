@@ -50,7 +50,9 @@ public final class Constants {
       public static final int kMinDegrees = 0; // TODO
 
       public static final double kHighGoalShoulderAngle = 0; // TODO
+      public static final double kLowGoalShoulderAngle = 0; // TODO
       public static final double kGroundPickupShoulderAngle = 0; // TODO
+      public static final double kSubstationPickupShoulderAngle = 0; // TODO
 
     }
 
@@ -66,7 +68,9 @@ public final class Constants {
       public static final double kMinPosInches = 0.0; // TODO
 
       public static final double kHighGoalArmLength = 0; // TODO
+      public static final double kLowGoalArmLength = 0; // TODO
       public static final double kGroundPickupArmLength = 0; // TODO
+      public static final double kSubstationPickupArmLength = 0;
 
     }
 
@@ -95,7 +99,7 @@ public final class Constants {
     public static final boolean kLeftEncoderReversed = false;
     public static final boolean kRightEncoderReversed = true;
 
-    public static final double kDriveSpeedLimit = 0.70;  // TODO
+    public static final double kDriveSpeedLimit = 0.70; // TODO
 
     public static final double kTrackWidthMeters = 0.530352;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
@@ -129,7 +133,7 @@ public final class Constants {
   }
 
   public static final class OIConstants {
-    public static final int kDriverControllerPort = 0; 
+    public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
     public static final int kOperatorArcadePort = 2;
   }
@@ -161,5 +165,10 @@ public final class Constants {
         new Rotation3d(0, 0, 0)); // TODO Cam mounted facing forward, half a meter forward of center, half a meter
                                   // up from center.
 
+  }
+
+  public static final class LEDConstants {
+    public static final int kNumberOfLEDs = 16; // TODO
+    public static final int kLEDPWMPort = 1; // TODO
   }
 }

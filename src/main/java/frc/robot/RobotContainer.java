@@ -35,9 +35,11 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -222,21 +224,55 @@ public class RobotContainer {
                                 .whileTrue(new RunCommand(() -> m_armSubsystem.run(0.01), m_armSubsystem));
                 m_operatorController.x().onTrue(new InstantCommand(() -> m_clawSubsystem.grab(), m_clawSubsystem));
                 m_operatorController.b().onTrue(new InstantCommand(() -> m_clawSubsystem.release(), m_clawSubsystem));
-                m_operatorController.pov(270)
-                                .whileTrue(new InstantCommand(() -> m_clawSubsystem.runSwivel(-0.5), m_clawSubsystem));
-                m_operatorController.pov(90)
-                                .whileTrue(new InstantCommand(() -> m_clawSubsystem.runSwivel(0.5), m_clawSubsystem));
+                m_operatorController.pov(0)
+                                .whileTrue(new RunCommand(() -> m_shoulderSubsystem.run(0.1), m_shoulderSubsystem));
+                m_operatorController.pov(180)
+                                .whileTrue(new RunCommand(() -> m_shoulderSubsystem.run(-0.1), m_shoulderSubsystem));
                 m_operatorController.y().onTrue(new InstantCommand(() -> m_clawSubsystem.setPickupMode(PickupMode.Cone),
                                 m_clawSubsystem));
                 m_operatorController.a().onTrue(new InstantCommand(() -> m_clawSubsystem.setPickupMode(PickupMode.Cube),
                                 m_clawSubsystem));
+                m_operatorController.back()
+                                .whileTrue(new RunCommand(() -> m_clawSubsystem.runSwivel(-0.1), m_clawSubsystem));
+                m_operatorController.start()
+                                .whileTrue(new RunCommand(() -> m_clawSubsystem.runSwivel(0.1), m_clawSubsystem));
 
-                // Arcade pad bindings
-                m_arcadePad.pov(270).whileTrue(new RunCommand(() -> m_shoulderSubsystem.run(0.1), m_shoulderSubsystem));
-                m_arcadePad.pov(90).whileTrue(new RunCommand(() -> m_shoulderSubsystem.run(-0.1), m_shoulderSubsystem));
+                // arcade pad
+                // enable/disable brake mode
+                m_arcadePad.share().onTrue(
+                                new InstantCommand(() -> m_driveSubsystem.tractionMode(true), m_driveSubsystem));
+                m_arcadePad.options().onTrue(
+                                new InstantCommand(() -> m_driveSubsystem.tractionMode(false), m_driveSubsystem));
+                m_arcadePad.rightTrigger().onTrue(new InstantCommand(() -> m_clawSubsystem.release(), m_clawSubsystem));
 
                 // Smart bindings -->
                 // Operator controller bindings
+
+                // Turret directional
+                BooleanSupplier arcadePadPOVSupplier = () -> (m_arcadePad.getHID().getPOV() != -1);
+                new Trigger(arcadePadPOVSupplier)
+                                .whileTrue(new TurretSetAngle(m_arcadePad.getHID().getPOV(), m_turretSubsystem));
+
+                // Set shoulder and arm to HIGH GOAL
+                m_arcadePad.x().whileTrue(new ParallelCommandGroup(
+                                new ShoulderSetAngle(ShoulderConstants.kHighGoalShoulderAngle, m_shoulderSubsystem),
+                                new ArmSetLength(ArmConstants.kHighGoalArmLength, m_armSubsystem)));
+
+                // Set shoulder and arm to LOW GOAL
+                m_arcadePad.y().whileTrue(new ParallelCommandGroup(
+                                new ShoulderSetAngle(ShoulderConstants.kLowGoalShoulderAngle, m_shoulderSubsystem),
+                                new ArmSetLength(ArmConstants.kLowGoalArmLength, m_armSubsystem)));
+
+                // Set shoulder and arm to GROUND PICKUP/PLACE
+                m_arcadePad.rightBumper().whileTrue(new ParallelCommandGroup(
+                                new ShoulderSetAngle(ShoulderConstants.kGroundPickupShoulderAngle, m_shoulderSubsystem),
+                                new ArmSetLength(ArmConstants.kGroundPickupArmLength, m_armSubsystem)));
+
+                // Set shoulder and arm to SUBSTATION PICKUP
+                m_arcadePad.a().whileTrue(new ParallelCommandGroup(
+                                new ShoulderSetAngle(ShoulderConstants.kSubstationPickupShoulderAngle,
+                                                m_shoulderSubsystem),
+                                new ArmSetLength(ArmConstants.kSubstationPickupArmLength, m_armSubsystem)));
 
         }
 
