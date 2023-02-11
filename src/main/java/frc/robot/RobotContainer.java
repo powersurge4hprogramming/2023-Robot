@@ -180,11 +180,11 @@ public class RobotContainer {
                 m_driveSubsystem.setDefaultCommand(
                                 // A split-stick arcade command, with forward/backward controlled by the left
                                 // hand, and turning controlled by the right.
-                                new RunCommand(
+                                m_driveSubsystem.runEnd(
                                                 () -> m_driveSubsystem.arcadeDrive(
                                                                 -m_driverController.getLeftY(),
                                                                 -m_driverController.getRightX()),
-                                                m_driveSubsystem));
+                                                () -> m_driveSubsystem.tankDriveVolts(0, 0)));
 
         }
 
@@ -202,7 +202,6 @@ public class RobotContainer {
                 m_operatorController.rightStick().and(m_driverController.back()).onTrue(
                                 new InstantCommand(() -> {
                                         m_stoppyBarSubsystem.setStop(true);
-                                        m_clawSubsystem.setPickupMode(PickupMode.Error);
                                 }, m_stoppyBarSubsystem));
                 m_driverController.start().onTrue(
                                 new InstantCommand(() -> {

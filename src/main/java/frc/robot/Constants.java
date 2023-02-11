@@ -44,7 +44,7 @@ public final class Constants {
       private static final double kGearboxRatio = 1 / 6.0;
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
 
-      public static final int kMotorPort = 7; // TODO
+      public static final int kMotorPort = 19; // TODO
 
       public static final int kMaxDegrees = 120; // TODO
       public static final int kMinDegrees = 0; // TODO
@@ -62,7 +62,7 @@ public final class Constants {
       private static final double kSpoolRadius = (3.0 / 4) + 0.040;
       public static final double kDistancePerRevInches = kGearRatio * kSpoolRadius;
 
-      public static final int kMotorPort = 7; // TODO
+      public static final int kMotorPort = 20; // TODO
 
       public static final double kMaxPosInches = 48.23; // TODO (49.23 is absolute max)
       public static final double kMinPosInches = 0.0; // TODO
@@ -75,18 +75,11 @@ public final class Constants {
     }
 
     public static final class ClawConstants {
-      public static final int kYellowLEDPort = 7; // TODO
-      public static final int kPurpleLEDPort = 7; // TODO
-
-      // foward, reverse for double solenoid
+     // foward, reverse for double solenoid
       public static final Pair<Integer, Integer> kDoubleSolenoidClawUpstream = new Pair<Integer, Integer>(1, 0); // TODO
       public static final Pair<Integer, Integer> kDoubleSolenoidClawDownstream = new Pair<Integer, Integer>(3, 2); // TODO
 
-      public static final int kSwivelMotor = 7; // TODO
-
-      public static final double kSwivelFastSpeed = 1.0; // TODO
-      public static final double kSwivelSlowSpeed = 0.5; // TODO
-
+      public static final int kSwivelMotor = 18; // TODO
     }
   }
 
@@ -128,8 +121,8 @@ public final class Constants {
   }
 
   public static final class StoppyBarConstants {
-    public static final int kFowardSolenoidPort = 7; // TODO
-    public static final int kBackwardSolenoidPort = 7; // TODO
+    public static final int kFowardSolenoidPort = 5; // TODO
+    public static final int kBackwardSolenoidPort = 6; // TODO
   }
 
   public static final class OIConstants {

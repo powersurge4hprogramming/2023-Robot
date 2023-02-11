@@ -16,6 +16,7 @@ import frc.robot.Constants.QuartetConstants.ShoulderConstants;
 public class ShoulderSubsystem extends SubsystemBase {
 
   private final CANSparkMax m_motor = new CANSparkMax(ShoulderConstants.kMotorPort, MotorType.kBrushless);
+  
   private final RelativeEncoder m_encoder = m_motor.getEncoder();
 
   /** Creates a new ShoulderSubsystem. */

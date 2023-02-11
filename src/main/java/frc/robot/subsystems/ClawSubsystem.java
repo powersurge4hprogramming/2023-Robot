@@ -6,9 +6,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
+import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.QuartetConstants.ClawConstants;
@@ -18,12 +17,8 @@ public class ClawSubsystem extends SubsystemBase {
   public static enum PickupMode {
     Cone,
     Cube,
-    Error,
     None
   }
-
-  private final Solenoid m_yellowLED = new Solenoid(PneumaticsModuleType.REVPH, ClawConstants.kYellowLEDPort);
-  private final Solenoid m_purpleLED = new Solenoid(PneumaticsModuleType.REVPH, ClawConstants.kPurpleLEDPort);
 
   // TODO 30 psi foward 60 psi reverse
   private final DoubleSolenoid m_doubleSolenoidUpstream = new DoubleSolenoid(PneumaticsModuleType.REVPH,
@@ -38,27 +33,18 @@ public class ClawSubsystem extends SubsystemBase {
 
   private PickupMode m_pickupMode = PickupMode.None;
 
-  private final Timer m_strobeTimer = new Timer();
-
   /** Creates a new ClawSubsystem. */
   public ClawSubsystem() {
-
+    new DoubleSolenoidSim(PneumaticsModuleType.REVPH,
+        ClawConstants.kDoubleSolenoidClawUpstream.getFirst(), ClawConstants.kDoubleSolenoidClawUpstream.getSecond());
+    new DoubleSolenoidSim(PneumaticsModuleType.REVPH,
+        ClawConstants.kDoubleSolenoidClawDownstream.getFirst(),
+        ClawConstants.kDoubleSolenoidClawDownstream.getSecond());
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putString("CLAW MODE", m_pickupMode.name());
-
-    if (m_pickupMode == PickupMode.Error) {
-      if (m_strobeTimer.get() >= 0.27 && m_strobeTimer.get() <= 0.54) {
-        m_yellowLED.set(false);
-        m_purpleLED.set(true);
-      } else {
-        m_yellowLED.set(true);
-        m_purpleLED.set(false);
-        m_strobeTimer.reset();
-      }
-    }
   }
 
   /** run the swivel claw */
@@ -89,7 +75,6 @@ public class ClawSubsystem extends SubsystemBase {
         m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kForward);
         m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kForward);
         break;
-      case Error:
       case None:
       default:
         m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff);
@@ -103,26 +88,13 @@ public class ClawSubsystem extends SubsystemBase {
   }
 
   private void updateLEDs() {
-    m_strobeTimer.reset();
-    m_strobeTimer.stop();
     switch (m_pickupMode) {
       case Cone:
-        m_yellowLED.set(true);
-        m_purpleLED.set(false);
         break;
       case Cube:
-        m_yellowLED.set(false);
-        m_purpleLED.set(true);
-        break;
-      case Error:
-        m_yellowLED.set(true);
-        m_purpleLED.set(true);
-        m_strobeTimer.start();
         break;
       case None:
       default:
-        m_yellowLED.set(false);
-        m_purpleLED.set(false);
         break;
     }
   }

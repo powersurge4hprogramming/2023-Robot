@@ -28,7 +28,7 @@ public class TurretSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     double rot = getRotations();
-    if (rot >= TurretConstants.kMaxRotations && (Math.signum(m_motor.get()) == Math.signum(rot))) {
+    if (Math.abs(rot) >= TurretConstants.kMaxRotations && (Math.signum(m_motor.get()) == Math.signum(rot))) {
       m_motor.set(0.0);
     }
     SmartDashboard.putNumber("Turret Rotations", rot);
