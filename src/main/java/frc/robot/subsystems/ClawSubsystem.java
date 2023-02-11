@@ -40,6 +40,7 @@ public class ClawSubsystem extends SubsystemBase {
     new DoubleSolenoidSim(PneumaticsModuleType.REVPH,
         ClawConstants.kDoubleSolenoidClawDownstream.getFirst(),
         ClawConstants.kDoubleSolenoidClawDownstream.getSecond());
+        setName("ClawSubsystem");
   }
 
   @Override

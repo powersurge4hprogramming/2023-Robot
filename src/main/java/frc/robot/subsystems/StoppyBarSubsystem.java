@@ -16,6 +16,7 @@ public class StoppyBarSubsystem extends SubsystemBase {
 
   /** Creates a new StoppyBarSubsystem. */
   public StoppyBarSubsystem() {
+    setName("StoppyBarSubsystem");
   }
 
   @Override

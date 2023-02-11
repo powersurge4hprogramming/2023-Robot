@@ -23,6 +23,7 @@ public class ShoulderSubsystem extends SubsystemBase {
   public ShoulderSubsystem() {
     m_encoder.setPositionConversionFactor(ShoulderConstants.kDegreesPerRev);
     m_motor.setIdleMode(IdleMode.kBrake);
+    setName("ShoulderSubsystem");
   }
 
   @Override
