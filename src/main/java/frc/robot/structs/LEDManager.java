@@ -4,12 +4,15 @@
 
 package frc.robot.structs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.Constants.LEDConstants;
+import frc.robot.subsystems.ClawSubsystem.PickupMode;
 
 public class LEDManager {
     private final static AddressableLED led = new AddressableLED(LEDConstants.kLEDPWMPort);
@@ -46,7 +49,7 @@ public class LEDManager {
         led.setData(ledBuffer);
     }
 
-    public static void setIndexesColor(List<Integer> indexes, Color8Bit color) {
+    private static void setIndexesColor(List<Integer> indexes, Color8Bit color) {
         if (!initialized) {
             initialize();
         }
@@ -54,5 +57,28 @@ public class LEDManager {
             ledBuffer.setRGB(index, color.red, color.green, color.blue);
         }
         led.setData(ledBuffer);
+    }
+
+    public static void setPickupLEDs(PickupMode mode) {
+        List<Integer> list = new ArrayList<Integer>();
+        for (int i = 10; i <= 19; i++) {
+            list.add(i);
+        }
+        Color color;
+        switch (mode) {
+            case Cone:
+                color = Color.kYellow;
+                break;
+            case Cube:
+                color = Color.kPurple;
+                break;
+            case None:
+            default:
+                color = null;
+                break;
+        }
+        if (color != null) {
+            setIndexesColor(list, null);
+        }
     }
 }

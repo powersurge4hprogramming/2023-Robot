@@ -161,7 +161,7 @@ public final class Constants {
   }
 
   public static final class LEDConstants {
-    public static final int kNumberOfLEDs = 16; // TODO
+    public static final int kNumberOfLEDs = 26; // TODO
     public static final int kLEDPWMPort = 1; // TODO
   }
 }

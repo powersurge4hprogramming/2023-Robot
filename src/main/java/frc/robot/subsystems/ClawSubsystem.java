@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.QuartetConstants.ClawConstants;
+import frc.robot.structs.LEDManager;
 
 public class ClawSubsystem extends SubsystemBase {
   /** Enum for determining the mode of robot pickup, for pressures and LEDs */
@@ -40,7 +41,7 @@ public class ClawSubsystem extends SubsystemBase {
     new DoubleSolenoidSim(PneumaticsModuleType.REVPH,
         ClawConstants.kDoubleSolenoidClawDownstream.getFirst(),
         ClawConstants.kDoubleSolenoidClawDownstream.getSecond());
-        setName("ClawSubsystem");
+    setName("ClawSubsystem");
   }
 
   @Override
@@ -89,14 +90,6 @@ public class ClawSubsystem extends SubsystemBase {
   }
 
   private void updateLEDs() {
-    switch (m_pickupMode) {
-      case Cone:
-        break;
-      case Cube:
-        break;
-      case None:
-      default:
-        break;
-    }
+    LEDManager.setPickupLEDs(m_pickupMode);
   }
 }
