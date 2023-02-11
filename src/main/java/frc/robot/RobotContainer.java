@@ -163,7 +163,7 @@ public class RobotContainer {
                                 DriveConstants.kDriveKinematics,
                                 new SimpleMotorFeedforward(DriveConstants.ksVolts, DriveConstants.kvVoltSecondsPerMeter,
                                                 DriveConstants.kaVoltSecondsSquaredPerMeter),
-                                m_driveSubsystem::getWheelSpeeds, new PIDConstants(0, 0, 0),
+                                m_driveSubsystem::getWheelSpeeds, new PIDConstants(DriveConstants.kPDriveVel, 0, 0),
                                 m_driveSubsystem::tankDriveVolts,
                                 m_hashMap, true, m_driveSubsystem);
 
