@@ -9,6 +9,7 @@ import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.structs.LEDManager;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -85,6 +86,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    LEDManager.initialize();
+    LEDManager.start();
     m_robotContainer.setTractionMode(true);
   }
 
@@ -102,6 +105,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    LEDManager.initialize();
+    LEDManager.start();
     m_robotContainer.setTractionMode(false);
   }
 

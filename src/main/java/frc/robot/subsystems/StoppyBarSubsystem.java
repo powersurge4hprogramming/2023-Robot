@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.StoppyBarConstants;
@@ -15,19 +16,28 @@ public class StoppyBarSubsystem extends SubsystemBase {
   private final DoubleSolenoid m_doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH,
       StoppyBarConstants.kFowardSolenoidPort, StoppyBarConstants.kBackwardSolenoidPort);
 
+  private boolean stoppyOn = false;
+
   /** Creates a new StoppyBarSubsystem. */
   public StoppyBarSubsystem() {
+    m_doubleSolenoid.set(Value.kReverse); // TODO check if doublesolenoid need default value
     setName("StoppyBarSubsystem");
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putBoolean("STOPPY ON", stoppyOn);
+  }
+
+  private void updateLEDs() {
+    
   }
 
   /** sets stoppy bar on/off, runs once */
   public CommandBase setStop(boolean on) {
     return this.runOnce(() -> {
+      stoppyOn = on;
+      updateLEDs();
       if (on) {
         m_doubleSolenoid.set(Value.kForward);
       } else {
