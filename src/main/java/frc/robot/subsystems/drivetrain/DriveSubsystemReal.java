@@ -20,7 +20,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.structs.PhotonCameraWrapper;
-import frc.robot.utilities.MathU;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveSubsystemReal extends DriveSubsystemTemplate {
@@ -130,13 +129,6 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   @Override
   public void arcadeDrive(double fwd, double rot) {
     m_drive.arcadeDrive(fwd, rot);
-  }
-
-  @Override
-  public void tankDriveLimit(double left, double right, double max) {
-    left = MathU.signLerp(0, max, left);
-    right = MathU.signLerp(0, max, right);
-    m_drive.tankDrive(left, right);
   }
 
   @Override

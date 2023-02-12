@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.QuartetConstants.ArmConstants;
 
@@ -36,8 +37,14 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Arm Length", pos);
   }
 
-  public void run(double speed) {
+  /** runs arm, for PID only */
+  public void runArm(double speed) {
     m_motor.set(speed);
+  }
+
+  /** runs arm, runs until canceled */
+  public CommandBase runArmCommand(double speed) {
+    return this.startEnd(() -> runArm(speed), () -> runArm(0.0));
   }
 
   public double getLength() {

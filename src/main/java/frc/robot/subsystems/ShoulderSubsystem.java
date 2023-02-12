@@ -10,13 +10,14 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.QuartetConstants.ShoulderConstants;
 
 public class ShoulderSubsystem extends SubsystemBase {
 
   private final CANSparkMax m_motor = new CANSparkMax(ShoulderConstants.kMotorPort, MotorType.kBrushless);
-  
+
   private final RelativeEncoder m_encoder = m_motor.getEncoder();
 
   /** Creates a new ShoulderSubsystem. */
@@ -37,8 +38,14 @@ public class ShoulderSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Shoulder Angle", deg);
   }
 
-  public void run(double speed) {
+  /** runs shoulder, for PID only */
+  public void runShoulder(double speed) {
     m_motor.set(speed);
+  }
+
+  /** runs arm, runs until canceled */
+  public CommandBase runShoulderCommand(double speed) {
+    return this.startEnd(() -> runShoulder(speed), () -> runShoulder(0.0));
   }
 
   public double getAngle() {

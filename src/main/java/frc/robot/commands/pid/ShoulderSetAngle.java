@@ -23,7 +23,7 @@ public class ShoulderSetAngle extends PIDCommand {
         () -> setpointAngle,
         // This uses the output
         output -> {
-          shoulder.run(output);
+          shoulder.runShoulder(output);
         });
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shoulder);

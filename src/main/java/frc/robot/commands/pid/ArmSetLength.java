@@ -24,7 +24,7 @@ public class ArmSetLength extends PIDCommand {
         // This uses the output
         output -> {
           // Use the output here
-          arm.run(output);
+          arm.runArm(output);
         });
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(arm);

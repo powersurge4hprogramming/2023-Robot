@@ -51,15 +51,6 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
    *
    * @param left  the left movement
    * @param right the right movement
-   * @param max   the max speed (-1 to 1)
-   */
-  public abstract void tankDriveLimit(double left, double right, double max);
-
-  /**
-   * Drives the robot using tank controls.
-   *
-   * @param left  the left movement
-   * @param right the right movement
    */
   public abstract void tankDrive(double left, double right);
 

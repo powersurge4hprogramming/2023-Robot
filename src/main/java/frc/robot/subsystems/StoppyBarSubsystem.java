@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.StoppyBarConstants;
 
@@ -24,11 +25,14 @@ public class StoppyBarSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void setStop(boolean on) {
-    if (on) {
-      m_doubleSolenoid.set(Value.kForward);
-    } else {
-      m_doubleSolenoid.set(Value.kReverse);
-    }
+  /** sets stoppy bar on/off, runs once */
+  public CommandBase setStop(boolean on) {
+    return this.runOnce(() -> {
+      if (on) {
+        m_doubleSolenoid.set(Value.kForward);
+      } else {
+        m_doubleSolenoid.set(Value.kReverse);
+      }
+    });
   }
 }

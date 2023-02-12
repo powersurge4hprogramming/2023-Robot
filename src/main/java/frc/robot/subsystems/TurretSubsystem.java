@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.QuartetConstants.TurretConstants;
 
@@ -35,8 +36,14 @@ public class TurretSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Turret Rotations", rot);
   }
 
-  public void run(double speed) {
+  /** runs arm, for PID only */
+  public void runTurret(double speed) {
     m_motor.set(speed);
+  }
+
+  /** runs arm, runs until canceled */
+  public CommandBase runTurretCommand(double speed) {
+    return this.startEnd(() -> runTurret(speed), () -> runTurret(0.0));
   }
 
   /** Get angle, partially so its not past +-360 */

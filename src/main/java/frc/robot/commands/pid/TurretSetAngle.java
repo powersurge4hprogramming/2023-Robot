@@ -23,7 +23,7 @@ public class TurretSetAngle extends PIDCommand {
         () -> setpointAngle,
         // This uses the output
         output -> {
-          turret.run(output);
+          turret.runTurret(output);
         });
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(turret);
