@@ -15,8 +15,8 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 public class PhotonCameraWrapper {
-  private final PhotonCamera photonCamera;
-  private final PhotonPoseEstimator photonPoseEstimator;
+  private final PhotonCamera m_photonCamera;
+  private final PhotonPoseEstimator m_photonPoseEstimator;
 
   public PhotonCameraWrapper() {
     // load the april tag field layout
@@ -30,10 +30,10 @@ public class PhotonCameraWrapper {
     }
 
     // turret camera
-    photonCamera = new PhotonCamera(VisionConstants.kPhotonCameraName);
+    m_photonCamera = new PhotonCamera(VisionConstants.kPhotonCameraName);
 
     // Create pose estimator
-    photonPoseEstimator = new PhotonPoseEstimator(field2023, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, photonCamera, VisionConstants.kRobotToCamera);
+    m_photonPoseEstimator = new PhotonPoseEstimator(field2023, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, m_photonCamera, VisionConstants.kRobotToCamera);
 
   }
 
@@ -45,18 +45,18 @@ public class PhotonCameraWrapper {
    *         firmly on the ground
    */
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) {
-    photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-    return photonPoseEstimator.update();
+    m_photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
+    return m_photonPoseEstimator.update();
   }
 
   /**
    * Set the drive mode
    */
   public void setDriveMode(boolean driveMode) {
-    photonCamera.setDriverMode(driveMode);
+    m_photonCamera.setDriverMode(driveMode);
   }
 
   public PhotonPipelineResult getResult() {
-    return photonCamera.getLatestResult();
+    return m_photonCamera.getLatestResult();
   }
 }

@@ -9,6 +9,10 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,8 +23,13 @@ public class ArmSubsystem extends SubsystemBase {
   private final CANSparkMax m_motor = new CANSparkMax(ArmConstants.kMotorPort, MotorType.kBrushless);
   private final RelativeEncoder m_encoder = m_motor.getEncoder();
 
+  private final DoubleSolenoid m_lockSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH,
+      ArmConstants.kLockSolenoidFwd, ArmConstants.kLockSolenoidFwd);
+
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
+    new DoubleSolenoidSim(PneumaticsModuleType.REVPH, ArmConstants.kLockSolenoidFwd, ArmConstants.kLockSolenoidFwd);
+
     m_encoder.setPositionConversionFactor(ArmConstants.kDistancePerRevInches);
     m_motor.setIdleMode(IdleMode.kBrake);
     setName("ArmSubsystem");
@@ -49,5 +58,11 @@ public class ArmSubsystem extends SubsystemBase {
 
   public double getLength() {
     return m_encoder.getPosition();
+  }
+
+  public CommandBase toggleArmLock() {
+    return this.runOnce(() -> {
+      m_lockSolenoid.toggle();
+    });
   }
 }

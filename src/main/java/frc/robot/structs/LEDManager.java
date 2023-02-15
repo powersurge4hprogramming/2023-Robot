@@ -4,44 +4,40 @@
 
 package frc.robot.structs;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.simulation.AddressableLEDSim;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.subsystems.ClawSubsystem.PickupMode;
 
 public class LEDManager {
-    private final static AddressableLED led = new AddressableLED(LEDConstants.kLEDPWMPort);
-    private final static AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(LEDConstants.kNumberOfLEDs);
-    private static boolean initialized = false;
+    private final static AddressableLED m_led = new AddressableLED(LEDConstants.kLEDPWMPort);
 
-    /** compose a list, inclusive of end index */
-    private static List<Integer> composeList(int startIndex, int endIndex) {
-        List<Integer> list = new ArrayList<Integer>();
-        for (int i = startIndex; i <= endIndex; i++) {
-            list.add(i);
-        }
-        return list;
-    }
+    @SuppressWarnings("unused")
+    private final static AddressableLEDSim p_ledSim = new AddressableLEDSim(m_led);
+
+    private final static AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(LEDConstants.kNumberOfLEDs);
+    private static boolean initialized = false;
 
     private static void setIndexesColor(List<Integer> indexes, Color color) {
         if (!initialized) {
             initialize();
         }
         for (int index : indexes) {
-            ledBuffer.setLED(index, color);
+            m_ledBuffer.setLED(index, color);
         }
-        led.setData(ledBuffer);
+        m_led.setData(m_ledBuffer);
     }
 
     /** prepare LEDs, expensive, call this once! */
     public static void initialize() {
         if (!initialized) {
-            led.setLength(LEDConstants.kNumberOfLEDs);
-            led.setData(ledBuffer);
+            m_led.setLength(LEDConstants.kNumberOfLEDs);
+            m_led.setData(m_ledBuffer);
             initialized = true;
         }
     }
@@ -51,14 +47,28 @@ public class LEDManager {
         if (!initialized) {
             initialize();
         }
-        led.start();
+        m_led.start();
+        List<Integer> indexes = List.of(0, 1, 2, 10, 11, 12, 13, 14, 15, 23, 24, 25);
+        switch (DriverStation.getAlliance()) {
+            case Blue:
+                setIndexesColor(indexes, Color.kBlue);
+                break;
+            case Red:
+                setIndexesColor(indexes, Color.kRed);
+                break;
+            case Invalid:
+            default:
+                setIndexesColor(indexes, Color.kHotPink);
+                break;
+
+        }
     }
 
     public static void stop() {
         if (!initialized) {
             initialize();
         }
-        led.stop();
+        m_led.stop();
     }
 
     /*
@@ -88,18 +98,16 @@ public class LEDManager {
                 color = new Color(0, 0, 0);
                 break;
         }
-        setIndexesColor(composeList(10, 19), color);
+        setIndexesColor(List.of(3, 4, 5, 6, 7, 8, 9, 16, 17, 18, 19, 20, 21, 22), color);
     }
 
     public static void setStoppyBarLEDs(boolean on) {
         Color color;
         if (on) {
-            color = Color.kRed;
+            color = new Color(0, 192, 0);
         } else {
             color = new Color(0, 0, 0);
         }
-        List<Integer> list = composeList(0, 4);
-        list.addAll(composeList(22, 25));
-        setIndexesColor(list, color);
+        setIndexesColor(List.of(3, 4, 5, 6, 7, 8, 9, 16, 17, 18, 19, 20, 21, 22), color);
     }
 }

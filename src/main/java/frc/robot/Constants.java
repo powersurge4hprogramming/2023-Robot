@@ -40,7 +40,7 @@ public final class Constants {
 
     public static final class ShoulderConstants {
       // for encoder
-      private static final double kGearToothRatio = 1 / 20.0;
+      private static final double kGearToothRatio = 1 / 100.0;
       private static final double kGearboxRatio = 1 / 6.0;
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
 
@@ -58,11 +58,14 @@ public final class Constants {
 
     public static final class ArmConstants {
       // for enconder
-      private static final double kGearRatio = 1.0 / 100;
+      private static final double kGearRatio = 1.0 / 20;
       private static final double kSpoolRadius = (3.0 / 4) + 0.040;
       public static final double kDistancePerRevInches = kGearRatio * kSpoolRadius;
 
       public static final int kMotorPort = 20; // TODO
+
+      public static final int kLockSolenoidFwd = 9; // TODO
+      public static final int kLockSolenoidBkwd = 8; //TODO
 
       public static final double kMaxPosInches = 48.23; // TODO (49.23 is absolute max)
       public static final double kMinPosInches = 0.0; // TODO
@@ -75,7 +78,7 @@ public final class Constants {
     }
 
     public static final class ClawConstants {
-     // foward, reverse for double solenoid
+      // foward, reverse for double solenoid
       public static final Pair<Integer, Integer> kDoubleSolenoidClawUpstream = new Pair<Integer, Integer>(1, 0); // TODO
       public static final Pair<Integer, Integer> kDoubleSolenoidClawDownstream = new Pair<Integer, Integer>(3, 2); // TODO
 
@@ -105,6 +108,11 @@ public final class Constants {
                                                                                                            // already
                                                                                                            // taken into
                                                                                                            // account!
+    public static final double kEncoderVelocityConversion = (2 * kWheelRadiusMeters * Math.PI) / (60 * kGearRatio); // TODO
+                                                                                                                    // ensure
+                                                                                                                    // this
+                                                                                                                    // is
+                                                                                                                    // correct
 
     // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
     // These characterization values MUST be determined either experimentally or

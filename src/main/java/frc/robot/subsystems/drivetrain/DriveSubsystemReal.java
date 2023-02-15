@@ -4,10 +4,6 @@
 
 package frc.robot.subsystems.drivetrain;
 
-import java.util.Optional;
-
-import org.photonvision.EstimatedRobotPose;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -15,11 +11,9 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.structs.PhotonCameraWrapper;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveSubsystemReal extends DriveSubsystemTemplate {
@@ -46,16 +40,11 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
       m_gyro.getRotation2d(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
       new Pose2d());
 
-  // wrapper for Global! PhotonCamera
-  private final PhotonCameraWrapper m_photonWrapper;
-
   // The robot's drive
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotorLeader, m_rightMotorLeader);
 
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystemReal(PhotonCameraWrapper photonWrapper) {
-    m_photonWrapper = photonWrapper;
-
+  public DriveSubsystemReal() {
     m_leftMotorFollower.follow(m_leftMotorLeader);
     m_rightMotorFollower.follow(m_rightMotorLeader);
 
@@ -73,6 +62,10 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     m_leftEncoder.setPositionConversionFactor(DriveConstants.kEncoderDistancePerPulse);
     m_rightEncoder.setPositionConversionFactor(DriveConstants.kEncoderDistancePerPulse);
 
+    // Set the velocity converter for the encoders
+    m_leftEncoder.setVelocityConversionFactor(DriveConstants.kEncoderDistancePerPulse);
+    m_rightEncoder.setVelocityConversionFactor(DriveConstants.kEncoderVelocityConversion);
+
     // reset robot to (0,0) and encoders
     resetOdometry(new Pose2d());
 
@@ -89,22 +82,6 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     m_odometry.update(m_gyro.getRotation2d(),
         m_leftEncoder.getPosition(),
         m_rightEncoder.getPosition());
-
-    // Also apply vision measurements. We use 0.3 seconds in the past as an example
-    // -- on
-    // a real robot, this must be calculated based either on latency or timestamps.
-    Optional<EstimatedRobotPose> result = m_photonWrapper.getEstimatedGlobalPose(m_odometry.getEstimatedPosition());
-
-    if (result.isPresent()) {
-      EstimatedRobotPose camPose = result.get();
-      m_odometry.addVisionMeasurement(camPose.estimatedPose.toPose2d(), camPose.timestampSeconds);
-      m_field.getObject("Cam Est Pos").setPose(camPose.estimatedPose.toPose2d());
-    } else {
-      // move it way off the screen to make it disappear
-      m_field.getObject("Cam Est Pos").setPose(new Pose2d(-100, -100, new Rotation2d()));
-    }
-
-    m_field.setRobotPose(m_odometry.getEstimatedPosition());
   }
 
   @Override

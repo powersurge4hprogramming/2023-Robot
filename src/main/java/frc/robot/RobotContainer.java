@@ -116,7 +116,7 @@ public class RobotContainer {
                 if (RobotBase.isSimulation()) {
                         m_driveSubsystem = new DriveSubsystemSim();
                 } else {
-                        m_driveSubsystem = new DriveSubsystemReal(m_photonCamera);
+                        m_driveSubsystem = new DriveSubsystemReal();
                 }
 
                 m_hashMap.put("collect0GPrep", Commands.parallel(
@@ -179,6 +179,8 @@ public class RobotContainer {
                                                                 -m_driverController.getRightX()),
                                                 () -> m_driveSubsystem.tankDriveVolts(0, 0)));
 
+                m_photonCamera.setDriveMode(true);
+
         }
 
         /**
@@ -216,11 +218,14 @@ public class RobotContainer {
                 m_operatorController.pov(180)
                                 .whileTrue(m_shoulderSubsystem.runShoulderCommand(-0.1));
                 m_operatorController.y().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cone));
-                m_operatorController.a().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cone));
+                m_operatorController.a().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cube));
                 m_operatorController.back()
                                 .whileTrue(m_clawSubsystem.runSwivelCommand(-0.1));
                 m_operatorController.start()
                                 .whileTrue(m_clawSubsystem.runSwivelCommand(0.1));
+
+                m_operatorController.leftStick().onTrue(m_armSubsystem.toggleArmLock());
+                m_operatorController.leftStick().onTrue(m_armSubsystem.toggleArmLock());
 
                 // arcade pad
                 // enable/disable brake mode

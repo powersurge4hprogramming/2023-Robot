@@ -11,12 +11,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.StoppyBarConstants;
+import frc.robot.structs.LEDManager;
 
 public class StoppyBarSubsystem extends SubsystemBase {
   private final DoubleSolenoid m_doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH,
       StoppyBarConstants.kFowardSolenoidPort, StoppyBarConstants.kBackwardSolenoidPort);
 
-  private boolean stoppyOn = false;
+  private boolean m_stoppyOn = false;
 
   /** Creates a new StoppyBarSubsystem. */
   public StoppyBarSubsystem() {
@@ -26,17 +27,17 @@ public class StoppyBarSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("STOPPY ON", stoppyOn);
+    SmartDashboard.putBoolean("STOPPY ON", m_stoppyOn);
   }
 
   private void updateLEDs() {
-    
+    LEDManager.setStoppyBarLEDs(m_stoppyOn);
   }
 
   /** sets stoppy bar on/off, runs once */
   public CommandBase setStop(boolean on) {
     return this.runOnce(() -> {
-      stoppyOn = on;
+      m_stoppyOn = on;
       updateLEDs();
       if (on) {
         m_doubleSolenoid.set(Value.kForward);
