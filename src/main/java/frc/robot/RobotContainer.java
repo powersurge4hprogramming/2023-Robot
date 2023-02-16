@@ -148,6 +148,7 @@ public class RobotContainer {
                 m_hashMap.put("grabCu", m_clawSubsystem.grabCommand(PickupMode.Cube));
                 m_hashMap.put("grabCo", m_clawSubsystem.grabCommand(PickupMode.Cone));
                 m_hashMap.put("release", m_clawSubsystem.releaseCommand());
+                m_hashMap.put("climb", m_stoppyBarSubsystem.setStop(true));
 
                 // add all items to Auto Selector
                 m_chooser.setDefaultOption(AutoConstants.kDefaultAuto, AutoConstants.kDefaultAuto);
