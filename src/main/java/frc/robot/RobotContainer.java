@@ -31,7 +31,6 @@ import frc.robot.subsystems.drivetrain.DriveSubsystemSim;
 import frc.robot.subsystems.drivetrain.DriveSubsystemTemplate;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -123,25 +122,29 @@ public class RobotContainer {
                                 new TurretSetAngle(0, m_turretSubsystem),
                                 new ArmSetLength(ArmConstants.kGroundPickupArmLength, m_armSubsystem),
                                 new ShoulderSetAngle(ShoulderConstants.kGroundPickupShoulderAngle,
-                                                m_shoulderSubsystem)));
-                m_hashMap.put("place180HPrep",
+                                                m_shoulderSubsystem))
+                                .withName("collect0GPrep"));
+                m_hashMap.put("collect0GPrep",
                                 Commands.parallel(
                                                 new TurretSetAngle(180, m_turretSubsystem),
                                                 new ArmSetLength(ArmConstants.kHighGoalArmLength, m_armSubsystem),
                                                 new ShoulderSetAngle(ShoulderConstants.kHighGoalShoulderAngle,
-                                                                m_shoulderSubsystem)));
+                                                                m_shoulderSubsystem))
+                                                .withName("collect0GPrep"));
                 m_hashMap.put("place270HPrep",
                                 Commands.parallel(
                                                 new TurretSetAngle(270, m_turretSubsystem),
                                                 new ArmSetLength(ArmConstants.kHighGoalArmLength, m_armSubsystem),
                                                 new ShoulderSetAngle(ShoulderConstants.kHighGoalShoulderAngle,
-                                                                m_shoulderSubsystem)));
+                                                                m_shoulderSubsystem))
+                                                .withName("place270HPrep"));
                 m_hashMap.put("place0HPrep",
                                 Commands.parallel(
                                                 new TurretSetAngle(0, m_turretSubsystem),
                                                 new ArmSetLength(ArmConstants.kHighGoalArmLength, m_armSubsystem),
                                                 new ShoulderSetAngle(ShoulderConstants.kHighGoalShoulderAngle,
-                                                                m_shoulderSubsystem)));
+                                                                m_shoulderSubsystem))
+                                                .withName("place0HPrep"));
                 m_hashMap.put("grabCu", m_clawSubsystem.grabCommand(PickupMode.Cube));
                 m_hashMap.put("grabCo", m_clawSubsystem.grabCommand(PickupMode.Cone));
                 m_hashMap.put("release", m_clawSubsystem.releaseCommand());
@@ -177,7 +180,7 @@ public class RobotContainer {
                                                 () -> m_driveSubsystem.arcadeDrive(
                                                                 -m_driverController.getLeftY(),
                                                                 -m_driverController.getRightX()),
-                                                () -> m_driveSubsystem.tankDriveVolts(0, 0)));
+                                                () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveArcade"));
 
                 m_photonCamera.setDriveMode(true);
 
@@ -229,10 +232,7 @@ public class RobotContainer {
 
                 // arcade pad
                 // enable/disable brake mode
-                m_arcadePad.share().onTrue(
-                                new InstantCommand(() -> m_driveSubsystem.tractionMode(true), m_driveSubsystem));
-                m_arcadePad.options().onTrue(
-                                new InstantCommand(() -> m_driveSubsystem.tractionMode(false), m_driveSubsystem));
+                m_arcadePad.share().onTrue(m_driveSubsystem.toggleBrakeModeCommand());
                 m_arcadePad.rightTrigger().onTrue(m_clawSubsystem.releaseCommand());
 
                 // Smart bindings -->
@@ -297,7 +297,7 @@ public class RobotContainer {
          * Turn off tractionMode in driveSubsystem
          */
         public void setTractionMode(boolean brakeMode) {
-                m_driveSubsystem.tractionMode(brakeMode);
+                m_driveSubsystem.setBrakeMode(brakeMode);
         }
 
 }

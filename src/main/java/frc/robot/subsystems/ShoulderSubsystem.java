@@ -45,7 +45,7 @@ public class ShoulderSubsystem extends SubsystemBase {
 
   /** runs arm, runs until canceled */
   public CommandBase runShoulderCommand(double speed) {
-    return this.startEnd(() -> runShoulder(speed), () -> runShoulder(0.0));
+    return this.startEnd(() -> runShoulder(speed), () -> runShoulder(0.0)).withName("RunShoulder");
   }
 
   public double getAngle() {

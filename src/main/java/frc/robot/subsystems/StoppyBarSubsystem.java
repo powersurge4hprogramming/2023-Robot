@@ -44,6 +44,6 @@ public class StoppyBarSubsystem extends SubsystemBase {
       } else {
         m_doubleSolenoid.set(Value.kReverse);
       }
-    });
+    }).withName("SetStoppyBar");
   }
 }

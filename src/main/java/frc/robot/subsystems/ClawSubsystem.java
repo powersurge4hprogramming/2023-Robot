@@ -60,7 +60,7 @@ public class ClawSubsystem extends SubsystemBase {
 
   /** run the swivel claw, runs until canceled */
   public CommandBase runSwivelCommand(double speed) {
-    return this.startEnd(() -> runSwivel(speed), () -> runSwivel(0.0));
+    return this.startEnd(() -> runSwivel(speed), () -> runSwivel(0.0)).withName("RunSwivel");
   }
 
   /** change pickup mode and update LEDs, runs once */
@@ -68,7 +68,7 @@ public class ClawSubsystem extends SubsystemBase {
     return this.runOnce(() -> {
       m_pickupMode = mode;
       updateLEDs();
-    });
+    }).withName("SetPickupMode");
   }
 
   /** Save pickup mode then grab, runs once */
@@ -77,7 +77,7 @@ public class ClawSubsystem extends SubsystemBase {
       m_pickupMode = mode;
       updateLEDs();
       grabCommand();
-    });
+    }).withName("GrabModeset");
   }
 
   /** grab claw using saved pickup mode, runs once */
@@ -98,7 +98,7 @@ public class ClawSubsystem extends SubsystemBase {
           m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kOff);
           break;
       }
-    });
+    }).withName("GrabUseMode");
   }
 
   /** release claw, runs once */
@@ -106,6 +106,6 @@ public class ClawSubsystem extends SubsystemBase {
     return this.runOnce(() -> {
       m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff); // TODO what the heck
       m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kReverse);
-    });
+    }).withName("Release");
   }
 }

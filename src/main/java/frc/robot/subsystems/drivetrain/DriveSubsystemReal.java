@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class DriveSubsystemReal extends DriveSubsystemTemplate {
 
@@ -132,8 +133,21 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   }
 
   @Override
-  public void tractionMode(boolean brakeMode) {
-    if (brakeMode) {
+  public void setBrakeMode(boolean brakeMode) {
+    m_brake = brakeMode;
+    updateBrakeMode();
+  }
+
+  @Override
+  public CommandBase toggleBrakeModeCommand() {
+    return this.runOnce(() -> {
+      m_brake = !m_brake;
+      updateBrakeMode();
+    }).withName("ToggleBrakeMode");
+  }
+
+  private void updateBrakeMode() {
+    if (m_brake) {
       m_leftMotorLeader.setIdleMode(IdleMode.kBrake);
       m_leftMotorFollower.setIdleMode(IdleMode.kBrake);
       m_rightMotorLeader.setIdleMode(IdleMode.kBrake);

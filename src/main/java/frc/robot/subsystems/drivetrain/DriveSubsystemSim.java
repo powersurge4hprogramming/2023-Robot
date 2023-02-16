@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotGearing;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSize;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class DriveSubsystemSim extends DriveSubsystemTemplate {
   // The motors on the left side of the drive.
@@ -166,7 +167,14 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
   }
 
   @Override
-  public void tractionMode(boolean brakeMode) {
+  public void setBrakeMode(boolean brakeMode) {
     return;
+  }
+
+  @Override
+  public CommandBase toggleBrakeModeCommand() {
+    return this.runOnce(() -> {
+      return;
+    }).withName("ToggleBrakeMode");
   }
 }

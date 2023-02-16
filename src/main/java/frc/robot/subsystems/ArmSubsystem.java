@@ -11,7 +11,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -53,7 +52,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** runs arm, runs until canceled */
   public CommandBase runArmCommand(double speed) {
-    return this.startEnd(() -> runArm(speed), () -> runArm(0.0));
+    return this.startEnd(() -> runArm(speed), () -> runArm(0.0)).withName("RunArm");
   }
 
   public double getLength() {
@@ -63,6 +62,6 @@ public class ArmSubsystem extends SubsystemBase {
   public CommandBase toggleArmLock() {
     return this.runOnce(() -> {
       m_lockSolenoid.toggle();
-    });
+    }).withName("ToggleArmLock");
   }
 }

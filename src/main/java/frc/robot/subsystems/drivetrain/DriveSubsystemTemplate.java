@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class DriveSubsystemTemplate extends SubsystemBase {
@@ -16,6 +17,9 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
 
   // Field for visualizing robot odometry
   protected final Field2d m_field = new Field2d();
+
+  // the brake mode
+  protected boolean m_brake = false;
 
   /**
    * Returns the currently-estimated pose of the robot.
@@ -69,7 +73,10 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
   public abstract void resetEncoders();
 
   /** Toggles break mode to true or false */
-  public abstract void tractionMode(boolean brakeMode);
+  public abstract void setBrakeMode(boolean brakeMode);
+
+  /** Toggles break mode to true or false */
+  public abstract CommandBase toggleBrakeModeCommand();
 
   /** Calibrate gyro (takes 5 seconds, robot MUST not move) */
   public void calibrateGyro() {

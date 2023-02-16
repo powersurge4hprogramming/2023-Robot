@@ -43,7 +43,7 @@ public class TurretSubsystem extends SubsystemBase {
 
   /** runs arm, runs until canceled */
   public CommandBase runTurretCommand(double speed) {
-    return this.startEnd(() -> runTurret(speed), () -> runTurret(0.0));
+    return this.startEnd(() -> runTurret(speed), () -> runTurret(0.0)).withName("RunTurret");
   }
 
   /** Get angle, partially so its not past +-360 */
