@@ -4,12 +4,9 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.server.PathPlannerServer;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.structs.LEDManager;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -37,10 +34,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    PathPlannerServer.startServer(5811); // TODO disable for competition
-
-    // calibrate rio gyro while disabled and not moving
-    m_robotContainer.calibrateRioGyro();
+    m_robotContainer.robotInit();
   }
 
   /**
@@ -80,15 +74,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    m_robotContainer.autonomousInit();
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
-    LEDManager.initialize();
-    LEDManager.start();
-    m_robotContainer.setTractionMode(true);
   }
 
   /** This function is called periodically during autonomous. */
@@ -105,9 +98,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    LEDManager.initialize();
-    LEDManager.start();
-    m_robotContainer.setTractionMode(false);
+    m_robotContainer.teleopInit();
   }
 
   /** This function is called periodically during operator control. */
@@ -118,14 +109,12 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
-  //  CommandScheduler.getInstance().cancelAll();  
-  if (m_autonomousCommand != null) {
-    m_autonomousCommand.cancel();
-  }
-  LEDManager.initialize();
-  LEDManager.start();
-  m_robotContainer.setTractionMode(false);
-  CommandScheduler.getInstance().enable();  // TODO delete this, unsafe
+    // CommandScheduler.getInstance().cancelAll();
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
+    m_robotContainer.teleopInit();
+    CommandScheduler.getInstance().enable(); // TODO delete this, unsafe
   }
 
   /** This function is called periodically during test mode. */

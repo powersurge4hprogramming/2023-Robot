@@ -66,7 +66,8 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
    */
   public abstract void tankDriveVolts(double leftVolts, double rightVolts);
 
-  /** Limits robot to @param limit **/
+  /** Limits robot
+   * @param limit the -1 to 1 limit **/
   public abstract void limit(double limit);
 
   /** Resets the drive encoders to currently read a position of 0. */

@@ -18,6 +18,7 @@ import frc.robot.Constants.QuartetConstants.ShoulderConstants;
 import frc.robot.commands.pid.ArmSetLength;
 import frc.robot.commands.pid.ShoulderSetAngle;
 import frc.robot.commands.pid.TurretSetAngle;
+import frc.robot.structs.LEDManager;
 import frc.robot.structs.PhotonCameraWrapper;
 import frc.robot.structs.hid.CommandPXNArcadeStickController;
 import frc.robot.subsystems.ArmSubsystem;
@@ -44,6 +45,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.RamseteAutoBuilder;
+import com.pathplanner.lib.server.PathPlannerServer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -170,9 +172,6 @@ public class RobotContainer {
                 // Configure the button bindings
                 configureButtonBindings();
 
-                // Set the drive limit
-                m_driveSubsystem.limit(DriveConstants.kDriveSpeedLimit);
-
                 // Configure default commands
                 m_driveSubsystem.setDefaultCommand(
                                 // A split-stick arcade command, with forward/backward controlled by the left
@@ -182,9 +181,6 @@ public class RobotContainer {
                                                                 -m_driverController.getLeftY(),
                                                                 -m_driverController.getRightX()),
                                                 () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveArcade"));
-
-                m_photonCamera.setDriveMode(true);
-
         }
 
         /**
@@ -228,7 +224,6 @@ public class RobotContainer {
                 m_operatorController.start()
                                 .whileTrue(m_clawSubsystem.runSwivelCommand(0.1));
 
-                m_operatorController.leftStick().onTrue(m_armSubsystem.toggleArmLock());
                 m_operatorController.leftStick().onTrue(m_armSubsystem.toggleArmLock());
 
                 // arcade pad
@@ -287,18 +282,37 @@ public class RobotContainer {
                                 m_driveSubsystem);
         }
 
-        /**
-         * Calibrate the encoder, takes 5 seconds and can be done while disabled
-         */
-        public void calibrateRioGyro() {
+        public void robotInit() {
+                PathPlannerServer.startServer(5811); // TODO disable for competition
+
+                /**
+                 * Calibrate the encoder, takes 5 seconds and can be done while disabled
+                 */
                 m_driveSubsystem.calibrateGyro();
+
+                // Set the drive limit
+                m_driveSubsystem.limit(DriveConstants.kDriveSpeedLimit);
+
+                m_photonCamera.setDriveMode(true);
         }
 
         /**
-         * Turn off tractionMode in driveSubsystem
+         * Init autonomous, before the auto command is scheduled
          */
-        public void setTractionMode(boolean brakeMode) {
-                m_driveSubsystem.setBrakeMode(brakeMode);
+        public void autonomousInit() {
+                LEDManager.initialize();
+                LEDManager.start();
+
+                m_armSubsystem.setArmLock(false);
+                m_driveSubsystem.setBrakeMode(true);
+        }
+
+        public void teleopInit() {
+                LEDManager.initialize();
+                LEDManager.start();
+
+                m_armSubsystem.setArmLock(false);
+                m_driveSubsystem.setBrakeMode(false);
         }
 
 }
