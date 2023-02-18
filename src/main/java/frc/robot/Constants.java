@@ -32,7 +32,7 @@ public final class Constants {
       private static final double kGearboxRatio = 1.0 / 12;
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
 
-      public static final int kMotorPort = 7; // TODO
+      public static final int kMotorPort = 12;
 
       public static final double kMaxRotations = 4; // TODO
 
@@ -44,7 +44,7 @@ public final class Constants {
       private static final double kGearboxRatio = 1 / 6.0;
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
 
-      public static final int kMotorPort = 19; // TODO
+      public static final int kMotorPort = 17;
 
       public static final int kMaxDegrees = 120; // TODO
       public static final int kMinDegrees = 0; // TODO
@@ -58,39 +58,42 @@ public final class Constants {
 
     public static final class ArmConstants {
       // for enconder
-      private static final double kGearRatio = 1.0 / 20;
-      private static final double kSpoolRadius = (3.0 / 4) + 0.040;
-      public static final double kDistancePerRevInches = kGearRatio * kSpoolRadius;
+      // private static final double kGearRatio = 1.0 / 20;
+      // private static final double kSpoolRadius = 2* Math.PI * (3.0 / 4 / 2.0) +
+      // 0.040;
+      // public static final double kDistancePerRevInches = kGearRatio * kSpoolRadius;
+      public static final double kDistancePerRevInches = 0.1481470777; // This is empirically determined via testing
 
-      public static final int kMotorPort = 20; // TODO
+      public static final int kMotorPort = 16;
 
       public static final int kLockSolenoidFwd = 9; // TODO
-      public static final int kLockSolenoidBkwd = 8; //TODO
+      public static final int kLockSolenoidBkwd = 8; // TODO
 
-      public static final double kMaxPosInches = 48.23; // TODO (49.23 is absolute max)
-      public static final double kMinPosInches = 0.0; // TODO
+      public static final double kMaxPosInches = 46.23; // (51 is real max)
+      public static final double kMinPosInches = 1.0; //
 
       public static final double kHighGoalArmLength = 0; // TODO
       public static final double kLowGoalArmLength = 0; // TODO
       public static final double kGroundPickupArmLength = 0; // TODO
-      public static final double kSubstationPickupArmLength = 0;
+      public static final double kSubstationPickupArmLength = 0; // TODO
 
     }
 
     public static final class ClawConstants {
       // foward, reverse for double solenoid
-      public static final Pair<Integer, Integer> kDoubleSolenoidClawUpstream = new Pair<Integer, Integer>(1, 0); // TODO
-      public static final Pair<Integer, Integer> kDoubleSolenoidClawDownstream = new Pair<Integer, Integer>(3, 2); // TODO
+      public static final Pair<Integer, Integer> kDoubleSolenoidClawUpstream = new Pair<Integer, Integer>(2, 3); // 2=60
+                                                                                                                 // 3=30
+      public static final Pair<Integer, Integer> kDoubleSolenoidClawDownstream = new Pair<Integer, Integer>(4, 5);
 
       public static final int kSwivelMotor = 18; // TODO
     }
   }
 
   public static final class DriveConstants {
-    public static final int kLeftMotorLeaderPort = 6; // TODO
+    public static final int kLeftMotorLeaderPort = 13;
     public static final int kLeftMotorFollowerPort = 8; // TODO
-    public static final int kRightMotorLeaderPort = 13; // TODO
-    public static final int kRightMotorFollowerPort = 4; // TODO
+    public static final int kRightMotorLeaderPort = 6;
+    public static final int kRightMotorFollowerPort = 9;
 
     public static final boolean kLeftEncoderReversed = false;
     public static final boolean kRightEncoderReversed = true;
@@ -129,8 +132,8 @@ public final class Constants {
   }
 
   public static final class StoppyBarConstants {
-    public static final int kFowardSolenoidPort = 5; // TODO
-    public static final int kBackwardSolenoidPort = 6; // TODO
+    public static final int kFowardSolenoidPort = 10; // TODO
+    public static final int kBackwardSolenoidPort = 11; // TODO
   }
 
   public static final class OIConstants {
@@ -169,7 +172,7 @@ public final class Constants {
   }
 
   public static final class LEDConstants {
-    public static final int kNumberOfLEDs = 26; // TODO
+    public static final int kNumberOfLEDs = 26;
     public static final int kLEDPWMPort = 1; // TODO
   }
 }

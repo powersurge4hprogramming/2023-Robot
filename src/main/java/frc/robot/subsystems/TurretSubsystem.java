@@ -23,7 +23,7 @@ public class TurretSubsystem extends SubsystemBase {
   public TurretSubsystem() {
     m_encoder.setPositionConversionFactor(TurretConstants.kDegreesPerRev);
     m_encoder.setPosition(180); // TODO confirm starting opposite robot front
-    m_motor.setIdleMode(IdleMode.kBrake);
+    m_motor.setIdleMode(IdleMode.kCoast);
     setName("TurretSubsystem");
   }
 
@@ -33,7 +33,7 @@ public class TurretSubsystem extends SubsystemBase {
     if (Math.abs(rot) >= TurretConstants.kMaxRotations && (Math.signum(m_motor.get()) == Math.signum(rot))) {
       m_motor.set(0.0);
     }
-    SmartDashboard.putNumber("Turret Rotations", rot);
+    SmartDashboard.putNumber("Turret Rot", rot);
   }
 
   /** runs arm, for PID only */
@@ -50,7 +50,7 @@ public class TurretSubsystem extends SubsystemBase {
   public double getAngle() {
     double angle = m_encoder.getPosition();
     double sign = Math.signum(angle);
-    return sign * (Math.abs(angle) - (360 * (Math.abs(angle) % 360.0)));
+    return sign * (Math.abs(angle) % 360.0);
   }
 
   private double getRotations() {

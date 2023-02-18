@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
@@ -16,6 +17,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.QuartetConstants.ArmConstants;
 import frc.robot.Constants.QuartetConstants.ShoulderConstants;
 import frc.robot.commands.pid.ArmSetLength;
+import frc.robot.commands.pid.ArmStopMovement;
 import frc.robot.commands.pid.ShoulderSetAngle;
 import frc.robot.commands.pid.TurretSetAngle;
 import frc.robot.structs.LEDManager;
@@ -32,6 +34,7 @@ import frc.robot.subsystems.drivetrain.DriveSubsystemSim;
 import frc.robot.subsystems.drivetrain.DriveSubsystemTemplate;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -109,6 +112,8 @@ public class RobotContainer {
         // constructor, just run .fullAuto(trajectory)
         private final RamseteAutoBuilder m_autoBuilder;
 
+        private int m_smartIndex = 0;
+
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -181,6 +186,8 @@ public class RobotContainer {
                                                                 -m_driverController.getLeftY(),
                                                                 -m_driverController.getRightX()),
                                                 () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveArcade"));
+
+                m_armSubsystem.setDefaultCommand(new ArmStopMovement(m_armSubsystem));
         }
 
         /**
@@ -212,7 +219,7 @@ public class RobotContainer {
                 m_operatorController.rightTrigger()
                                 .whileTrue(m_armSubsystem.runArmCommand(0.01));
                 m_operatorController.x().onTrue(m_clawSubsystem.grabCommand());
-                m_operatorController.b().onTrue(m_clawSubsystem.grabCommand());
+                m_operatorController.b().onTrue(m_clawSubsystem.releaseCommand());
                 m_operatorController.pov(0)
                                 .whileTrue(m_shoulderSubsystem.runShoulderCommand(0.1));
                 m_operatorController.pov(180)
@@ -237,29 +244,56 @@ public class RobotContainer {
                 // Turret directional
                 BooleanSupplier arcadePadPOVSupplier = () -> (m_arcadePad.getHID().getPOV() != -1);
                 new Trigger(arcadePadPOVSupplier)
-                                .whileTrue(new TurretSetAngle(m_arcadePad.getHID().getPOV(), m_turretSubsystem));
+                                .whileTrue((new TurretSetAngle(m_arcadePad.getHID().getPOV(), m_turretSubsystem)
+                                                .beforeStarting(this::pidUp, new Subsystem[0]))
+                                                .finallyDo(this::pidDown));
 
                 // Set shoulder and arm to HIGH GOAL
-                m_arcadePad.x().whileTrue(Commands.parallel(
+                m_arcadePad.x().whileTrue((Commands.parallel(
                                 new ShoulderSetAngle(ShoulderConstants.kHighGoalShoulderAngle, m_shoulderSubsystem),
-                                new ArmSetLength(ArmConstants.kHighGoalArmLength, m_armSubsystem)));
+                                new ArmSetLength(ArmConstants.kHighGoalArmLength, m_armSubsystem))
+                                .withName("HighGoal").beforeStarting(this::pidUp, new Subsystem[0]))
+                                .finallyDo(this::pidDown));
 
                 // Set shoulder and arm to LOW GOAL
-                m_arcadePad.y().whileTrue(Commands.parallel(
+                m_arcadePad.y().whileTrue((Commands.parallel(
                                 new ShoulderSetAngle(ShoulderConstants.kLowGoalShoulderAngle, m_shoulderSubsystem),
-                                new ArmSetLength(ArmConstants.kLowGoalArmLength, m_armSubsystem)));
+                                new ArmSetLength(ArmConstants.kLowGoalArmLength, m_armSubsystem)).withName("LowGoal")
+                                .beforeStarting(this::pidUp, new Subsystem[0])).finallyDo(this::pidDown));
 
                 // Set shoulder and arm to GROUND PICKUP/PLACE
-                m_arcadePad.rightBumper().whileTrue(Commands.parallel(
+                m_arcadePad.rightBumper().whileTrue((Commands.parallel(
                                 new ShoulderSetAngle(ShoulderConstants.kGroundPickupShoulderAngle, m_shoulderSubsystem),
-                                new ArmSetLength(ArmConstants.kGroundPickupArmLength, m_armSubsystem)));
+                                new ArmSetLength(ArmConstants.kGroundPickupArmLength, m_armSubsystem))
+                                .withName("Ground").beforeStarting(this::pidUp, new Subsystem[0]))
+                                .finallyDo(this::pidDown));
 
                 // Set shoulder and arm to SUBSTATION PICKUP
-                m_arcadePad.a().whileTrue(Commands.parallel(
+                m_arcadePad.a().whileTrue((Commands.parallel(
                                 new ShoulderSetAngle(ShoulderConstants.kSubstationPickupShoulderAngle,
                                                 m_shoulderSubsystem),
-                                new ArmSetLength(ArmConstants.kSubstationPickupArmLength, m_armSubsystem)));
+                                new ArmSetLength(ArmConstants.kSubstationPickupArmLength, m_armSubsystem))
+                                .withName("Substation").beforeStarting(this::pidUp, new Subsystem[0]))
+                                .finallyDo(this::pidDown));
 
+        }
+
+        private void pidUp() {
+                m_smartIndex++;
+                setRumble();
+        }
+
+        private void pidDown(boolean end) {
+                m_smartIndex--;
+                setRumble();
+        }
+
+        private void setRumble() {
+                if (m_smartIndex > 0) {
+                        m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0.5);
+                } else {
+                        m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+                }
         }
 
         /**

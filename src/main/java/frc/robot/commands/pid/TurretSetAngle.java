@@ -4,37 +4,41 @@
 
 package frc.robot.commands.pid;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.TurretSubsystem;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TurretSetAngle extends PIDCommand {
+public class TurretSetAngle extends CommandBase {
+  private final TurretSubsystem m_turret;
+  private final ProfiledPIDController m_pidController = new ProfiledPIDController(0.01, 0, 0.01,
+      new TrapezoidProfile.Constraints(180, 360));
+
   /** Creates a new TurretSetAngle. */
   public TurretSetAngle(double setpointAngle, TurretSubsystem turret) {
-    super(
-        // The controller that the command will use
-        new PIDController(0, 0, 0), // TODO constantify
-        // This should return the measurement
-        () -> turret.getAngle(),
-        // This should return the setpoint (can also be a constant)
-        () -> setpointAngle,
-        // This uses the output
-        output -> {
-          turret.runTurret(output);
-        });
+    m_turret = turret;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(turret);
-    // Configure additional PID options by calling `getController` here.
-    getController().setTolerance(1);
-    getController().enableContinuousInput(-360, 360);
+    addRequirements(m_turret);
+
+    m_pidController.setTolerance(1);
+    m_pidController.enableContinuousInput(-360, 360);
+    m_pidController.setGoal(setpointAngle);
+  }
+
+  @Override
+  public void execute() {
+    double motorValue = m_pidController.calculate(m_turret.getAngle());
+    m_turret.runTurret(motorValue);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return getController().atSetpoint();
+    return m_pidController.atSetpoint();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    m_turret.runTurret(0.0);
   }
 }

@@ -68,7 +68,7 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
       KitbotMotor.kDoubleNEOPerSide, // 2 NEOs per side.
       KitbotGearing.k7p31, // 7.31:1
       KitbotWheelSize.kSixInch, // 6" diameter wheels.
-      VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005)); // TODO
+      VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
 
   /** Creates a new DriveSubsystemSim. */
   public DriveSubsystemSim() {

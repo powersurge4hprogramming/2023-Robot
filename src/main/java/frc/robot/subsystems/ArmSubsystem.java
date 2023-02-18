@@ -32,6 +32,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     m_encoder.setPositionConversionFactor(ArmConstants.kDistancePerRevInches);
     m_motor.setIdleMode(IdleMode.kBrake);
+    m_motor.setInverted(true);
     setName("ArmSubsystem");
   }
 

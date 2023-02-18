@@ -4,37 +4,41 @@
 
 package frc.robot.commands.pid;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ArmSetLength extends PIDCommand {
+public class ArmSetLength extends CommandBase {
+  private final ArmSubsystem m_arm;
+  private final ProfiledPIDController m_pidController = new ProfiledPIDController(0.05, 0, 0,
+      new TrapezoidProfile.Constraints(1.75, 10));
+
   /** Creates a new ArmSetLength. */
   public ArmSetLength(double setpoint, ArmSubsystem arm) {
-    super(
-        // The controller that the command will use
-        new PIDController(0, 0, 0),
-        // This should return the measurement
-        () -> arm.getLength(),
-        // This should return the setpoint (can also be a constant)
-        () -> setpoint,
-        // This uses the output
-        output -> {
-          // Use the output here
-          arm.runArm(output);
-        });
+    m_arm = arm;
+
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(arm);
-    // Configure additional PID options by calling `getController` here.
-    getController().setTolerance(0.25);
+    addRequirements(m_arm);
+
+    m_pidController.setTolerance(0.25);
+    m_pidController.setGoal(setpoint);
+  }
+
+  @Override
+  public void execute() {
+    double motorValue = m_pidController.calculate(m_arm.getLength());
+    m_arm.runArm(motorValue);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return getController().atSetpoint();
+    return m_pidController.atSetpoint();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    m_arm.runArm(0.0);
   }
 }
