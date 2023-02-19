@@ -81,17 +81,17 @@ public final class Constants {
 
     public static final class ClawConstants {
       // foward, reverse for double solenoid
-      public static final Pair<Integer, Integer> kDoubleSolenoidClawUpstream = new Pair<Integer, Integer>(2, 3); // 2=60
+      public static final Pair<Integer, Integer> kDoubleSolenoidClawUpstream = new Pair<Integer, Integer>(3, 2); // 2=60
                                                                                                                  // 3=30
       public static final Pair<Integer, Integer> kDoubleSolenoidClawDownstream = new Pair<Integer, Integer>(4, 5);
 
-      public static final int kSwivelMotor = 18; // TODO
+      public static final int kSwivelMotor = 18;
     }
   }
 
   public static final class DriveConstants {
     public static final int kLeftMotorLeaderPort = 13;
-    public static final int kLeftMotorFollowerPort = 8; // TODO
+    public static final int kLeftMotorFollowerPort = 8;
     public static final int kRightMotorLeaderPort = 6;
     public static final int kRightMotorFollowerPort = 9;
 
@@ -132,14 +132,14 @@ public final class Constants {
   }
 
   public static final class StoppyBarConstants {
-    public static final int kFowardSolenoidPort = 10; // TODO
-    public static final int kBackwardSolenoidPort = 11; // TODO
+    public static final int kFowardSolenoidPort = 1;
+    public static final int kBackwardSolenoidPort = 0;
   }
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
-    public static final int kOperatorArcadePort = 2;
+    public static final int kArcadePort = 2;
   }
 
   public static final class AutoConstants {

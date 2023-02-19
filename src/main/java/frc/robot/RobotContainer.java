@@ -16,6 +16,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.QuartetConstants.ArmConstants;
 import frc.robot.Constants.QuartetConstants.ShoulderConstants;
+import frc.robot.commands.PhotonCameraReader;
 import frc.robot.commands.pid.ArmSetLength;
 import frc.robot.commands.pid.ArmStopMovement;
 import frc.robot.commands.pid.ShoulderSetAngle;
@@ -87,15 +88,14 @@ public class RobotContainer {
 
         // The arcade pad
         private final CommandPXNArcadeStickController m_arcadePad = new CommandPXNArcadeStickController(
-                        OIConstants.kOperatorArcadePort);
+                        OIConstants.kArcadePort);
 
         // <-- END STRUCTS --> (HID, controllers, etc)
 
         // <-- COMMANDS -->
 
         // the PhotonCamera Smartdashboard sending class
-        // private final PhotonCameraReader m_photonCameraReader = new
-        // PhotonCameraReader(m_photonCamera);
+        private final PhotonCameraReader m_photonCameraReader = new PhotonCameraReader(m_photonCamera);
 
         // <-- END COMMANDS -->
 
@@ -174,6 +174,8 @@ public class RobotContainer {
 
                 SmartDashboard.putData("Auto Selector", m_chooser);
 
+                SmartDashboard.putBoolean("PIDs On", false);
+
                 // Configure the button bindings
                 configureButtonBindings();
 
@@ -188,6 +190,8 @@ public class RobotContainer {
                                                 () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveArcade"));
 
                 m_armSubsystem.setDefaultCommand(new ArmStopMovement(m_armSubsystem));
+
+                m_photonCameraReader.schedule();
         }
 
         /**
@@ -211,9 +215,9 @@ public class RobotContainer {
 
                 // Operator controller bindings
                 m_operatorController.leftBumper()
-                                .whileTrue(m_turretSubsystem.runTurretCommand(-0.25));
+                                .whileTrue(m_turretSubsystem.runTurretCommand(-0.15));
                 m_operatorController.rightBumper()
-                                .whileTrue(m_turretSubsystem.runTurretCommand(0.25));
+                                .whileTrue(m_turretSubsystem.runTurretCommand(0.15));
                 m_operatorController.leftTrigger()
                                 .whileTrue(m_armSubsystem.runArmCommand(-0.01));
                 m_operatorController.rightTrigger()
@@ -291,8 +295,10 @@ public class RobotContainer {
         private void setRumble() {
                 if (m_smartIndex > 0) {
                         m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0.5);
+                        SmartDashboard.putBoolean("PIDs On", true);
                 } else {
                         m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+                        SmartDashboard.putBoolean("PIDs On", true);
                 }
         }
 

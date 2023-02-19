@@ -31,12 +31,17 @@ public class ShoulderSetAngle extends CommandBase {
     final double feedback = m_pidController.calculate(m_shoulder.getAngle());
     final double feedforward = m_armFeed.calculate(Math.toRadians(m_shoulder.getAngle()), 0); // TODO get degrees offset
 
-    m_shoulder.runShoulder(feedback + feedforward);
+    m_shoulder.runShoulderVolts(feedback + feedforward);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return m_pidController.atSetpoint();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    m_shoulder.runShoulderVolts(0);
   }
 }

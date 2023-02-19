@@ -12,7 +12,7 @@ import frc.robot.subsystems.TurretSubsystem;
 public class TurretSetAngle extends CommandBase {
   private final TurretSubsystem m_turret;
   private final ProfiledPIDController m_pidController = new ProfiledPIDController(0.01, 0, 0.01,
-      new TrapezoidProfile.Constraints(180, 360));
+      new TrapezoidProfile.Constraints(0.001, 0.01));
 
   /** Creates a new TurretSetAngle. */
   public TurretSetAngle(double setpointAngle, TurretSubsystem turret) {
@@ -28,7 +28,7 @@ public class TurretSetAngle extends CommandBase {
   @Override
   public void execute() {
     double motorValue = m_pidController.calculate(m_turret.getAngle());
-    m_turret.runTurret(motorValue);
+    m_turret.runTurretVolts(motorValue);
   }
 
   // Returns true when the command should end.
@@ -39,6 +39,6 @@ public class TurretSetAngle extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
-    m_turret.runTurret(0.0);
+    m_turret.runTurretVolts(0.0);
   }
 }

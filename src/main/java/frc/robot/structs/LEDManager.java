@@ -84,6 +84,10 @@ public class LEDManager {
      */
 
     public static void setPickupLEDs(PickupMode mode) {
+        if (!initialized) {
+            initialize();
+        }
+
         Color color;
         switch (mode) {
             case Cone:
@@ -102,6 +106,10 @@ public class LEDManager {
     }
 
     public static void setStoppyBarLEDs(boolean on) {
+        if (!initialized) {
+            initialize();
+        }
+
         Color color;
         if (on) {
             color = new Color(0, 192, 0);

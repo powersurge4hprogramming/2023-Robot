@@ -4,9 +4,12 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -22,26 +25,31 @@ public class ClawSubsystem extends SubsystemBase {
     None
   }
 
-  // TODO 30 psi foward 60 psi reverse
+  // forward 30, reverse, 60
   private final DoubleSolenoid m_doubleSolenoidUpstream = new DoubleSolenoid(PneumaticsModuleType.REVPH,
       ClawConstants.kDoubleSolenoidClawUpstream.getFirst(), ClawConstants.kDoubleSolenoidClawUpstream.getSecond());
 
-  // TODO grab forward release reverse
+  // forward grab, reverse release
   private final DoubleSolenoid m_doubleSolenoidDownstream = new DoubleSolenoid(PneumaticsModuleType.REVPH,
       ClawConstants.kDoubleSolenoidClawDownstream.getFirst(), ClawConstants.kDoubleSolenoidClawDownstream.getSecond());
 
-  // TODO switch to brake mode by making bc/cal RED
-  private final PWMTalonSRX m_swivelMotor = new PWMTalonSRX(ClawConstants.kSwivelMotor);
+  private final CANSparkMax m_swivelMotor = new CANSparkMax(ClawConstants.kSwivelMotor, MotorType.kBrushed);
 
   private PickupMode m_pickupMode = PickupMode.None;
 
   /** Creates a new ClawSubsystem. */
   public ClawSubsystem() {
+    m_swivelMotor.setIdleMode(IdleMode.kBrake);
+
     new DoubleSolenoidSim(PneumaticsModuleType.REVPH,
         ClawConstants.kDoubleSolenoidClawUpstream.getFirst(), ClawConstants.kDoubleSolenoidClawUpstream.getSecond());
     new DoubleSolenoidSim(PneumaticsModuleType.REVPH,
         ClawConstants.kDoubleSolenoidClawDownstream.getFirst(),
         ClawConstants.kDoubleSolenoidClawDownstream.getSecond());
+
+    m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff);
+    m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kReverse);
+
     setName("ClawSubsystem");
   }
 
@@ -104,8 +112,8 @@ public class ClawSubsystem extends SubsystemBase {
   /** release claw, runs once */
   public CommandBase releaseCommand() {
     return this.runOnce(() -> {
-      m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff); // TODO what the heck
-      m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kReverse);
+      m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff);
+      m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kReverse);
     }).withName("Release");
   }
 }

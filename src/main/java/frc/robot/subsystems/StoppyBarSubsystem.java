@@ -21,7 +21,7 @@ public class StoppyBarSubsystem extends SubsystemBase {
 
   /** Creates a new StoppyBarSubsystem. */
   public StoppyBarSubsystem() {
-    m_doubleSolenoid.set(Value.kReverse); // TODO check if doublesolenoid need default value
+    m_doubleSolenoid.set(Value.kReverse);
     setName("StoppyBarSubsystem");
   }
 

@@ -36,9 +36,14 @@ public class TurretSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Turret Rot", rot);
   }
 
-  /** runs arm, for PID only */
-  public void runTurret(double speed) {
+  /** runs arm, not for PID */
+  private void runTurret(double speed) {
     m_motor.set(speed);
+  }
+
+  /** runs arm, for PID */
+  public void runTurretVolts(double voltage) {
+    m_motor.setVoltage(voltage);
   }
 
   /** runs arm, runs until canceled */

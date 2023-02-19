@@ -38,9 +38,14 @@ public class ShoulderSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Shoulder Angle", deg);
   }
 
-  /** runs shoulder, for PID only */
-  public void runShoulder(double speed) {
+  /** runs shoulder, not for PID */
+  private void runShoulder(double speed) {
     m_motor.set(speed);
+  }
+
+  /** runs shoulder, for PID only */
+  public void runShoulderVolts(double voltage) {
+    m_motor.setVoltage(voltage);
   }
 
   /** runs arm, runs until canceled */

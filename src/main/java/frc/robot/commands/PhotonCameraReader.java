@@ -16,6 +16,7 @@ public class PhotonCameraReader extends CommandBase {
   /** Creates a new PhotonCameraReader. */
   public PhotonCameraReader(PhotonCameraWrapper photonCamera) {
     m_photonCamera = photonCamera;
+    SmartDashboard.putBoolean("Drive Mode", true);
   }
 
   // Called when the command is initially scheduled.

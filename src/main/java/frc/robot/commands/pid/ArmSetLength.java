@@ -28,7 +28,7 @@ public class ArmSetLength extends CommandBase {
   @Override
   public void execute() {
     double motorValue = m_pidController.calculate(m_arm.getLength());
-    m_arm.runArm(motorValue);
+    m_arm.runArmVolts(motorValue);
   }
 
   // Returns true when the command should end.
@@ -39,6 +39,6 @@ public class ArmSetLength extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
-    m_arm.runArm(0.0);
+    m_arm.runArmVolts(0.0);
   }
 }
