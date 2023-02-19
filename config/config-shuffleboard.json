@@ -152,6 +152,19 @@
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
+          },
+          "28,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/#  Of Targets",
+              "_title": "#  Of Targets",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -287,15 +300,28 @@
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
+          },
+          "21,2": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/#  Of Targets",
+              "_title": "SmartDashboard/#  Of Targets",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
     }
   ],
   "windowGeometry": {
-    "x": -6.666666507720947,
-    "y": 1.3333333730697632,
-    "width": 1292.0,
-    "height": 685.3333129882812
+    "x": -7.333333492279053,
+    "y": -7.333333492279053,
+    "width": 1294.6666259765625,
+    "height": 694.6666870117188
   }
 }

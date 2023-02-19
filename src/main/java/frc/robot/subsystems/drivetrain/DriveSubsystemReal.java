@@ -32,8 +32,8 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
       MotorType.kBrushless); // should not be called outside of the constructor
 
   // The drive encoders
-  private final RelativeEncoder m_leftEncoder = m_leftMotorLeader.getEncoder(); // TODO multiple encoders?
-  private final RelativeEncoder m_rightEncoder = m_rightMotorLeader.getEncoder(); // TODO multiple encoders?
+  private final RelativeEncoder m_leftEncoder = m_leftMotorLeader.getEncoder();
+  private final RelativeEncoder m_rightEncoder = m_rightMotorLeader.getEncoder();
 
   // Odometry class for tracking robot pose
   private final DifferentialDrivePoseEstimator m_odometry = new DifferentialDrivePoseEstimator(

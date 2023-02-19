@@ -298,7 +298,7 @@ public class RobotContainer {
                         SmartDashboard.putBoolean("PIDs On", true);
                 } else {
                         m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
-                        SmartDashboard.putBoolean("PIDs On", true);
+                        SmartDashboard.putBoolean("PIDs On", false);
                 }
         }
 
