@@ -46,8 +46,8 @@ public final class Constants {
 
       public static final int kMotorPort = 17;
 
-      public static final int kMaxDegrees = 120; // TODO
-      public static final int kMinDegrees = 0; // TODO
+      public static final int kMaxDegrees = 70; // TODO
+      public static final int kMinDegrees = -30; // TODO
 
       public static final double kHighGoalShoulderAngle = 0; // TODO
       public static final double kLowGoalShoulderAngle = 0; // TODO
@@ -70,7 +70,7 @@ public final class Constants {
       public static final int kLockSolenoidBkwd = 8; // TODO
 
       public static final double kMaxPosInches = 46.23; // (51 is real max)
-      public static final double kMinPosInches = 1.0; //
+      public static final double kMinPosInches = 0.0; //
 
       public static final double kHighGoalArmLength = 0; // TODO
       public static final double kLowGoalArmLength = 0; // TODO

@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -22,6 +24,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private final CANSparkMax m_motor = new CANSparkMax(ArmConstants.kMotorPort, MotorType.kBrushless);
   private final RelativeEncoder m_encoder = m_motor.getEncoder();
+  private final SparkMaxPIDController m_pidController = m_motor.getPIDController();
 
   private final DoubleSolenoid m_lockSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH,
       ArmConstants.kLockSolenoidFwd, ArmConstants.kLockSolenoidFwd);
@@ -30,9 +33,21 @@ public class ArmSubsystem extends SubsystemBase {
   public ArmSubsystem() {
     new DoubleSolenoidSim(PneumaticsModuleType.REVPH, ArmConstants.kLockSolenoidFwd, ArmConstants.kLockSolenoidFwd);
 
+    m_motor.restoreFactoryDefaults();
+
     m_encoder.setPositionConversionFactor(ArmConstants.kDistancePerRevInches);
     m_motor.setIdleMode(IdleMode.kBrake);
     m_motor.setInverted(true);
+
+    m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+    m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+
+    m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ((float) ArmConstants.kMinPosInches));
+    m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ((float) ArmConstants.kMaxPosInches));
+
+    m_pidController.setOutputRange(-0.6, 0.4);
+    m_pidController.setP(0.05);
+
     setName("ArmSubsystem");
   }
 
@@ -52,9 +67,13 @@ public class ArmSubsystem extends SubsystemBase {
     m_motor.set(speed);
   }
 
-  /** runs arm, not for PID */
-  public void runArmVolts(double voltage) {
-    m_motor.setVoltage(voltage);
+  /** runs arm to position in inches */
+  public void runArmPosition(double position) {
+    m_pidController.setReference(position, ControlType.kPosition);
+  }
+
+  public void stopArm() {
+    m_motor.stopMotor();
   }
 
   /** runs arm, runs until canceled */
@@ -62,7 +81,7 @@ public class ArmSubsystem extends SubsystemBase {
     return this.startEnd(() -> runArm(speed), () -> runArm(0.0)).withName("RunArm");
   }
 
-  public double getLength() {
+  public double getArmLength() {
     return m_encoder.getPosition();
   }
 

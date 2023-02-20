@@ -10,7 +10,7 @@ import frc.robot.subsystems.ArmSubsystem;
 public class ArmStopMovement extends ArmSetLength {
 
     public ArmStopMovement(ArmSubsystem arm) {
-        super(arm.getLength(), arm);
+        super(arm.getArmLength(), arm);
     }
 
     @Override

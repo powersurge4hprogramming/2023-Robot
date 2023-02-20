@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -18,12 +20,28 @@ public class TurretSubsystem extends SubsystemBase {
 
   private final CANSparkMax m_motor = new CANSparkMax(TurretConstants.kMotorPort, MotorType.kBrushless);
   private final RelativeEncoder m_encoder = m_motor.getEncoder();
+  private final SparkMaxPIDController m_pidController = m_motor.getPIDController();
 
   /** Creates a new TurretSubsystem. */
   public TurretSubsystem() {
+
+    m_motor.restoreFactoryDefaults();
+
     m_encoder.setPositionConversionFactor(TurretConstants.kDegreesPerRev);
     m_encoder.setPosition(180); // TODO confirm starting opposite robot front
     m_motor.setIdleMode(IdleMode.kCoast);
+
+    m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+    m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
+
+    m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, -((float) TurretConstants.kMaxRotations * 360));
+    m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ((float) TurretConstants.kMaxRotations * 360));
+
+    m_pidController.setOutputRange(-0.15, 0.15);
+    // m_pidController.setPositionPIDWrappingMaxInput() // TODO check PID wrapping done in command
+    m_pidController.setP(0.01);
+    m_pidController.setD(0.01);
+
     setName("TurretSubsystem");
   }
 
@@ -41,9 +59,13 @@ public class TurretSubsystem extends SubsystemBase {
     m_motor.set(speed);
   }
 
-  /** runs arm, for PID */
-  public void runTurretVolts(double voltage) {
-    m_motor.setVoltage(voltage);
+    /** runs turret to position in degrees */
+  public void runTurretPosition(double position) {
+    m_pidController.setReference(position, ControlType.kPosition);
+  }
+
+  public void stopTurret() {
+    m_motor.stopMotor();
   }
 
   /** runs arm, runs until canceled */
@@ -58,7 +80,7 @@ public class TurretSubsystem extends SubsystemBase {
     return sign * (Math.abs(angle) % 360.0);
   }
 
-  private double getRotations() {
+  public double getRotations() {
     return m_encoder.getPosition() / 360.0;
   }
 }
