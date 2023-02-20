@@ -59,7 +59,7 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     m_rightEncoder.setPositionConversionFactor(DriveConstants.kEncoderDistancePerPulse);
 
     // Set the velocity converter for the encoders
-    m_leftEncoder.setVelocityConversionFactor(DriveConstants.kEncoderDistancePerPulse);
+    m_leftEncoder.setVelocityConversionFactor(DriveConstants.kEncoderVelocityConversion);
     m_rightEncoder.setVelocityConversionFactor(DriveConstants.kEncoderVelocityConversion);
 
     // reset robot to (0,0) and encoders
