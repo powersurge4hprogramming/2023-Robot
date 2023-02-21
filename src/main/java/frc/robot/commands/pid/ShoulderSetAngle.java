@@ -4,40 +4,18 @@
 
 package frc.robot.commands.pid;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ShoulderSubsystem;
+import frc.robot.subsystems.motor.MotorTemplate;
 
-public class ShoulderSetAngle extends CommandBase {
-  private final ShoulderSubsystem m_shoulder;
-  private final double m_setpoint;
+public class ShoulderSetAngle extends PIDPositionSet {
 
-  /** sets shoulder to angle (degrees) then finishes */
-  public ShoulderSetAngle(double setpointAngle, ShoulderSubsystem shoulder) {
-    m_shoulder = shoulder;
-    m_setpoint = setpointAngle;
-
-    addRequirements(m_shoulder);
-
-  }
-
-  @Override
-  public void initialize() {
-    m_shoulder.runShoulderPosition(m_setpoint);
-  }
-
-  @Override
-  public void execute() {
-
+  public ShoulderSetAngle(double setpoint, MotorTemplate subsystem) {
+    super(setpoint, subsystem);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Math.abs(m_setpoint - m_shoulder.getAngle()) <= 0.5) && (Math.abs(m_shoulder.getVelocity()) <= 1);
+    return (Math.abs(m_setpoint - m_subsystem.getLength()) <= 0.5) && (Math.abs(m_subsystem.getVelocity()) <= 1);
   }
 
-  @Override
-  public void end(boolean interrupted) {
-    m_shoulder.stopShoulder();
-  }
 }

@@ -24,15 +24,15 @@ import frc.robot.commands.pid.TurretSetAngle;
 import frc.robot.structs.LEDManager;
 import frc.robot.structs.PhotonCameraWrapper;
 import frc.robot.structs.hid.CommandPXNArcadeStickController;
-import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
-import frc.robot.subsystems.ShoulderSubsystem;
 import frc.robot.subsystems.StoppyBarSubsystem;
-import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.subsystems.ClawSubsystem.PickupMode;
 import frc.robot.subsystems.drivetrain.DriveSubsystemReal;
 import frc.robot.subsystems.drivetrain.DriveSubsystemSim;
 import frc.robot.subsystems.drivetrain.DriveSubsystemTemplate;
+import frc.robot.subsystems.motor.ArmSubsystem;
+import frc.robot.subsystems.motor.ShoulderSubsystem;
+import frc.robot.subsystems.motor.TurretSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -215,19 +215,19 @@ public class RobotContainer {
 
                 // Operator controller bindings
                 m_operatorController.leftBumper()
-                                .whileTrue(m_turretSubsystem.runTurretCommand(-0.15));
+                                .whileTrue(m_turretSubsystem.setSpeedCommand(-0.15));
                 m_operatorController.rightBumper()
-                                .whileTrue(m_turretSubsystem.runTurretCommand(0.15));
+                                .whileTrue(m_turretSubsystem.setSpeedCommand(0.15));
                 m_operatorController.leftTrigger()
-                                .whileTrue(m_armSubsystem.runArmCommand(-0.01));
+                                .whileTrue(m_armSubsystem.setSpeedCommand(-0.01));
                 m_operatorController.rightTrigger()
-                                .whileTrue(m_armSubsystem.runArmCommand(0.01));
+                                .whileTrue(m_armSubsystem.setSpeedCommand(0.01));
                 m_operatorController.x().onTrue(m_clawSubsystem.grabCommand());
                 m_operatorController.b().onTrue(m_clawSubsystem.releaseCommand());
                 m_operatorController.pov(0)
-                                .whileTrue(m_shoulderSubsystem.runShoulderCommand(0.1));
+                                .whileTrue(m_shoulderSubsystem.setSpeedCommand(0.1));
                 m_operatorController.pov(180)
-                                .whileTrue(m_shoulderSubsystem.runShoulderCommand(-0.1));
+                                .whileTrue(m_shoulderSubsystem.setSpeedCommand(-0.1));
                 m_operatorController.y().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cone));
                 m_operatorController.a().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cube));
                 m_operatorController.back()

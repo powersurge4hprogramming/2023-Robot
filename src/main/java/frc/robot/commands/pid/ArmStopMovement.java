@@ -4,7 +4,7 @@
 
 package frc.robot.commands.pid;
 
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.motor.ArmSubsystem;
 
 /** Keeps setpoint where the arm currently is. */
 public class ArmStopMovement extends ArmSetLength {

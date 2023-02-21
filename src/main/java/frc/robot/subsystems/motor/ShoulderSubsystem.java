@@ -2,28 +2,19 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.motor;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.QuartetConstants.ShoulderConstants;
 
-public class ShoulderSubsystem extends SubsystemBase {
-
-  private final CANSparkMax m_motor = new CANSparkMax(ShoulderConstants.kMotorPort, MotorType.kBrushless);
-  private final RelativeEncoder m_encoder = m_motor.getEncoder();
-  private final SparkMaxPIDController m_pidController = m_motor.getPIDController();
+public class ShoulderSubsystem extends MotorTemplate {
 
   /** Creates a new ShoulderSubsystem. */
   public ShoulderSubsystem() {
+    super(ShoulderConstants.kMotorPort);
+
     m_motor.restoreFactoryDefaults();
 
     m_encoder.setPositionConversionFactor(ShoulderConstants.kDegreesPerRev);
@@ -52,34 +43,5 @@ public class ShoulderSubsystem extends SubsystemBase {
       m_motor.set(0.0);
     }
     SmartDashboard.putNumber("Shoulder Angle", deg);
-  }
-
-  /** runs shoulder, not for PID */
-  private void runShoulder(double speed) {
-    m_motor.set(speed);
-  }
-
-  /** runs shoulder to position in degrees */
-  public void runShoulderPosition(double position) {
-    m_pidController.setReference(position, ControlType.kPosition);
-  }
-
-  public void stopShoulder() {
-    m_motor.stopMotor();
-  }
-
-  /** runs arm, runs until canceled */
-  public CommandBase runShoulderCommand(double speed) {
-    return this.startEnd(() -> runShoulder(speed), () -> runShoulder(0.0)).withName("RunShoulder");
-  }
-
-  /** angle (degrees) */
-  public double getAngle() {
-    return m_encoder.getPosition();
-  }
-
-  /** velocity (rpm) */
-  public double getVelocity() {
-    return m_encoder.getVelocity();
   }
 }
