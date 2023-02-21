@@ -8,6 +8,7 @@ import frc.robot.subsystems.motor.MotorTemplate;
 
 public class ShoulderSetAngle extends PIDPositionSet {
 
+  /** sets shoulder to angle (degrees) then finishes */
   public ShoulderSetAngle(double setpoint, MotorTemplate subsystem) {
     super(setpoint, subsystem);
   }

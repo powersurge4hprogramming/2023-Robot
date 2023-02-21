@@ -20,7 +20,7 @@ public abstract class MotorTemplate extends SubsystemBase {
   protected final RelativeEncoder m_encoder;
   protected final SparkMaxPIDController m_pidController;
 
-  /** Creates a new ActuatorSubsystem. */
+  /** Creates a new MotorTemplate. */
   public MotorTemplate(double motorPort) {
     m_motor = new CANSparkMax(ArmConstants.kMotorPort, MotorType.kBrushless);
     m_encoder = m_motor.getEncoder();
@@ -32,26 +32,27 @@ public abstract class MotorTemplate extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  /** runs arm, not for PID */
+  /** runs motor to speed -1 to 1, not for PID */
   private void setSpeed(double speed) {
     m_motor.set(speed);
   }
 
-  /** runs arm to position in inches */
+  /** runs motor to position */
   public void setPosition(double position) {
     m_pidController.setReference(position, ControlType.kPosition);
   }
 
+  /** stops motor from running */
   public void stopMotor() {
     m_motor.stopMotor();
   }
 
-  /** runs arm, runs until canceled */
+  /** runs motor, runs until canceled */
   public CommandBase setSpeedCommand(double speed) {
-    return this.startEnd(() -> setSpeed(speed), () -> setSpeed(0.0)).withName("RunSpeed");
+    return this.startEnd(() -> setSpeed(speed), () -> setSpeed(0.0)).withName("RunSpeed" + getName());
   }
 
-  /** position (in) */
+  /** position (in or degrees) */
   public double getLength() {
     return m_encoder.getPosition();
   }

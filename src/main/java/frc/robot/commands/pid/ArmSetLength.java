@@ -8,6 +8,7 @@ import frc.robot.subsystems.motor.MotorTemplate;
 
 public class ArmSetLength extends PIDPositionSet {
 
+  /** sets arm to length (in) then finishes */
   public ArmSetLength(double setpoint, MotorTemplate subsystem) {
     super(setpoint, subsystem);
   }

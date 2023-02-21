@@ -11,13 +11,14 @@ public abstract class PIDPositionSet extends CommandBase {
   protected final MotorTemplate m_subsystem;
   protected final double m_setpoint;
 
-  /** sets arm to length (in), then finishes */
+  /** sets motor to length (in or degrees), then finishes */
   public PIDPositionSet(double setpoint, MotorTemplate subsystem) {
     m_subsystem = subsystem;
     m_setpoint = setpoint;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
+    setName("PIDPosition" + m_subsystem.getName());
   }
 
   @Override

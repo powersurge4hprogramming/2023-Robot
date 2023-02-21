@@ -8,6 +8,7 @@ import frc.robot.subsystems.motor.MotorTemplate;
 
 public class TurretSetAngle extends PIDPositionSet {
 
+  /** sets turret to angle (degrees) then finishes */
   public TurretSetAngle(double setpoint, MotorTemplate subsystem) {
     super(setpoint, subsystem);
   }
