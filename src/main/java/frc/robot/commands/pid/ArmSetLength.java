@@ -4,41 +4,40 @@
 
 package frc.robot.commands.pid;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
 
 public class ArmSetLength extends CommandBase {
   private final ArmSubsystem m_arm;
-  private final ProfiledPIDController m_pidController = new ProfiledPIDController(0.05, 0, 0,
-      new TrapezoidProfile.Constraints(1.75, 10));
+  private final double m_setpoint;
 
-  /** Creates a new ArmSetLength. */
+  /** sets arm to length (in), then finishes */
   public ArmSetLength(double setpoint, ArmSubsystem arm) {
     m_arm = arm;
+    m_setpoint = setpoint;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_arm);
+  }
 
-    m_pidController.setTolerance(0.25);
-    m_pidController.setGoal(setpoint);
+  @Override
+  public void initialize() {
+    m_arm.runArmPosition(m_setpoint);
   }
 
   @Override
   public void execute() {
-    double motorValue = m_pidController.calculate(m_arm.getLength());
-    m_arm.runArmVolts(motorValue);
+
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_pidController.atSetpoint();
+    return (Math.abs(m_setpoint - m_arm.getLength()) <= 0.25) && (Math.abs(m_arm.getVelocity()) <= 1);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_arm.runArmVolts(0.0);
+    m_arm.stopArm();
   }
 }

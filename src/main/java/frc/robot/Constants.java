@@ -30,9 +30,10 @@ public final class Constants {
       // for encoder
       private static final double kGearToothRatio = 20.0 / 147;
       private static final double kGearboxRatio = 1.0 / 12;
-      public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
+      private static final double kLossMultipler = 1.0-(2.25/90);
+      public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360 * kLossMultipler;
 
-      public static final int kMotorPort = 12;
+      public static final int kMotorPort = 16;
 
       public static final double kMaxRotations = 4; // TODO
 
@@ -46,8 +47,8 @@ public final class Constants {
 
       public static final int kMotorPort = 17;
 
-      public static final int kMaxDegrees = 120; // TODO
-      public static final int kMinDegrees = 0; // TODO
+      public static final int kMaxDegrees = 70; // TODO
+      public static final int kMinDegrees = -30; // TODO
 
       public static final double kHighGoalShoulderAngle = 0; // TODO
       public static final double kLowGoalShoulderAngle = 0; // TODO
@@ -64,13 +65,13 @@ public final class Constants {
       // public static final double kDistancePerRevInches = kGearRatio * kSpoolRadius;
       public static final double kDistancePerRevInches = 0.1481470777; // This is empirically determined via testing
 
-      public static final int kMotorPort = 16;
+      public static final int kMotorPort = 12;
 
       public static final int kLockSolenoidFwd = 9; // TODO
       public static final int kLockSolenoidBkwd = 8; // TODO
 
       public static final double kMaxPosInches = 46.23; // (51 is real max)
-      public static final double kMinPosInches = 1.0; //
+      public static final double kMinPosInches = 0.0; //
 
       public static final double kHighGoalArmLength = 0; // TODO
       public static final double kLowGoalArmLength = 0; // TODO
@@ -173,6 +174,6 @@ public final class Constants {
 
   public static final class LEDConstants {
     public static final int kNumberOfLEDs = 26;
-    public static final int kLEDPWMPort = 1; // TODO
+    public static final int kLEDPWMPort = 0;
   }
 }

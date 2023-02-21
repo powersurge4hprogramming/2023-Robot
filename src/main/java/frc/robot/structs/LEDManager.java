@@ -24,6 +24,7 @@ public class LEDManager {
     private static boolean initialized = false;
 
     private static void setIndexesColor(List<Integer> indexes, Color color) {
+        color = convertColor(color);
         if (!initialized) {
             initialize();
         }
@@ -31,6 +32,11 @@ public class LEDManager {
             m_ledBuffer.setLED(index, color);
         }
         m_led.setData(m_ledBuffer);
+    }
+
+    /** Buffer converts RGB to BGR, and we want BRG. So this will do RBG -> GBR? */
+    private static Color convertColor(Color color) {
+        return new Color(color.red, color.blue, color.green);
     }
 
     /** prepare LEDs, expensive, call this once! */

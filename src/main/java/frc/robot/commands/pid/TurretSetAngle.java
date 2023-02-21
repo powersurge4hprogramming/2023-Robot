@@ -4,41 +4,39 @@
 
 package frc.robot.commands.pid;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.TurretSubsystem;
 
 public class TurretSetAngle extends CommandBase {
   private final TurretSubsystem m_turret;
-  private final ProfiledPIDController m_pidController = new ProfiledPIDController(0.01, 0, 0.01,
-      new TrapezoidProfile.Constraints(0.001, 0.01));
+  private final double m_setpoint;
 
-  /** Creates a new TurretSetAngle. */
+  /** sets turret to angle (degrees) then finishes */
   public TurretSetAngle(double setpointAngle, TurretSubsystem turret) {
     m_turret = turret;
+    m_setpoint = setpointAngle;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_turret);
+  }
 
-    m_pidController.setTolerance(1);
-    m_pidController.enableContinuousInput(-360, 360);
-    m_pidController.setGoal(setpointAngle);
+  @Override
+  public void initialize() {
+    m_turret.runTurretPosition(m_setpoint);
   }
 
   @Override
   public void execute() {
-    double motorValue = m_pidController.calculate(m_turret.getAngle());
-    m_turret.runTurretVolts(motorValue);
+
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_pidController.atSetpoint();
+    return (Math.abs(m_setpoint - m_turret.getAngle()) <= 1) && (Math.abs(m_turret.getVelocity()) <= 1);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_turret.runTurretVolts(0.0);
+    m_turret.stopTurret();
   }
 }

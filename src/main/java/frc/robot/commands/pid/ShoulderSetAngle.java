@@ -4,44 +4,40 @@
 
 package frc.robot.commands.pid;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ShoulderSubsystem;
 
 public class ShoulderSetAngle extends CommandBase {
-  private final ArmFeedforward m_armFeed = new ArmFeedforward(0, 1.75, 0);
-  private final ProfiledPIDController m_pidController = new ProfiledPIDController(0, 0, 0,
-      new TrapezoidProfile.Constraints(0.75, 2)); // rad/s
   private final ShoulderSubsystem m_shoulder;
+  private final double m_setpoint;
 
-  /** Creates a new TurretSetAngle. */
+  /** sets shoulder to angle (degrees) then finishes */
   public ShoulderSetAngle(double setpointAngle, ShoulderSubsystem shoulder) {
-
     m_shoulder = shoulder;
+    m_setpoint = setpointAngle;
+
     addRequirements(m_shoulder);
 
-    m_pidController.setTolerance(0.5);
-    m_pidController.setGoal(setpointAngle);
+  }
+
+  @Override
+  public void initialize() {
+    m_shoulder.runShoulderPosition(m_setpoint);
   }
 
   @Override
   public void execute() {
-    final double feedback = m_pidController.calculate(m_shoulder.getAngle());
-    final double feedforward = m_armFeed.calculate(Math.toRadians(m_shoulder.getAngle()), 0); // TODO get degrees offset
 
-    m_shoulder.runShoulderVolts(feedback + feedforward);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_pidController.atSetpoint();
+    return (Math.abs(m_setpoint - m_shoulder.getAngle()) <= 0.5) && (Math.abs(m_shoulder.getVelocity()) <= 1);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_shoulder.runShoulderVolts(0);
+    m_shoulder.stopShoulder();
   }
 }
