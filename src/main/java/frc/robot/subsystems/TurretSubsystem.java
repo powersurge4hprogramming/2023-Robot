@@ -27,6 +27,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     m_motor.restoreFactoryDefaults();
 
+    m_motor.setInverted(true);
     m_encoder.setPositionConversionFactor(TurretConstants.kDegreesPerRev);
     m_encoder.setPosition(180); // TODO confirm starting opposite robot front
     m_motor.setIdleMode(IdleMode.kCoast);
