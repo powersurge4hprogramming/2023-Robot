@@ -39,9 +39,11 @@ public class TurretSubsystem extends SubsystemBase {
     m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ((float) TurretConstants.kMaxRotations * 360));
 
     m_pidController.setOutputRange(-0.15, 0.15);
-    // m_pidController.setPositionPIDWrappingMaxInput() // TODO check PID wrapping done in command
     m_pidController.setP(0.01);
     m_pidController.setD(0.01);
+    m_pidController.setPositionPIDWrappingEnabled(true);
+    m_pidController.setPositionPIDWrappingMinInput(-180);
+    m_pidController.setPositionPIDWrappingMaxInput(180);
 
     setName("TurretSubsystem");
   }
@@ -60,7 +62,7 @@ public class TurretSubsystem extends SubsystemBase {
     m_motor.set(speed);
   }
 
-    /** runs turret to position in degrees */
+  /** runs turret to position in degrees */
   public void runTurretPosition(double position) {
     m_pidController.setReference(position, ControlType.kPosition);
   }
