@@ -11,7 +11,7 @@ public class ShoulderSetAngle extends CommandBase {
   private final ShoulderSubsystem m_shoulder;
   private final double m_setpoint;
 
-  /** Creates a new TurretSetAngle. */
+  /** sets shoulder to angle (degrees) then finishes */
   public ShoulderSetAngle(double setpointAngle, ShoulderSubsystem shoulder) {
     m_shoulder = shoulder;
     m_setpoint = setpointAngle;
@@ -33,7 +33,7 @@ public class ShoulderSetAngle extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(m_setpoint - m_shoulder.getAngle()) <= 0.5;
+    return (Math.abs(m_setpoint - m_shoulder.getAngle()) <= 0.5) && (Math.abs(m_shoulder.getVelocity()) <= 1);
   }
 
   @Override

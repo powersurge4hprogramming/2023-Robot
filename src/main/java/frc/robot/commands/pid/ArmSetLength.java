@@ -11,7 +11,7 @@ public class ArmSetLength extends CommandBase {
   private final ArmSubsystem m_arm;
   private final double m_setpoint;
 
-  /** Creates a new ArmSetLength. */
+  /** sets arm to length (in), then finishes */
   public ArmSetLength(double setpoint, ArmSubsystem arm) {
     m_arm = arm;
     m_setpoint = setpoint;
@@ -33,7 +33,7 @@ public class ArmSetLength extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(m_setpoint - m_arm.getArmLength()) <= 0.25;
+    return (Math.abs(m_setpoint - m_arm.getLength()) <= 0.25) && (Math.abs(m_arm.getVelocity()) <= 1);
   }
 
   @Override

@@ -59,7 +59,7 @@ public class ShoulderSubsystem extends SubsystemBase {
     m_motor.set(speed);
   }
 
-    /** runs shoulder to position in degrees */
+  /** runs shoulder to position in degrees */
   public void runShoulderPosition(double position) {
     m_pidController.setReference(position, ControlType.kPosition);
   }
@@ -73,7 +73,13 @@ public class ShoulderSubsystem extends SubsystemBase {
     return this.startEnd(() -> runShoulder(speed), () -> runShoulder(0.0)).withName("RunShoulder");
   }
 
+  /** angle (degrees) */
   public double getAngle() {
     return m_encoder.getPosition();
+  }
+
+  /** velocity (rpm) */
+  public double getVelocity() {
+    return m_encoder.getVelocity();
   }
 }

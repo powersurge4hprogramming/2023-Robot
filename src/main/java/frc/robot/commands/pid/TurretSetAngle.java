@@ -4,7 +4,6 @@
 
 package frc.robot.commands.pid;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.TurretSubsystem;
 
@@ -12,7 +11,7 @@ public class TurretSetAngle extends CommandBase {
   private final TurretSubsystem m_turret;
   private final double m_setpoint;
 
-  /** Creates a new TurretSetAngle. */
+  /** sets turret to angle (degrees) then finishes */
   public TurretSetAngle(double setpointAngle, TurretSubsystem turret) {
     m_turret = turret;
     m_setpoint = setpointAngle;
@@ -22,16 +21,7 @@ public class TurretSetAngle extends CommandBase {
 
   @Override
   public void initialize() {
-    double maxInput = 180;
-    double minInput = -180;
-    double errorBound = (maxInput - minInput) / 2.0;
-    double positionError = MathUtil.inputModulus(m_setpoint - (m_turret.getRotations() * 360), -errorBound, errorBound); // TODO
-                                                                                                                         // is
-                                                                                                                         // this
-                                                                                                                         // at
-                                                                                                                         // all
-                                                                                                                         // right?
-    m_turret.runTurretPosition(positionError);
+    m_turret.runTurretPosition(m_setpoint);
   }
 
   @Override
@@ -42,7 +32,7 @@ public class TurretSetAngle extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(m_setpoint - m_turret.getAngle()) <= 1;
+    return (Math.abs(m_setpoint - m_turret.getAngle()) <= 1) && (Math.abs(m_turret.getVelocity()) <= 1);
   }
 
   @Override

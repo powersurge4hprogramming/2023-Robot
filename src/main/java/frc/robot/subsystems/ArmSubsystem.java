@@ -81,8 +81,14 @@ public class ArmSubsystem extends SubsystemBase {
     return this.startEnd(() -> runArm(speed), () -> runArm(0.0)).withName("RunArm");
   }
 
-  public double getArmLength() {
+  /** position (in) */
+  public double getLength() {
     return m_encoder.getPosition();
+  }
+
+  /** velocity (rpm) */
+  public double getVelocity() {
+    return m_encoder.getVelocity();
   }
 
   public void setArmLock(boolean locked) {
