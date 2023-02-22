@@ -12,7 +12,6 @@ import com.revrobotics.CANSparkMax.ControlType;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.QuartetConstants.ArmConstants;
 
 public abstract class MotorTemplate extends SubsystemBase {
 
@@ -21,8 +20,8 @@ public abstract class MotorTemplate extends SubsystemBase {
   protected final SparkMaxPIDController m_pidController;
 
   /** Creates a new MotorTemplate. */
-  public MotorTemplate(double motorPort) {
-    m_motor = new CANSparkMax(ArmConstants.kMotorPort, MotorType.kBrushless);
+  public MotorTemplate(int motorPort) {
+    m_motor = new CANSparkMax(motorPort, MotorType.kBrushless);
     m_encoder = m_motor.getEncoder();
     m_pidController = m_motor.getPIDController();
   }
