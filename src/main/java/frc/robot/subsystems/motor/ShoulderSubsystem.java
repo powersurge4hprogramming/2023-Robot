@@ -11,7 +11,7 @@ import frc.robot.Constants.QuartetConstants.ShoulderConstants;
 
 public class ShoulderSubsystem extends MotorTemplate {
 
-  /** Creates a new ShoulderSubsystem. */
+  /** Creates a new ShoulderSubsystem, position units are degrees. */
   public ShoulderSubsystem() {
     super(ShoulderConstants.kMotorPort);
 
@@ -27,6 +27,8 @@ public class ShoulderSubsystem extends MotorTemplate {
 
     m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ShoulderConstants.kMinDegrees);
     m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ShoulderConstants.kMaxDegrees);
+
+    m_motor.setSmartCurrentLimit(20, 25);
 
     m_pidController.setOutputRange(-0.15, 0.15);
     m_pidController.setP(0.01);

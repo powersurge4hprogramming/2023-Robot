@@ -30,11 +30,17 @@ public class StoppyBarSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("STOPPY ON", m_stoppyOn);
   }
 
+  /** Update the LEDs in the {@link LEDManager} class */
   private void updateLEDs() {
     LEDManager.setStoppyBarLEDs(m_stoppyOn);
   }
 
-  /** sets stoppy bar on/off, runs once */
+  /**
+   * Sets stoppy bar on/off and updates LEDs
+   * 
+   * @param on whether the stoppy bar should be set on
+   * @return a command which updates the stoppy bar and LEDs, runs once
+   */
   public CommandBase setStop(boolean on) {
     return this.runOnce(() -> {
       m_stoppyOn = on;

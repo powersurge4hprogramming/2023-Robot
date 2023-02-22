@@ -66,17 +66,24 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
    */
   public abstract void tankDriveVolts(double leftVolts, double rightVolts);
 
-  /** Limits robot
-   * @param limit the -1 to 1 limit **/
+  /**
+   * Limits robot
+   * 
+   * @param limit the -1 to 1 limit
+   **/
   public abstract void limit(double limit);
 
   /** Resets the drive encoders to currently read a position of 0. */
   public abstract void resetEncoders();
 
-  /** Toggles break mode to true or false */
+  /** Toggles brake mode to true or false */
   public abstract void setBrakeMode(boolean brakeMode);
 
-  /** Toggles break mode to true or false */
+  /**
+   * Toggles brake mode to true or false
+   * 
+   * @return a command which toggles the brake mode and then finishes
+   */
   public abstract CommandBase toggleBrakeModeCommand();
 
   /** Calibrate gyro (takes 5 seconds, robot MUST not move) */

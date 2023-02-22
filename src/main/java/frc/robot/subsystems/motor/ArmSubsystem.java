@@ -19,7 +19,7 @@ public class ArmSubsystem extends MotorTemplate {
   private final DoubleSolenoid m_lockSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH,
       ArmConstants.kLockSolenoidFwd, ArmConstants.kLockSolenoidFwd);
 
-  /** Creates a new ArmSubsystem. */
+  /** Creates a new ArmSubsystem, position units are inches. */
   public ArmSubsystem() {
     super(ArmConstants.kMotorPort);
 
@@ -36,6 +36,8 @@ public class ArmSubsystem extends MotorTemplate {
 
     m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ((float) ArmConstants.kMinPosInches));
     m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ((float) ArmConstants.kMaxPosInches));
+
+    m_motor.setSmartCurrentLimit(20, 25);
 
     m_pidController.setOutputRange(-0.6, 0.4);
     m_pidController.setP(0.05);
@@ -54,6 +56,11 @@ public class ArmSubsystem extends MotorTemplate {
     SmartDashboard.putNumber("Arm Length", pos);
   }
 
+  /**
+   * Sets the lock mode on the arm.
+   * 
+   * @param locked whether the arm should be locked
+   */
   public void setArmLock(boolean locked) {
     if (locked) {
       m_lockSolenoid.set(Value.kForward);
@@ -62,6 +69,11 @@ public class ArmSubsystem extends MotorTemplate {
     }
   }
 
+  /**
+   * Toggles the arm's locking
+   * 
+   * @return a command which toggles the arm lock and the finishes
+   */
   public CommandBase toggleArmLock() {
     return this.runOnce(() -> {
       m_lockSolenoid.toggle();

@@ -13,21 +13,18 @@ import frc.robot.structs.PhotonCameraWrapper;
 public class PhotonCameraReader extends CommandBase {
   private final PhotonCameraWrapper m_photonCamera;
 
-  /** Creates a new PhotonCameraReader. */
   public PhotonCameraReader(PhotonCameraWrapper photonCamera) {
     m_photonCamera = photonCamera;
     SmartDashboard.putBoolean("Drive Mode", true);
     SmartDashboard.putNumber("#  Of Targets", 0);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     SmartDashboard.putBoolean("Drive Mode", true);
     SmartDashboard.putNumber("#  Of Targets", 0);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     m_photonCamera.setDriveMode(SmartDashboard.getBoolean("Drive Mode", true));
@@ -37,7 +34,6 @@ public class PhotonCameraReader extends CommandBase {
     }
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     SmartDashboard.putBoolean("Drive Mode", true);
@@ -45,7 +41,6 @@ public class PhotonCameraReader extends CommandBase {
     SmartDashboard.putNumber("# Of Targets", 0);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

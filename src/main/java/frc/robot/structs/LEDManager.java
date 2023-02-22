@@ -14,6 +14,9 @@ import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.subsystems.ClawSubsystem.PickupMode;
 
+/**
+ * The static manager for the LEDs. Call {@code initialize()} before running!
+ */
 public class LEDManager {
     private final static AddressableLED m_led = new AddressableLED(LEDConstants.kLEDPWMPort);
 
@@ -21,25 +24,29 @@ public class LEDManager {
     private final static AddressableLEDSim p_ledSim = new AddressableLEDSim(m_led);
 
     private final static AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(LEDConstants.kNumberOfLEDs);
+
     private static boolean initialized = false;
 
+    /**
+     * Sets the LEDs to the specified color.
+     * 
+     * @param indexes the indexes of LEDs to be switched
+     * @param color   the color to be sent to the LEDs (unconverted)
+     */
     private static void setIndexesColor(List<Integer> indexes, Color color) {
-        color = convertColor(color);
+        /// Buffer converts RGB to BGR, and we want BRG. So this will do RBG -> GBR?
         if (!initialized) {
             initialize();
         }
+
+        color = new Color(color.red, color.blue, color.green);
         for (int index : indexes) {
             m_ledBuffer.setLED(index, color);
         }
         m_led.setData(m_ledBuffer);
     }
 
-    /** Buffer converts RGB to BGR, and we want BRG. So this will do RBG -> GBR? */
-    private static Color convertColor(Color color) {
-        return new Color(color.red, color.blue, color.green);
-    }
-
-    /** prepare LEDs, expensive, call this once! */
+    /** Prepare the LEDs. This is expensive, so call this only once! */
     public static void initialize() {
         if (!initialized) {
             m_led.setLength(LEDConstants.kNumberOfLEDs);
@@ -48,11 +55,12 @@ public class LEDManager {
         }
     }
 
-    /** start LED outputs */
+    /** Start LED outputs, switching the alliance LEDs to the correct color. */
     public static void start() {
         if (!initialized) {
             initialize();
         }
+
         m_led.start();
         List<Integer> indexes = List.of(0, 1, 2, 10, 11, 12, 13, 14, 15, 23, 24, 25);
         switch (DriverStation.getAlliance()) {
@@ -70,30 +78,21 @@ public class LEDManager {
         }
     }
 
+    /** Stop sending data to the LEDs. This will most likely turn them off? */
     public static void stop() {
         if (!initialized) {
             initialize();
         }
+
         m_led.stop();
     }
 
-    /*
-     * private static void setAllColor(Color color) {
-     * if (!initialized) {
-     * initialize();
-     * }
-     * for (var i = 0; i < ledBuffer.getLength(); i++) {
-     * ledBuffer.setLED(i, color);
-     * }
-     * led.setData(ledBuffer);
-     * }
+    /**
+     * Sets the pickup LEDs to the corresponding color.
+     * 
+     * @param mode the pickup mode the robot is currently in
      */
-
     public static void setPickupLEDs(PickupMode mode) {
-        if (!initialized) {
-            initialize();
-        }
-
         Color color;
         switch (mode) {
             case Cone:
@@ -111,14 +110,14 @@ public class LEDManager {
         setIndexesColor(List.of(3, 4, 5, 6, 7, 8, 9, 16, 17, 18, 19, 20, 21, 22), color);
     }
 
+    /** Sets the pickup LEDs based on whether the stoppy bars are down.
+     * 
+     * @param on whether the stoppy bar is activated
+     */
     public static void setStoppyBarLEDs(boolean on) {
-        if (!initialized) {
-            initialize();
-        }
-
         Color color;
         if (on) {
-            color = new Color(0, 192, 0);
+            color = new Color(0, 192, 0); // "robot" green
         } else {
             color = new Color(0, 0, 0);
         }

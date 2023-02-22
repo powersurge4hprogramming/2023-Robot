@@ -19,44 +19,65 @@ public abstract class MotorTemplate extends SubsystemBase {
   protected final RelativeEncoder m_encoder;
   protected final SparkMaxPIDController m_pidController;
 
-  /** Creates a new MotorTemplate. */
+  /**
+   * Creates a new motor template based off an assumption the motor is brushless
+   * and attached to a {@link CANSparkMax}
+   * 
+   * @param motorPort the CAN ID of the motor
+   */
   public MotorTemplate(int motorPort) {
     m_motor = new CANSparkMax(motorPort, MotorType.kBrushless);
     m_encoder = m_motor.getEncoder();
     m_pidController = m_motor.getPIDController();
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
-
-  /** runs motor to speed -1 to 1, not for PID */
+  /**
+   * Runs motor to a specified speed, not for usage in the PID.
+   * 
+   * @speed the duty cycle speed (-1 to 1) to set the motor
+   */
   private void setSpeed(double speed) {
     m_motor.set(speed);
   }
 
-  /** runs motor to position */
+  /**
+   * Runs motor to a specified position.
+   * 
+   * @param position the position (in subclass units) to set the motor to
+   */
   public void setPosition(double position) {
     m_pidController.setReference(position, ControlType.kPosition);
   }
 
-  /** stops motor from running */
+  /** Stops motor from running, will interrupt any control mode. */
   public void stopMotor() {
     m_motor.stopMotor();
   }
 
-  /** runs motor, runs until canceled */
+  /**
+   * Runs the motor at a specified speed.
+   * 
+   * @param speed the duty cycle speed (-1 to 1) to set the motor
+   * @return a command which runs the motor until interrupted
+   */
   public CommandBase setSpeedCommand(double speed) {
     return this.startEnd(() -> setSpeed(speed), () -> setSpeed(0.0)).withName("RunSpeed" + getName());
   }
 
-  /** position (in or degrees) */
+  /**
+   * Gets the position
+   * 
+   * @return the position of the encoder in inches or degrees
+   */
   public double getLength() {
     return m_encoder.getPosition();
   }
 
-  /** velocity (rpm) */
+  /**
+   * Gets the velocity
+   * 
+   * @return the velocity in rpm
+   */
   public double getVelocity() {
     return m_encoder.getVelocity();
   }

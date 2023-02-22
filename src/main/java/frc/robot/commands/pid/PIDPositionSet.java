@@ -11,12 +11,18 @@ public abstract class PIDPositionSet extends CommandBase {
   protected final MotorTemplate m_subsystem;
   protected final double m_setpoint;
 
-  /** sets motor to length (in or degrees), then finishes */
+  /**
+   * Constructs a PID command that moves the {@link MotorTemplate} to the
+   * specified length. Will not finish unless overridden by subclass.
+   * 
+   * @param setpoint  the setpoint in units that the {@link MotorTemplate}
+   *                  position is in
+   * @param subsystem the subsystem in which the PID should run
+   */
   public PIDPositionSet(double setpoint, MotorTemplate subsystem) {
     m_subsystem = subsystem;
     m_setpoint = setpoint;
 
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
     setName("PIDPosition" + m_subsystem.getName());
   }
@@ -24,17 +30,6 @@ public abstract class PIDPositionSet extends CommandBase {
   @Override
   public void initialize() {
     m_subsystem.setPosition(m_setpoint);
-  }
-
-  @Override
-  public void execute() {
-
-  }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return (Math.abs(m_setpoint - m_subsystem.getLength()) <= 0.25) && (Math.abs(m_subsystem.getVelocity()) <= 1);
   }
 
   @Override

@@ -8,7 +8,12 @@ import frc.robot.subsystems.motor.ArmSubsystem;
 
 public class ArmStopMovement extends ArmSetLength {
 
-    /** sets arm to current length, does not finish */
+    /**
+     * Constructs a new {@link ArmSetLength} for the {@link ArmSubsystem} that
+     * will hold the robot at the position it was upon construction, and will not finish.
+     * 
+     * @param subsystem the {@link ArmSubsystem} for the position to be set
+     */
     public ArmStopMovement(ArmSubsystem arm) {
         super(arm.getLength(), arm);
     }

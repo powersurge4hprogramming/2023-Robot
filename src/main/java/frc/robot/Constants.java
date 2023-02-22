@@ -30,7 +30,7 @@ public final class Constants {
       // for encoder
       private static final double kGearToothRatio = 20.0 / 147;
       private static final double kGearboxRatio = 1.0 / 12;
-      private static final double kLossMultipler = 1.0-(2.25/90);
+      private static final double kLossMultipler = 1.0 - (2.25 / 90);
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360 * kLossMultipler;
 
       public static final int kMotorPort = 16;

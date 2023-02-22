@@ -11,7 +11,7 @@ import frc.robot.Constants.QuartetConstants.TurretConstants;
 
 public class TurretSubsystem extends MotorTemplate {
 
-  /** Creates a new TurretSubsystem. */
+  /** Creates a new TurretSubsystem, position units are degrees. */
   public TurretSubsystem() {
     super(TurretConstants.kMotorPort);
 
@@ -35,6 +35,8 @@ public class TurretSubsystem extends MotorTemplate {
     m_pidController.setPositionPIDWrappingMinInput(-180);
     m_pidController.setPositionPIDWrappingMaxInput(180);
 
+    m_motor.setSmartCurrentLimit(20, 25);
+
     setName("TurretSubsystem");
   }
 
@@ -47,6 +49,12 @@ public class TurretSubsystem extends MotorTemplate {
     SmartDashboard.putNumber("Turret Rot", rot);
   }
 
+  /**
+   * Gets the rotations of the turret.
+   * 
+   * @return the positive or negative decimal number of the rotations the turret
+   *         has moved
+   */
   private double getRotations() {
     return m_encoder.getPosition() / 360.0;
   }

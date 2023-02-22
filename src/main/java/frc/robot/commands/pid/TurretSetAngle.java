@@ -4,12 +4,19 @@
 
 package frc.robot.commands.pid;
 
-import frc.robot.subsystems.motor.MotorTemplate;
+import frc.robot.subsystems.motor.TurretSubsystem;
 
 public class TurretSetAngle extends PIDPositionSet {
 
-  /** sets turret to angle (degrees) then finishes */
-  public TurretSetAngle(double setpoint, MotorTemplate subsystem) {
+  /**
+   * Constructs a new {@link PIDPositionSet} for the {@link TurretSubsystem}
+   * that
+   * will move the robot to the specified length, then finish.
+   * 
+   * @param setpoint  (degrees) The setpoint for the turret
+   * @param subsystem the {@link TurretSubsystem} for the position to be set
+   */
+  public TurretSetAngle(double setpoint, TurretSubsystem subsystem) {
     super(setpoint, subsystem);
   }
 

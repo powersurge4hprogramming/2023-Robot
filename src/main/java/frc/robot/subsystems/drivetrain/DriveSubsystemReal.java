@@ -141,6 +141,7 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     }).withName("ToggleBrakeMode");
   }
 
+  /** Updates CANSparkMax brake mode based on {@code m_brake} */
   private void updateBrakeMode() {
     if (m_brake) {
       m_leftMotorLeader.setIdleMode(IdleMode.kBrake);

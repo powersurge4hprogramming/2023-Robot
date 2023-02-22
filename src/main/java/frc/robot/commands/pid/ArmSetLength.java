@@ -4,16 +4,21 @@
 
 package frc.robot.commands.pid;
 
-import frc.robot.subsystems.motor.MotorTemplate;
+import frc.robot.subsystems.motor.ArmSubsystem;
 
 public class ArmSetLength extends PIDPositionSet {
 
-  /** sets arm to length (in) then finishes */
-  public ArmSetLength(double setpoint, MotorTemplate subsystem) {
+  /**
+   * Constructs a new {@link PIDPositionSet} for the {@link ArmSubsystem} that
+   * will move the robot to the specified length, then finish
+   * 
+   * @param setpoint  (inches) The setpoint for the arm
+   * @param subsystem the {@link ArmSubsystem} for the position to be set
+   */
+  public ArmSetLength(double setpoint, ArmSubsystem subsystem) {
     super(setpoint, subsystem);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return (Math.abs(m_setpoint - m_subsystem.getLength()) <= 0.25) && (Math.abs(m_subsystem.getVelocity()) <= 1);

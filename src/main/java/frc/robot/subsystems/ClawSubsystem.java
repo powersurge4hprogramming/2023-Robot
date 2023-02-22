@@ -18,7 +18,7 @@ import frc.robot.Constants.QuartetConstants.ClawConstants;
 import frc.robot.structs.LEDManager;
 
 public class ClawSubsystem extends SubsystemBase {
-  /** Enum for determining the mode of robot pickup, for pressures and LEDs */
+  /** Enum for determining the mode of robot pickup, for pressures. */
   public static enum PickupMode {
     Cone,
     Cube,
@@ -58,20 +58,38 @@ public class ClawSubsystem extends SubsystemBase {
     SmartDashboard.putString("CLAW MODE", m_pickupMode.name());
   }
 
+  /**
+   * Runs the swivel to a specified speed.
+   * 
+   * @param speed the duty cycle speed to set the motor (-1 to 1)
+   */
   private void runSwivel(double speed) {
     m_swivelMotor.set(speed);
   }
 
+  /**
+   * Updates the LEDs based on the {@link PickupMode} the robot is currently in.
+   */
   private void updateLEDs() {
     LEDManager.setPickupLEDs(m_pickupMode);
   }
 
-  /** run the swivel claw, runs until canceled */
+  /**
+   * Runs the swivel
+   * 
+   * @param speed the duty cycle speed to set the motor (-1 to 1)
+   * @return a command which runs the swivel until interrupted
+   */
   public CommandBase runSwivelCommand(double speed) {
     return this.startEnd(() -> runSwivel(speed), () -> runSwivel(0.0)).withName("RunSwivel");
   }
 
-  /** change pickup mode and update LEDs, runs once */
+  /**
+   * Changes the pickup mode and update LEDs
+   * 
+   * @param mode the new pickup mode
+   * @return a command which changes the pickup mode, runs once
+   */
   public CommandBase setPickupModeCommand(PickupMode mode) {
     return this.runOnce(() -> {
       m_pickupMode = mode;
@@ -79,16 +97,26 @@ public class ClawSubsystem extends SubsystemBase {
     }).withName("SetPickupMode");
   }
 
-  /** Save pickup mode then grab, runs once */
+  /**
+   * Saves the pickup mode then grabs the object
+   * 
+   * @param mode the new pickup mode
+   * @return a command which changes the pickup mode and then grabs the object,
+   *         runs once
+   */
   public CommandBase grabCommand(PickupMode mode) {
     return this.runOnce(() -> {
       m_pickupMode = mode;
       updateLEDs();
       grabCommand();
-    }).withName("GrabModeset");
+    }).withName("GrabModeSet");
   }
 
-  /** grab claw using saved pickup mode, runs once */
+  /**
+   * Grabs the object based on the saved pickup mode
+   * 
+   * @return a command which grabs the object, runs once
+   */
   public CommandBase grabCommand() {
     return this.runOnce(() -> {
       switch (m_pickupMode) {
@@ -109,7 +137,11 @@ public class ClawSubsystem extends SubsystemBase {
     }).withName("GrabUseMode");
   }
 
-  /** release claw, runs once */
+  /**
+   * Releases the claw
+   * 
+   * @return a command which releases the claw, runs once
+   */
   public CommandBase releaseCommand() {
     return this.runOnce(() -> {
       m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff);
