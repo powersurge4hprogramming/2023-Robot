@@ -10,7 +10,8 @@ public class ArmStopMovement extends ArmSetLength {
 
     /**
      * Constructs a new {@link ArmSetLength} for the {@link ArmSubsystem} that
-     * will hold the robot at the position it was upon construction, and will not finish.
+     * will hold the robot at the position it was upon construction, and will not
+     * finish.
      * 
      * @param subsystem the {@link ArmSubsystem} for the position to be set
      */

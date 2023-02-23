@@ -4,6 +4,7 @@
 
 package frc.robot.commands.pid;
 
+import static frc.robot.Constants.QuartetConstants.TurretConstants.*;
 import frc.robot.subsystems.motor.TurretSubsystem;
 
 public class TurretSetAngle extends PIDPositionSet {
@@ -23,6 +24,7 @@ public class TurretSetAngle extends PIDPositionSet {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Math.abs(m_setpoint - m_subsystem.getLength()) <= 1) && (Math.abs(m_subsystem.getVelocity()) <= 1);
+    return (Math.abs(m_setpoint - m_subsystem.getLength()) <= kPositionTolerance)
+        && (Math.abs(m_subsystem.getVelocity()) <= kVelocityTolerance);
   }
 }

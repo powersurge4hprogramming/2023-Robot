@@ -6,11 +6,11 @@ package frc.robot;
 
 import java.util.List;
 
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -35,6 +35,15 @@ public final class Constants {
 
       public static final int kMotorPort = 16;
 
+      public static final double kPositionTolerance = 0.25;
+      public static final double kVelocityTolerance = 1;
+      public static final double kP = 0.01;
+      public static final double kD = 0.01;
+      public static final double kMin = -0.15;
+      public static final double kMax = 0.15;
+
+      public static final double kStartingDegrees = 180;
+
       public static final double kMaxRotations = 4; // TODO
 
     }
@@ -47,8 +56,16 @@ public final class Constants {
 
       public static final int kMotorPort = 17;
 
+      public static final double kPositionTolerance = 0.5;
+      public static final double kVelocityTolerance = 1;
+      public static final double kP = 0.01;
+      public static final double kD = 0.00;
+      public static final double kMin = -0.15;
+      public static final double kMax = 0.15;
+
       public static final int kMaxDegrees = 70; // TODO
       public static final int kMinDegrees = -30; // TODO
+      public static final int kStartingDegrees = 0; // TODO
 
       public static final double kHighGoalShoulderAngle = 0; // TODO
       public static final double kLowGoalShoulderAngle = 0; // TODO
@@ -67,10 +84,17 @@ public final class Constants {
 
       public static final int kMotorPort = 12;
 
+      public static final double kPositionTolerance = 0.25;
+      public static final double kVelocityTolerance = 1;
+      public static final double kP = 0.05;
+      public static final double kD = 0.00;
+      public static final double kMin = -0.6;
+      public static final double kMax = 0.4;
+
       public static final int kLockSolenoidFwd = 9; // TODO
       public static final int kLockSolenoidBkwd = 8; // TODO
 
-      public static final double kMaxPosInches = 46.23; // (51 is real max)
+      public static final double kMaxPosInches = 46.23; // TODO (51 is real max)
       public static final double kMinPosInches = 0.0; //
 
       public static final double kHighGoalArmLength = 0; // TODO
@@ -81,10 +105,11 @@ public final class Constants {
     }
 
     public static final class ClawConstants {
-      // foward, reverse for double solenoid
-      public static final Pair<Integer, Integer> kDoubleSolenoidClawUpstream = new Pair<Integer, Integer>(3, 2); // 2=60
-                                                                                                                 // 3=30
-      public static final Pair<Integer, Integer> kDoubleSolenoidClawDownstream = new Pair<Integer, Integer>(4, 5);
+      public static final int kClawUpstreamFwd = 3; // 30 PSI
+      public static final int kClawUpstreamBkwd = 2; // 60 PSI
+
+      public static final int kClawDownstreamFwd = 4;
+      public static final int kClawDownstreamBkwd = 5;
 
       public static final int kSwivelMotor = 18;
     }
@@ -95,9 +120,6 @@ public final class Constants {
     public static final int kLeftMotorFollowerPort = 8;
     public static final int kRightMotorLeaderPort = 6;
     public static final int kRightMotorFollowerPort = 9;
-
-    public static final boolean kLeftEncoderReversed = false;
-    public static final boolean kRightEncoderReversed = true;
 
     public static final double kDriveSpeedLimit = 0.70; // TODO
 
@@ -175,5 +197,20 @@ public final class Constants {
   public static final class LEDConstants {
     public static final int kNumberOfLEDs = 26;
     public static final int kLEDPWMPort = 0;
+
+    public static final Color kRedAllianceColor = new Color(145, 0, 0);
+    public static final Color kBlueAllianceColor = new Color(0, 0, 145);
+    public static final Color kInvalidAllianceColor = Color.kHotPink;
+
+    public static final List<Integer> kAllianceLEDIndexes = List.of(0, 1, 2, 10, 11, 12, 13, 14, 15, 23, 24, 25);
+
+    public static final Color kConeColor = new Color(36, 148, 48);
+    public static final Color kCubeColor = new Color(24, 128, 99);
+    public static final Color kStoppybarColor = new Color(0, 192, 0); // "robot" green
+
+    public static final List<Integer> kPickupLEDIndexes = List.of(3, 4, 5, 6, 7, 8, 9, 16, 17, 18, 19, 20, 21, 22);
+
+    public static final Color kTransparentColor = new Color(0, 0, 0);
+
   }
 }

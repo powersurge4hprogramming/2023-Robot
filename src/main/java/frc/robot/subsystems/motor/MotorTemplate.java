@@ -61,7 +61,7 @@ public abstract class MotorTemplate extends SubsystemBase {
    * @return a command which runs the motor until interrupted
    */
   public CommandBase setSpeedCommand(double speed) {
-    return this.startEnd(() -> setSpeed(speed), () -> setSpeed(0.0)).withName("RunSpeed" + getName());
+    return this.startEnd(() -> setSpeed(speed), () -> stopMotor()).withName("RunSpeed" + getName());
   }
 
   /**

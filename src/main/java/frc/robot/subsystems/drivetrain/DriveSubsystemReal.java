@@ -78,6 +78,8 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     m_odometry.update(m_gyro.getRotation2d(),
         m_leftEncoder.getPosition(),
         m_rightEncoder.getPosition());
+
+    SmartDashboard.putBoolean("Drive Brake", m_brake);
   }
 
   @Override
@@ -134,10 +136,9 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   }
 
   @Override
-  public CommandBase toggleBrakeModeCommand() {
+  public CommandBase setBrakeModeCommand(boolean brakeMode) {
     return this.runOnce(() -> {
-      m_brake = !m_brake;
-      updateBrakeMode();
+      setBrakeMode(brakeMode);
     }).withName("ToggleBrakeMode");
   }
 

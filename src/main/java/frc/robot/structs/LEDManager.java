@@ -62,17 +62,16 @@ public class LEDManager {
         }
 
         m_led.start();
-        List<Integer> indexes = List.of(0, 1, 2, 10, 11, 12, 13, 14, 15, 23, 24, 25);
         switch (DriverStation.getAlliance()) {
             case Blue:
-                setIndexesColor(indexes, Color.kBlue);
+                setIndexesColor(LEDConstants.kAllianceLEDIndexes, LEDConstants.kBlueAllianceColor);
                 break;
             case Red:
-                setIndexesColor(indexes, Color.kRed);
+                setIndexesColor(LEDConstants.kAllianceLEDIndexes, LEDConstants.kRedAllianceColor);
                 break;
             case Invalid:
             default:
-                setIndexesColor(indexes, Color.kHotPink);
+                setIndexesColor(LEDConstants.kAllianceLEDIndexes, LEDConstants.kInvalidAllianceColor);
                 break;
 
         }
@@ -96,31 +95,32 @@ public class LEDManager {
         Color color;
         switch (mode) {
             case Cone:
-                color = Color.kYellow;
+                color = LEDConstants.kConeColor;
                 break;
             case Cube:
-                color = Color.kPurple;
+                color = LEDConstants.kCubeColor;
                 break;
             case None:
-                color = new Color(0, 0, 0);
+                color = LEDConstants.kTransparentColor;
             default:
-                color = new Color(0, 0, 0);
+                color = LEDConstants.kTransparentColor;
                 break;
         }
-        setIndexesColor(List.of(3, 4, 5, 6, 7, 8, 9, 16, 17, 18, 19, 20, 21, 22), color);
+        setIndexesColor(LEDConstants.kPickupLEDIndexes, color);
     }
 
-    /** Sets the pickup LEDs based on whether the stoppy bars are down.
+    /**
+     * Sets the pickup LEDs based on whether the stoppy bars are down.
      * 
      * @param on whether the stoppy bar is activated
      */
     public static void setStoppyBarLEDs(boolean on) {
         Color color;
         if (on) {
-            color = new Color(0, 192, 0); // "robot" green
+            color = LEDConstants.kStoppybarColor;
         } else {
-            color = new Color(0, 0, 0);
+            color = LEDConstants.kTransparentColor;
         }
-        setIndexesColor(List.of(3, 4, 5, 6, 7, 8, 9, 16, 17, 18, 19, 20, 21, 22), color);
+        setIndexesColor(LEDConstants.kPickupLEDIndexes, color);
     }
 }

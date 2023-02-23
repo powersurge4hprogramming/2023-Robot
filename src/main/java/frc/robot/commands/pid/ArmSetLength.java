@@ -4,6 +4,7 @@
 
 package frc.robot.commands.pid;
 
+import static frc.robot.Constants.QuartetConstants.ArmConstants.*;
 import frc.robot.subsystems.motor.ArmSubsystem;
 
 public class ArmSetLength extends PIDPositionSet {
@@ -21,6 +22,7 @@ public class ArmSetLength extends PIDPositionSet {
 
   @Override
   public boolean isFinished() {
-    return (Math.abs(m_setpoint - m_subsystem.getLength()) <= 0.25) && (Math.abs(m_subsystem.getVelocity()) <= 1);
+    return (Math.abs(m_setpoint - m_subsystem.getLength()) <= kPositionTolerance)
+        && (Math.abs(m_subsystem.getVelocity()) <= kVelocityTolerance);
   }
 }

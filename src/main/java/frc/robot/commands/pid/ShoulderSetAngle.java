@@ -4,6 +4,7 @@
 
 package frc.robot.commands.pid;
 
+import static frc.robot.Constants.QuartetConstants.ShoulderConstants.*;
 import frc.robot.subsystems.motor.MotorTemplate;
 
 public class ShoulderSetAngle extends PIDPositionSet {
@@ -22,7 +23,8 @@ public class ShoulderSetAngle extends PIDPositionSet {
 
   @Override
   public boolean isFinished() {
-    return (Math.abs(m_setpoint - m_subsystem.getLength()) <= 0.5) && (Math.abs(m_subsystem.getVelocity()) <= 1);
+    return (Math.abs(m_setpoint - m_subsystem.getLength()) <= kPositionTolerance)
+        && (Math.abs(m_subsystem.getVelocity()) <= kVelocityTolerance);
   }
 
 }

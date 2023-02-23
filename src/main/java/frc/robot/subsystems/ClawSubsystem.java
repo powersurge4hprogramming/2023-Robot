@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.QuartetConstants.ClawConstants;
+import static frc.robot.Constants.QuartetConstants.ClawConstants.*;
 import frc.robot.structs.LEDManager;
 
 public class ClawSubsystem extends SubsystemBase {
@@ -27,13 +27,13 @@ public class ClawSubsystem extends SubsystemBase {
 
   // forward 30, reverse, 60
   private final DoubleSolenoid m_doubleSolenoidUpstream = new DoubleSolenoid(PneumaticsModuleType.REVPH,
-      ClawConstants.kDoubleSolenoidClawUpstream.getFirst(), ClawConstants.kDoubleSolenoidClawUpstream.getSecond());
+      kClawUpstreamFwd, kClawUpstreamBkwd);
 
   // forward grab, reverse release
   private final DoubleSolenoid m_doubleSolenoidDownstream = new DoubleSolenoid(PneumaticsModuleType.REVPH,
-      ClawConstants.kDoubleSolenoidClawDownstream.getFirst(), ClawConstants.kDoubleSolenoidClawDownstream.getSecond());
+      kClawDownstreamFwd, kClawDownstreamBkwd);
 
-  private final CANSparkMax m_swivelMotor = new CANSparkMax(ClawConstants.kSwivelMotor, MotorType.kBrushed);
+  private final CANSparkMax m_swivelMotor = new CANSparkMax(kSwivelMotor, MotorType.kBrushed);
 
   private PickupMode m_pickupMode = PickupMode.None;
 
@@ -41,11 +41,8 @@ public class ClawSubsystem extends SubsystemBase {
   public ClawSubsystem() {
     m_swivelMotor.setIdleMode(IdleMode.kBrake);
 
-    new DoubleSolenoidSim(PneumaticsModuleType.REVPH,
-        ClawConstants.kDoubleSolenoidClawUpstream.getFirst(), ClawConstants.kDoubleSolenoidClawUpstream.getSecond());
-    new DoubleSolenoidSim(PneumaticsModuleType.REVPH,
-        ClawConstants.kDoubleSolenoidClawDownstream.getFirst(),
-        ClawConstants.kDoubleSolenoidClawDownstream.getSecond());
+    new DoubleSolenoidSim(PneumaticsModuleType.REVPH, kClawUpstreamFwd, kClawUpstreamBkwd);
+    new DoubleSolenoidSim(PneumaticsModuleType.REVPH, kClawDownstreamFwd, kClawDownstreamBkwd);
 
     m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff);
     m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kReverse);

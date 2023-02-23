@@ -12,48 +12,52 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.QuartetConstants.ArmConstants;
+import static frc.robot.Constants.QuartetConstants.ArmConstants.*;
 
 public class ArmSubsystem extends MotorTemplate {
 
-  private final DoubleSolenoid m_lockSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH,
-      ArmConstants.kLockSolenoidFwd, ArmConstants.kLockSolenoidFwd);
+  private final DoubleSolenoid m_lockSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, kLockSolenoidFwd,
+      kLockSolenoidBkwd);
 
   /** Creates a new ArmSubsystem, position units are inches. */
   public ArmSubsystem() {
-    super(ArmConstants.kMotorPort);
+    super(kMotorPort);
 
-    new DoubleSolenoidSim(PneumaticsModuleType.REVPH, ArmConstants.kLockSolenoidFwd, ArmConstants.kLockSolenoidFwd);
+    new DoubleSolenoidSim(PneumaticsModuleType.REVPH, kLockSolenoidFwd, kLockSolenoidFwd);
 
     m_motor.restoreFactoryDefaults();
 
-    m_encoder.setPositionConversionFactor(ArmConstants.kDistancePerRevInches);
+    m_encoder.setPositionConversionFactor(kDistancePerRevInches);
     m_motor.setIdleMode(IdleMode.kBrake);
     m_motor.setInverted(true);
 
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
 
-    m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ((float) ArmConstants.kMinPosInches));
-    m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ((float) ArmConstants.kMaxPosInches));
+    m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ((float) kMinPosInches));
+    m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ((float) kMaxPosInches));
 
     m_motor.setSmartCurrentLimit(20, 25);
 
-    m_pidController.setOutputRange(-0.6, 0.4);
-    m_pidController.setP(0.05);
+    m_pidController.setOutputRange(kMin, kMax);
+    m_pidController.setP(kP);
+    m_pidController.setD(kD);
 
     setName("ArmSubsystem");
   }
 
   @Override
   public void periodic() {
-    double pos = m_encoder.getPosition();
-    if (pos >= ArmConstants.kMaxPosInches && (Math.signum(m_motor.get()) == 1)) {
-      m_motor.set(0.0);
-    } else if (pos <= ArmConstants.kMinPosInches && (Math.signum(m_motor.get()) == -1)) {
-      m_motor.set(0.0);
-    }
-    SmartDashboard.putNumber("Arm Length", pos);
+    /*
+     * double pos = m_encoder.getPosition();
+     * if (pos >= ArmConstants.kMaxPosInches && (Math.signum(m_motor.get()) == 1)) {
+     * m_motor.set(0.0);
+     * } else if (pos <= ArmConstants.kMinPosInches && (Math.signum(m_motor.get())
+     * == -1)) {
+     * m_motor.set(0.0);
+     * }
+     */
+    SmartDashboard.putNumber("Arm Length", m_encoder.getPosition());
   }
 
   /**

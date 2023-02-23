@@ -213,15 +213,20 @@ public class RobotContainer {
                 // Dumb bindings (non distance based)
                 // Drive bindings
 
+                // Set brake mode, with a debounce of 0.5 seconds to prevent accidental left
+                // stick activation
+                m_driverController.leftStick().debounce(0.5).onTrue(m_driveSubsystem.setBrakeModeCommand(true));
+                m_driverController.leftStick().onFalse(m_driveSubsystem.setBrakeModeCommand(false));
+
                 // Operator controller bindings
                 m_operatorController.leftBumper()
                                 .whileTrue(m_turretSubsystem.setSpeedCommand(-0.15));
                 m_operatorController.rightBumper()
                                 .whileTrue(m_turretSubsystem.setSpeedCommand(0.15));
                 m_operatorController.leftTrigger()
-                                .whileTrue(m_armSubsystem.setSpeedCommand(-0.01));
+                                .whileTrue(m_armSubsystem.setSpeedCommand(-0.15));
                 m_operatorController.rightTrigger()
-                                .whileTrue(m_armSubsystem.setSpeedCommand(0.01));
+                                .whileTrue(m_armSubsystem.setSpeedCommand(0.3));
                 m_operatorController.x().onTrue(m_clawSubsystem.grabCommand());
                 m_operatorController.b().onTrue(m_clawSubsystem.releaseCommand());
                 m_operatorController.pov(0)
@@ -238,9 +243,9 @@ public class RobotContainer {
                 m_operatorController.leftStick().onTrue(m_armSubsystem.toggleArmLock());
 
                 // arcade pad
-                // enable/disable brake mode
-                m_arcadePad.share().onTrue(m_driveSubsystem.toggleBrakeModeCommand());
                 m_arcadePad.rightTrigger().onTrue(m_clawSubsystem.releaseCommand());
+                m_arcadePad.L3().onTrue(Commands.run(() -> LEDManager.start(), new Subsystem[0]));
+                m_arcadePad.L3().onTrue(Commands.run(() -> LEDManager.stop(), new Subsystem[0]));
 
                 // Smart bindings -->
                 // Operator controller bindings
@@ -278,6 +283,14 @@ public class RobotContainer {
                                                 m_shoulderSubsystem),
                                 new ArmSetLength(ArmConstants.kSubstationPickupArmLength, m_armSubsystem))
                                 .withName("Substation").beforeStarting(this::pidUp, new Subsystem[0]))
+                                .finallyDo(this::pidDown));
+
+                // Set shoulder and arm to full starting/finishing retraction
+                m_arcadePad.b().whileTrue((Commands.parallel(
+                                new ShoulderSetAngle(ShoulderConstants.kStartingDegrees,
+                                                m_shoulderSubsystem),
+                                new ArmSetLength(0, m_armSubsystem))
+                                .withName("ResetStarting").beforeStarting(this::pidUp, new Subsystem[0]))
                                 .finallyDo(this::pidDown));
 
         }
@@ -352,7 +365,7 @@ public class RobotContainer {
                 LEDManager.start();
 
                 m_armSubsystem.setArmLock(false);
-                m_driveSubsystem.setBrakeMode(false);
+                m_driveSubsystem.setBrakeMode(m_driverController.leftStick().getAsBoolean());
         }
 
 }

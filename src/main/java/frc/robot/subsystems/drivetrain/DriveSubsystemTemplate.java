@@ -84,7 +84,7 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
    * 
    * @return a command which toggles the brake mode and then finishes
    */
-  public abstract CommandBase toggleBrakeModeCommand();
+  public abstract CommandBase setBrakeModeCommand(boolean brakeMode);
 
   /** Calibrate gyro (takes 5 seconds, robot MUST not move) */
   public void calibrateGyro() {

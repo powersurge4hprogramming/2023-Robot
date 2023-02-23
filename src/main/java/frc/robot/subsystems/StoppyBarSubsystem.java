@@ -10,12 +10,12 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.StoppyBarConstants;
+import static frc.robot.Constants.StoppyBarConstants.*;
 import frc.robot.structs.LEDManager;
 
 public class StoppyBarSubsystem extends SubsystemBase {
-  private final DoubleSolenoid m_doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH,
-      StoppyBarConstants.kFowardSolenoidPort, StoppyBarConstants.kBackwardSolenoidPort);
+  private final DoubleSolenoid m_doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, kFowardSolenoidPort,
+      kBackwardSolenoidPort);
 
   private boolean m_stoppyOn = false;
 
