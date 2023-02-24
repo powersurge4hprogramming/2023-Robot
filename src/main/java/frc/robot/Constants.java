@@ -155,8 +155,8 @@ public final class Constants {
   }
 
   public static final class StoppyBarConstants {
-    public static final int kFowardSolenoidPort = 1;
-    public static final int kBackwardSolenoidPort = 0;
+    public static final int kFowardSolenoidPort = 0;
+    public static final int kBackwardSolenoidPort = 1;
   }
 
   public static final class OIConstants {
@@ -199,14 +199,14 @@ public final class Constants {
     public static final int kLEDPWMPort = 0;
 
     public static final Color kRedAllianceColor = new Color(145, 0, 0);
-    public static final Color kBlueAllianceColor = new Color(0, 0, 145);
+    public static final Color kBlueAllianceColor = new Color(0, 0, 80);
     public static final Color kInvalidAllianceColor = Color.kHotPink;
 
     public static final List<Integer> kAllianceLEDIndexes = List.of(0, 1, 2, 10, 11, 12, 13, 14, 15, 23, 24, 25);
 
-    public static final Color kConeColor = new Color(36, 148, 48);
-    public static final Color kCubeColor = new Color(24, 128, 99);
-    public static final Color kStoppybarColor = new Color(0, 192, 0); // "robot" green
+    public static final Color kConeColor = new Color(100, 28, 0);
+    public static final Color kCubeColor = new Color(100, 0, 60);
+    public static final Color kStoppybarColor = new Color(0, 140, 0); // "robot" green
 
     public static final List<Integer> kPickupLEDIndexes = List.of(3, 4, 5, 6, 7, 8, 9, 16, 17, 18, 19, 20, 21, 22);
 

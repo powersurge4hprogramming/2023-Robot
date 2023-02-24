@@ -25,7 +25,7 @@ public class LEDManager {
 
     private final static AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(LEDConstants.kNumberOfLEDs);
 
-    private static boolean initialized = false;
+    private static boolean m_initialized = false;
 
     /**
      * Sets the LEDs to the specified color.
@@ -34,11 +34,11 @@ public class LEDManager {
      * @param color   the color to be sent to the LEDs (unconverted)
      */
     private static void setIndexesColor(List<Integer> indexes, Color color) {
-        /// Buffer converts RGB to BGR, and we want BRG. So this will do RBG -> GBR?
-        if (!initialized) {
+        if (!m_initialized) {
             initialize();
         }
 
+        // Buffer converts RGB to BGR, and we want BRG. So this will do RBG -> GBR?
         color = new Color(color.red, color.blue, color.green);
         for (int index : indexes) {
             m_ledBuffer.setLED(index, color);
@@ -48,16 +48,16 @@ public class LEDManager {
 
     /** Prepare the LEDs. This is expensive, so call this only once! */
     public static void initialize() {
-        if (!initialized) {
+        if (!m_initialized) {
             m_led.setLength(LEDConstants.kNumberOfLEDs);
             m_led.setData(m_ledBuffer);
-            initialized = true;
+            m_initialized = true;
         }
     }
 
     /** Start LED outputs, switching the alliance LEDs to the correct color. */
     public static void start() {
-        if (!initialized) {
+        if (!m_initialized) {
             initialize();
         }
 
@@ -79,7 +79,7 @@ public class LEDManager {
 
     /** Stop sending data to the LEDs. This will most likely turn them off? */
     public static void stop() {
-        if (!initialized) {
+        if (!m_initialized) {
             initialize();
         }
 
