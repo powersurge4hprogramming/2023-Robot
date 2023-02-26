@@ -245,7 +245,7 @@ public class RobotContainer {
                 // arcade pad
                 m_arcadePad.rightTrigger().onTrue(m_clawSubsystem.releaseCommand());
                 m_arcadePad.L3().onTrue(Commands.run(() -> LEDManager.start(), new Subsystem[0]));
-                m_arcadePad.L3().onTrue(Commands.run(() -> LEDManager.stop(), new Subsystem[0]));
+                m_arcadePad.R3().onTrue(Commands.run(() -> LEDManager.stop(), new Subsystem[0]));
 
                 // Smart bindings -->
                 // Operator controller bindings
@@ -253,9 +253,9 @@ public class RobotContainer {
                 // Turret directional
                 BooleanSupplier arcadePadPOVSupplier = () -> (m_arcadePad.getHID().getPOV() != -1);
                 new Trigger(arcadePadPOVSupplier)
-                                .whileTrue((new TurretSetAngle(m_arcadePad.getHID().getPOV(), m_turretSubsystem)
+                                .whileTrue((new TurretSetAngle(m_arcadePad.getHID()::getPOV, m_turretSubsystem)
                                                 .beforeStarting(this::pidUp, new Subsystem[0]))
-                                                .finallyDo(this::pidDown));
+                                                .finallyDo(this::pidDown).withName("SetTurretPOV"));
 
                 // Set shoulder and arm to HIGH GOAL
                 m_arcadePad.x().whileTrue((Commands.parallel(

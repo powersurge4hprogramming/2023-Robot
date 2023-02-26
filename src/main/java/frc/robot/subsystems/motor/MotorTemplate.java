@@ -37,6 +37,7 @@ public abstract class MotorTemplate extends SubsystemBase {
    * @speed the duty cycle speed (-1 to 1) to set the motor
    */
   private void setSpeed(double speed) {
+    // System.out.println("SetDuty" + getName());
     m_motor.set(speed);
   }
 
@@ -46,6 +47,7 @@ public abstract class MotorTemplate extends SubsystemBase {
    * @param position the position (in subclass units) to set the motor to
    */
   public void setPosition(double position) {
+    // System.out.println("SetPos" + getName() + position);
     m_pidController.setReference(position, ControlType.kPosition);
   }
 

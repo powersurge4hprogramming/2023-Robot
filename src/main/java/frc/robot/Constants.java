@@ -33,7 +33,7 @@ public final class Constants {
       private static final double kLossMultipler = 1.0 - (2.25 / 90);
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360 * kLossMultipler;
 
-      public static final int kMotorPort = 16;
+      public static final int kMotorPort = 12;
 
       public static final double kPositionTolerance = 0.25;
       public static final double kVelocityTolerance = 1;
@@ -44,7 +44,7 @@ public final class Constants {
 
       public static final double kStartingDegrees = 180;
 
-      public static final double kMaxRotations = 4; // TODO
+      public static final double kMaxRotations = 2; // TODO
 
     }
 
@@ -82,7 +82,7 @@ public final class Constants {
       // public static final double kDistancePerRevInches = kGearRatio * kSpoolRadius;
       public static final double kDistancePerRevInches = 0.1481470777; // This is empirically determined via testing
 
-      public static final int kMotorPort = 12;
+      public static final int kMotorPort = 16;
 
       public static final double kPositionTolerance = 0.25;
       public static final double kVelocityTolerance = 1;
@@ -121,7 +121,7 @@ public final class Constants {
     public static final int kRightMotorLeaderPort = 6;
     public static final int kRightMotorFollowerPort = 9;
 
-    public static final double kDriveSpeedLimit = 0.70; // TODO
+    public static final double kDriveSpeedLimit = 0.10; // TODO
 
     public static final double kTrackWidthMeters = 0.530352;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
@@ -195,14 +195,14 @@ public final class Constants {
   }
 
   public static final class LEDConstants {
-    public static final int kNumberOfLEDs = 26;
+    public static final int kNumberOfLEDs = 24;
     public static final int kLEDPWMPort = 0;
 
     public static final Color kRedAllianceColor = new Color(145, 0, 0);
     public static final Color kBlueAllianceColor = new Color(0, 0, 80);
     public static final Color kInvalidAllianceColor = Color.kHotPink;
 
-    public static final List<Integer> kAllianceLEDIndexes = List.of(0, 1, 2, 10, 11, 12, 13, 14, 15, 23, 24, 25);
+    public static final List<Integer> kAllianceLEDIndexes = List.of(0, 1, 2, 10, 11, 12, 13, 14, 15, 23);
 
     public static final Color kConeColor = new Color(100, 28, 0);
     public static final Color kCubeColor = new Color(100, 0, 60);
