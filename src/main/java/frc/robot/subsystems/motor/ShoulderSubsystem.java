@@ -25,8 +25,8 @@ public class ShoulderSubsystem extends MotorTemplate {
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
 
-    m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, kMinDegrees);
-    m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, kMaxDegrees);
+    m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) kMinDegrees);
+    m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) kMaxDegrees);
 
     m_motor.setSmartCurrentLimit(20, 25);
 
