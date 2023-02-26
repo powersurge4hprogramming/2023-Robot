@@ -1,10 +1,5 @@
 {
   "HALProvider": {
-    "Addressable LEDs": {
-      "window": {
-        "visible": true
-      }
-    },
     "Encoders": {
       "0": {
         "header": {
@@ -56,12 +51,20 @@
       "/LiveWindow/Ungrouped/PIDController[9]": "PIDController",
       "/LiveWindow/Ungrouped/PWMTalonSRX[18]": "Motor Controller",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/SmartDashboard/Arm2D": "Mechanism2d",
+      "/SmartDashboard/Arm2d": "Mechanism2d",
       "/SmartDashboard/Auto Selector": "String Chooser",
       "/SmartDashboard/DifferentialDrive[1]": "DifferentialDrive",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Mech2d": "Mechanism2d",
       "/SmartDashboard/PPRamseteCommand_field": "Field2d"
     },
     "windows": {
+      "/SmartDashboard/Arm2d": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Auto Selector": {
         "window": {
           "visible": true

@@ -63,9 +63,9 @@ public final class Constants {
       public static final double kMin = -0.15;
       public static final double kMax = 0.15;
 
-      public static final int kMaxDegrees = 70; // TODO
-      public static final int kMinDegrees = -30; // TODO
-      public static final int kStartingDegrees = 0; // TODO
+      public static final double kMaxDegrees = 43;
+      public static final double kMinDegrees = -62.5;
+      public static final double kStartingDegrees = -90;
 
       public static final double kHighGoalShoulderAngle = 0; // TODO
       public static final double kLowGoalShoulderAngle = 0; // TODO

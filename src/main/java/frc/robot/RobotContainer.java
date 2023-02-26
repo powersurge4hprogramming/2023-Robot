@@ -25,6 +25,7 @@ import frc.robot.structs.LEDManager;
 import frc.robot.structs.PhotonCameraWrapper;
 import frc.robot.structs.hid.CommandPXNArcadeStickController;
 import frc.robot.subsystems.ClawSubsystem;
+import frc.robot.subsystems.MechQuartetSubsystem;
 import frc.robot.subsystems.StoppyBarSubsystem;
 import frc.robot.subsystems.ClawSubsystem.PickupMode;
 import frc.robot.subsystems.drivetrain.DriveSubsystemReal;
@@ -118,6 +119,9 @@ public class RobotContainer {
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
+                new MechQuartetSubsystem(m_armSubsystem::getLength,
+                                m_shoulderSubsystem::getLength);
+
                 // create sim or real object
                 if (RobotBase.isSimulation()) {
                         m_driveSubsystem = new DriveSubsystemSim();
