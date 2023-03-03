@@ -50,8 +50,9 @@ public final class Constants {
 
     public static final class ShoulderConstants {
       // for encoder
-      private static final double kGearToothRatio = 1 / 100.0;
-      private static final double kGearboxRatio = 1 / 6.0;
+      private static final double kGearToothRatio = 1 / 6.0;
+      private static final double kGearboxRatio = 1 / 20.0;
+      private static final double kSprocketRatio = 1/15.0;
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
 
       public static final int kMotorPort = 17;
@@ -91,8 +92,8 @@ public final class Constants {
       public static final double kMin = -0.6;
       public static final double kMax = 0.4;
 
-      public static final int kLockSolenoidFwd = 9; // TODO
-      public static final int kLockSolenoidBkwd = 8; // TODO
+      public static final int kLockSolenoidFwd = 15;
+      public static final int kLockSolenoidBkwd = 14;
 
       public static final double kMaxPosInches = 46.23; // TODO (51 is real max)
       public static final double kMinPosInches = 0.0; //

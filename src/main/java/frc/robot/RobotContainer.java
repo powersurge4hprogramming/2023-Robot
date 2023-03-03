@@ -20,6 +20,7 @@ import frc.robot.commands.PhotonCameraReader;
 import frc.robot.commands.pid.ArmSetLength;
 import frc.robot.commands.pid.ArmStopMovement;
 import frc.robot.commands.pid.ShoulderSetAngle;
+import frc.robot.commands.pid.ShoulderStopMovement;
 import frc.robot.commands.pid.TurretSetAngle;
 import frc.robot.structs.LEDManager;
 import frc.robot.structs.PhotonCameraWrapper;
@@ -35,6 +36,7 @@ import frc.robot.subsystems.motor.ArmSubsystem;
 import frc.robot.subsystems.motor.ShoulderSubsystem;
 import frc.robot.subsystems.motor.TurretSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -179,6 +181,7 @@ public class RobotContainer {
                 SmartDashboard.putData("Auto Selector", m_chooser);
 
                 SmartDashboard.putBoolean("PIDs On", false);
+                SmartDashboard.putData(CommandScheduler.getInstance());
 
                 // Configure the button bindings
                 configureButtonBindings();
@@ -194,6 +197,7 @@ public class RobotContainer {
                                                 () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveArcade"));
 
                 m_armSubsystem.setDefaultCommand(new ArmStopMovement(m_armSubsystem));
+                m_shoulderSubsystem.setDefaultCommand(new ShoulderStopMovement(m_shoulderSubsystem));
 
                 m_photonCameraReader.schedule();
         }

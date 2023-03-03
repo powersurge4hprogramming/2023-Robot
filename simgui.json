@@ -57,7 +57,8 @@
       "/SmartDashboard/DifferentialDrive[1]": "DifferentialDrive",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Mech2d": "Mechanism2d",
-      "/SmartDashboard/PPRamseteCommand_field": "Field2d"
+      "/SmartDashboard/PPRamseteCommand_field": "Field2d",
+      "/SmartDashboard/Scheduler": "Scheduler"
     },
     "windows": {
       "/SmartDashboard/Arm2d": {

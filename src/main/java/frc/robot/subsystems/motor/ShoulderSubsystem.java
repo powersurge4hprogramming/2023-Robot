@@ -20,7 +20,7 @@ public class ShoulderSubsystem extends MotorTemplate {
     m_encoder.setPositionConversionFactor(kDegreesPerRev);
     m_encoder.setPosition(kStartingDegrees); // TODO figure out starting degrees
     m_motor.setIdleMode(IdleMode.kBrake);
-    m_motor.setInverted(true);
+    m_motor.setInverted(false);
 
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
