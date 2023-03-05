@@ -16,14 +16,14 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.QuartetConstants.ArmConstants;
 import frc.robot.Constants.QuartetConstants.ShoulderConstants;
-import frc.robot.commands.PhotonCameraReader;
+import frc.robot.commands.LimeCameraReader;
 import frc.robot.commands.pid.ArmSetLength;
 import frc.robot.commands.pid.ArmStopMovement;
 import frc.robot.commands.pid.ShoulderSetAngle;
 import frc.robot.commands.pid.ShoulderStopMovement;
 import frc.robot.commands.pid.TurretSetAngle;
 import frc.robot.structs.LEDManager;
-import frc.robot.structs.PhotonCameraWrapper;
+import frc.robot.structs.LimelightHelpers;
 import frc.robot.structs.hid.CommandPXNArcadeStickController;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.MechQuartetSubsystem;
@@ -78,9 +78,6 @@ public class RobotContainer {
 
         // <-- STRUCTS --> (HID, controllers, etc)
 
-        // the PhotonCamera global wrapper class
-        private final PhotonCameraWrapper m_photonCamera = new PhotonCameraWrapper();
-
         // The driver's controller
         private final CommandXboxController m_driverController = new CommandXboxController(
                         OIConstants.kDriverControllerPort);
@@ -98,7 +95,7 @@ public class RobotContainer {
         // <-- COMMANDS -->
 
         // the PhotonCamera Smartdashboard sending class
-        private final PhotonCameraReader m_photonCameraReader = new PhotonCameraReader(m_photonCamera);
+        private final LimeCameraReader m_limelightReader = new LimeCameraReader();
 
         // <-- END COMMANDS -->
 
@@ -199,7 +196,7 @@ public class RobotContainer {
                 m_armSubsystem.setDefaultCommand(new ArmStopMovement(m_armSubsystem));
                 m_shoulderSubsystem.setDefaultCommand(new ShoulderStopMovement(m_shoulderSubsystem));
 
-                m_photonCameraReader.schedule();
+                m_limelightReader.schedule();
         }
 
         /**
@@ -354,7 +351,8 @@ public class RobotContainer {
                 // Set the drive limit
                 m_driveSubsystem.limit(DriveConstants.kDriveSpeedLimit);
 
-                m_photonCamera.setDriveMode(true);
+                LimelightHelpers.setCameraMode_Driver(null);
+                ;
         }
 
         /**
