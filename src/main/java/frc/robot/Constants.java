@@ -39,6 +39,7 @@ public final class Constants {
       public static final double kVelocityTolerance = 1;
       public static final double kP = 0.01;
       public static final double kD = 0.01;
+      public static final double kF = 0.00;
       public static final double kMin = -0.15;
       public static final double kMax = 0.15;
 
@@ -52,7 +53,7 @@ public final class Constants {
       // for encoder
       private static final double kGearToothRatio = 1 / 6.0;
       private static final double kGearboxRatio = 1 / 20.0;
-      private static final double kSprocketRatio = 1/15.0;
+      private static final double kSprocketRatio = 1 / 15.0;
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
 
       public static final int kMotorPort = 17;
@@ -61,6 +62,7 @@ public final class Constants {
       public static final double kVelocityTolerance = 1;
       public static final double kP = 0.01;
       public static final double kD = 0.00;
+      public static final double kF = 0.00;
       public static final double kMin = -0.15;
       public static final double kMax = 0.15;
 
@@ -89,6 +91,7 @@ public final class Constants {
       public static final double kVelocityTolerance = 1;
       public static final double kP = 0.05;
       public static final double kD = 0.00;
+      public static final double kF = 0.00;
       public static final double kMin = -0.6;
       public static final double kMax = 0.4;
 

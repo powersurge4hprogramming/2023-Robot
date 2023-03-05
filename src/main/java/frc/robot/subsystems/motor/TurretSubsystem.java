@@ -31,6 +31,7 @@ public class TurretSubsystem extends MotorTemplate {
     m_pidController.setOutputRange(kMin, kMax);
     m_pidController.setP(kP);
     m_pidController.setD(kD);
+    m_pidController.setFF(kF);
     m_pidController.setPositionPIDWrappingEnabled(true);
     m_pidController.setPositionPIDWrappingMinInput(-180);
     m_pidController.setPositionPIDWrappingMaxInput(180);
@@ -42,13 +43,6 @@ public class TurretSubsystem extends MotorTemplate {
 
   @Override
   public void periodic() {
-    /*
-     * double rot = getRotations();
-     * if (Math.abs(rot) >= TurretConstants.kMaxRotations &&
-     * (Math.signum(m_motor.get()) == Math.signum(rot))) {
-     * m_motor.set(0.0);
-     * }
-     */
     SmartDashboard.putNumber("Turret Rot", getRotations());
   }
 

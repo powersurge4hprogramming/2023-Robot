@@ -33,22 +33,13 @@ public class ShoulderSubsystem extends MotorTemplate {
     m_pidController.setOutputRange(kMin, kMax);
     m_pidController.setP(kP);
     m_pidController.setD(kD);
+    m_pidController.setFF(kF);
 
     setName("ShoulderSubsystem");
   }
 
   @Override
   public void periodic() {
-    /*
-     * double deg = m_encoder.getPosition();
-     * if (deg >= ShoulderConstants.kMaxDegrees && (Math.signum(m_motor.get()) ==
-     * 1)) {
-     * m_motor.set(0.0);
-     * } else if (deg <= ShoulderConstants.kMinDegrees &&
-     * (Math.signum(m_motor.get()) == -1)) {
-     * m_motor.set(0.0);
-     * }
-     */
     SmartDashboard.putNumber("Shoulder Angle", m_encoder.getPosition());
   }
 }

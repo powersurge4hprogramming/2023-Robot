@@ -42,21 +42,13 @@ public class ArmSubsystem extends MotorTemplate {
     m_pidController.setOutputRange(kMin, kMax);
     m_pidController.setP(kP);
     m_pidController.setD(kD);
+    m_pidController.setFF(kF);
 
     setName("ArmSubsystem");
   }
 
   @Override
   public void periodic() {
-    /*
-     * double pos = m_encoder.getPosition();
-     * if (pos >= ArmConstants.kMaxPosInches && (Math.signum(m_motor.get()) == 1)) {
-     * m_motor.set(0.0);
-     * } else if (pos <= ArmConstants.kMinPosInches && (Math.signum(m_motor.get())
-     * == -1)) {
-     * m_motor.set(0.0);
-     * }
-     */
     SmartDashboard.putNumber("Arm Length", m_encoder.getPosition());
   }
 
