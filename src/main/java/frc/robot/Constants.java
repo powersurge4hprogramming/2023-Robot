@@ -6,9 +6,6 @@ package frc.robot;
 
 import java.util.List;
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -53,7 +50,7 @@ public final class Constants {
       // for encoder
       private static final double kGearToothRatio = 1 / 6.0;
       private static final double kGearboxRatio = 1 / 20.0;
-      private static final double kSprocketRatio = 1 / 15.0;
+    //  private static final double kSprocketRatio = 1 / 15.0;
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
 
       public static final int kMotorPort = 17;
@@ -93,7 +90,7 @@ public final class Constants {
       public static final double kD = 0.00;
       public static final double kF = 0.00;
       public static final double kMin = -0.6;
-      public static final double kMax = 0.4;
+      public static final double kMax = 0.01;
 
       public static final int kLockSolenoidFwd = 15;
       public static final int kLockSolenoidBkwd = 14;
@@ -181,20 +178,9 @@ public final class Constants {
     public static final String kAutoSelectionKey = "Auto Selector";
 
     // auto selections based on PathPlanner, from ./deploy/pathplanner dir
-    public static final String kDefaultAuto = "S1H-P1Cu-S2H-C";
-    public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-P1Co-S3H", "S9H-P1Cu-S8H-C",
-        "S9H-P4Cu-S8H-P3Co-S7H"); // TODO
-
-  }
-
-  public static final class VisionConstants {
-    // from photonvision webUI
-    public static final String kPhotonCameraName = "photonvision"; // TODO
-
-    // Camera location from center of robot
-    public static final Transform3d kRobotToCamera = new Transform3d(new Translation3d(0.5, 0.0, 0.5),
-        new Rotation3d(0, 0, 0)); // TODO Cam mounted facing forward, half a meter forward of center, half a meter
-                                  // up from center.
+    public static final String kDefaultAuto = "S6H-P1Cu-C";
+    public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-C", "S1H-P1Cu-S2H-P1Co",
+        "S9H-P1Cu-S8H-C", "S9H-P4Cu-S8H-P3Co");
 
   }
 

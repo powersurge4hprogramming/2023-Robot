@@ -114,7 +114,6 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     m_robotContainer.teleopInit();
-    CommandScheduler.getInstance().enable(); // TODO delete this, unsafe
   }
 
   /** This function is called periodically during test mode. */

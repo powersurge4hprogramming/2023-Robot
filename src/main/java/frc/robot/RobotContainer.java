@@ -155,6 +155,13 @@ public class RobotContainer {
                                                 new ShoulderSetAngle(ShoulderConstants.kHighGoalShoulderAngle,
                                                                 m_shoulderSubsystem))
                                                 .withName("place0HPrep"));
+                m_hashMap.put("retract",
+                                Commands.parallel(
+                                                new TurretSetAngle(0, m_turretSubsystem),
+                                                new ArmSetLength(0, m_armSubsystem),
+                                                new ShoulderSetAngle(ShoulderConstants.kStartingDegrees,
+                                                                m_shoulderSubsystem))
+                                                .withName("place0HPrep"));
                 m_hashMap.put("grabCu", m_clawSubsystem.grabCommand(PickupMode.Cube));
                 m_hashMap.put("grabCo", m_clawSubsystem.grabCommand(PickupMode.Cone));
                 m_hashMap.put("release", m_clawSubsystem.releaseCommand());
@@ -193,10 +200,9 @@ public class RobotContainer {
                                                                 -m_driverController.getRightX()),
                                                 () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveArcade"));
 
-                m_armSubsystem.setDefaultCommand(new ArmStopMovement(m_armSubsystem));
-                m_shoulderSubsystem.setDefaultCommand(new ShoulderStopMovement(m_shoulderSubsystem));
+            /*     m_armSubsystem.setDefaultCommand(new ArmStopMovement(m_armSubsystem));
+                m_shoulderSubsystem.setDefaultCommand(new ShoulderStopMovement(m_shoulderSubsystem)); */
 
-                m_limelightReader.schedule();
         }
 
         /**
@@ -231,7 +237,7 @@ public class RobotContainer {
                 m_operatorController.leftTrigger()
                                 .whileTrue(m_armSubsystem.setSpeedCommand(-0.15));
                 m_operatorController.rightTrigger()
-                                .whileTrue(m_armSubsystem.setSpeedCommand(0.3));
+                                .whileTrue(m_armSubsystem.setSpeedCommand(0.01));
                 m_operatorController.x().onTrue(m_clawSubsystem.grabCommand());
                 m_operatorController.b().onTrue(m_clawSubsystem.releaseCommand());
                 m_operatorController.pov(0)
@@ -241,9 +247,9 @@ public class RobotContainer {
                 m_operatorController.y().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cone));
                 m_operatorController.a().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cube));
                 m_operatorController.back()
-                                .whileTrue(m_clawSubsystem.runSwivelCommand(-0.1));
+                                .whileTrue(m_clawSubsystem.runSwivelCommand(-0.60));
                 m_operatorController.start()
-                                .whileTrue(m_clawSubsystem.runSwivelCommand(0.1));
+                                .whileTrue(m_clawSubsystem.runSwivelCommand(0.60));
 
                 m_operatorController.leftStick().onTrue(m_armSubsystem.toggleArmLock());
 

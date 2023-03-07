@@ -16,8 +16,12 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "grabCo",
+          "place180HPrep",
+          "release"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -39,7 +43,7 @@
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -70,5 +74,18 @@
       }
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "position": 0.6787878787879229,
+      "names": [
+        "collect0Prep"
+      ]
+    },
+    {
+      "position": 1.1515151515152167,
+      "names": [
+        "retract"
+      ]
+    }
+  ]
 }
