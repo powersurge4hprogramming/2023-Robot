@@ -95,7 +95,7 @@ public class RobotContainer {
         // <-- COMMANDS -->
 
         // the PhotonCamera Smartdashboard sending class
-        private final LimeCameraReader m_limelightReader = new LimeCameraReader();
+       // private final LimeCameraReader m_limelightReader = new LimeCameraReader();
 
         // <-- END COMMANDS -->
 
@@ -375,6 +375,8 @@ public class RobotContainer {
         public void teleopInit() {
                 LEDManager.initialize();
                 LEDManager.start();
+
+                LimelightHelpers.setCameraMode_Driver(null);
 
                 m_armSubsystem.setArmLock(false);
                 m_driveSubsystem.setBrakeMode(m_driverController.leftStick().getAsBoolean());

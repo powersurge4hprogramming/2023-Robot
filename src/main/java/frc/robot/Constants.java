@@ -42,7 +42,7 @@ public final class Constants {
 
       public static final double kStartingDegrees = 180;
 
-      public static final double kMaxRotations = 2; // TODO
+      public static final double kMaxRotations = 1.5;
 
     }
 
@@ -50,7 +50,7 @@ public final class Constants {
       // for encoder
       private static final double kGearToothRatio = 1 / 6.0;
       private static final double kGearboxRatio = 1 / 20.0;
-    //  private static final double kSprocketRatio = 1 / 15.0;
+      // private static final double kSprocketRatio = 1 / 15.0;
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
 
       public static final int kMotorPort = 17;
@@ -60,12 +60,12 @@ public final class Constants {
       public static final double kP = 0.01;
       public static final double kD = 0.00;
       public static final double kF = 0.00;
-      public static final double kMin = -0.15;
-      public static final double kMax = 0.15;
+      public static final double kMin = -0.7;
+      public static final double kMax = 0.3;
 
       public static final double kMaxDegrees = 43;
-      public static final double kMinDegrees = -62.5;
-      public static final double kStartingDegrees = -90;
+      public static final double kMinDegrees = -110;
+      public static final double kStartingDegrees = -109.8;
 
       public static final double kHighGoalShoulderAngle = 0; // TODO
       public static final double kLowGoalShoulderAngle = 0; // TODO
@@ -84,21 +84,21 @@ public final class Constants {
 
       public static final int kMotorPort = 16;
 
-      public static final double kPositionTolerance = 0.25;
+      public static final double kPositionTolerance = 0.5;
       public static final double kVelocityTolerance = 1;
       public static final double kP = 0.05;
       public static final double kD = 0.00;
       public static final double kF = 0.00;
       public static final double kMin = -0.6;
-      public static final double kMax = 0.01;
+      public static final double kMax = 0.3;
 
       public static final int kLockSolenoidFwd = 15;
       public static final int kLockSolenoidBkwd = 14;
 
-      public static final double kMaxPosInches = 46.23; // TODO (51 is real max)
-      public static final double kMinPosInches = 0.0; //
+      public static final double kMaxPosInches = 55.5;
+      public static final double kMinPosInches = 0.0;
 
-      public static final double kHighGoalArmLength = 0; // TODO
+      public static final double kHighGoalArmLength = 55;
       public static final double kLowGoalArmLength = 0; // TODO
       public static final double kGroundPickupArmLength = 0; // TODO
       public static final double kSubstationPickupArmLength = 0; // TODO
@@ -192,13 +192,13 @@ public final class Constants {
     public static final Color kBlueAllianceColor = new Color(0, 0, 80);
     public static final Color kInvalidAllianceColor = Color.kHotPink;
 
-    public static final List<Integer> kAllianceLEDIndexes = List.of(0, 1, 2, 10, 11, 12, 13, 14, 15, 23);
+    public static final List<Integer> kAllianceLEDIndexes = List.of(0, 1, 2, 10, 11, 12, 13, 22, 23);
 
     public static final Color kConeColor = new Color(100, 28, 0);
     public static final Color kCubeColor = new Color(100, 0, 60);
     public static final Color kStoppybarColor = new Color(0, 140, 0); // "robot" green
 
-    public static final List<Integer> kPickupLEDIndexes = List.of(3, 4, 5, 6, 7, 8, 9, 16, 17, 18, 19, 20, 21, 22);
+    public static final List<Integer> kPickupLEDIndexes = List.of(3, 4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 19, 20, 21);
 
     public static final Color kTransparentColor = new Color(0, 0, 0);
 

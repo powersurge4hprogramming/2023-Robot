@@ -37,7 +37,7 @@ public class ArmSubsystem extends MotorTemplate {
     m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ((float) kMinPosInches));
     m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ((float) kMaxPosInches));
 
-    m_motor.setSmartCurrentLimit(20, 25);
+    m_motor.setSmartCurrentLimit(60, 30);
 
     m_pidController.setOutputRange(kMin, kMax);
     m_pidController.setP(kP);
