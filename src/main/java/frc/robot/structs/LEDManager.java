@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.AddressableLEDSim;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants.LEDConstants;
-import frc.robot.subsystems.ClawSubsystem.PickupMode;
+import frc.robot.Constants.QuartetConstants.ClawConstants.PickupMode;
 
 /**
  * The static manager for the LEDs. Call {@code initialize()} before running!
@@ -60,8 +60,6 @@ public class LEDManager {
         if (!m_initialized) {
             initialize();
         }
-
-        m_led.start();
         switch (DriverStation.getAlliance()) {
             case Blue:
                 setIndexesColor(LEDConstants.kAllianceLEDIndexes, LEDConstants.kBlueAllianceColor);
@@ -75,6 +73,7 @@ public class LEDManager {
                 break;
 
         }
+        m_led.start();
     }
 
     /** Stop sending data to the LEDs. This will most likely turn them off? */
@@ -82,7 +81,9 @@ public class LEDManager {
         if (!m_initialized) {
             initialize();
         }
-
+        setIndexesColor(List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20),
+                new Color(0, 0, 0));
+        m_led.setData(m_ledBuffer);
         m_led.stop();
     }
 

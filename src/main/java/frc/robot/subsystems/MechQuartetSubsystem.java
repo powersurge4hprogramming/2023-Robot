@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.QuartetConstants.ShoulderConstants;
+import frc.robot.Constants.QuartetConstants.LocationType;
 
 /** Add your docs here. */
 public class MechQuartetSubsystem extends SubsystemBase {
@@ -33,7 +33,7 @@ public class MechQuartetSubsystem extends SubsystemBase {
 
     private final MechanismRoot2d m_shoulderPoint = m_mechanism.getRoot("Quartet", 18.25, 31); // y=31
     private final MechanismLigament2d m_arm = m_shoulderPoint
-            .append(new MechanismLigament2d("Arm", kArmBaseLength, ShoulderConstants.kStartingDegrees, 6,
+            .append(new MechanismLigament2d("Arm", kArmBaseLength, LocationType.Starting.shoulderDegrees, 6,
                     new Color8Bit(Color.kLightGreen)));
 
     public MechQuartetSubsystem(DoubleSupplier armLength, DoubleSupplier shoulderAngle) {

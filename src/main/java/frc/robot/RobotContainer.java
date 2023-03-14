@@ -14,27 +14,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.QuartetConstants.ArmConstants;
-import frc.robot.Constants.QuartetConstants.ShoulderConstants;
-import frc.robot.commands.LimeCameraReader;
-import frc.robot.commands.pid.ArmSetLength;
-import frc.robot.commands.pid.ArmStopMovement;
-import frc.robot.commands.pid.ShoulderSetAngle;
-import frc.robot.commands.pid.ShoulderStopMovement;
-import frc.robot.commands.pid.TurretSetAngle;
+import frc.robot.Constants.QuartetConstants.LocationType;
+import frc.robot.Constants.QuartetConstants.ClawConstants.PickupMode;
 import frc.robot.structs.LEDManager;
 import frc.robot.structs.LimelightHelpers;
 import frc.robot.structs.hid.CommandPXNArcadeStickController;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.MechQuartetSubsystem;
+import frc.robot.subsystems.ShoulderSubsystem;
 import frc.robot.subsystems.StoppyBarSubsystem;
-import frc.robot.subsystems.ClawSubsystem.PickupMode;
+import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.subsystems.drivetrain.DriveSubsystemReal;
 import frc.robot.subsystems.drivetrain.DriveSubsystemSim;
 import frc.robot.subsystems.drivetrain.DriveSubsystemTemplate;
-import frc.robot.subsystems.motor.ArmSubsystem;
-import frc.robot.subsystems.motor.ShoulderSubsystem;
-import frc.robot.subsystems.motor.TurretSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -46,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -95,7 +89,7 @@ public class RobotContainer {
         // <-- COMMANDS -->
 
         // the PhotonCamera Smartdashboard sending class
-       // private final LimeCameraReader m_limelightReader = new LimeCameraReader();
+        // private final LimeCameraReader m_limelightReader = new LimeCameraReader();
 
         // <-- END COMMANDS -->
 
@@ -129,38 +123,33 @@ public class RobotContainer {
                 }
 
                 m_hashMap.put("collect0GPrep", Commands.parallel(
-                                new TurretSetAngle(0, m_turretSubsystem),
-                                new ArmSetLength(ArmConstants.kGroundPickupArmLength, m_armSubsystem),
-                                new ShoulderSetAngle(ShoulderConstants.kGroundPickupShoulderAngle,
-                                                m_shoulderSubsystem))
+                                m_turretSubsystem.setPosition(0),
+                                m_armSubsystem.moveToLocation(LocationType.Hybrid),
+                                m_shoulderSubsystem.moveToLocation(LocationType.Hybrid))
                                 .withName("collect0GPrep"));
-                m_hashMap.put("collect0GPrep",
+                m_hashMap.put("collect180GPrep",
                                 Commands.parallel(
-                                                new TurretSetAngle(180, m_turretSubsystem),
-                                                new ArmSetLength(ArmConstants.kHighGoalArmLength, m_armSubsystem),
-                                                new ShoulderSetAngle(ShoulderConstants.kHighGoalShoulderAngle,
-                                                                m_shoulderSubsystem))
+                                                m_turretSubsystem.setPosition(180),
+                                                m_armSubsystem.moveToLocation(LocationType.Hybrid),
+                                                m_shoulderSubsystem.moveToLocation(LocationType.Hybrid))
                                                 .withName("collect0GPrep"));
                 m_hashMap.put("place270HPrep",
                                 Commands.parallel(
-                                                new TurretSetAngle(270, m_turretSubsystem),
-                                                new ArmSetLength(ArmConstants.kHighGoalArmLength, m_armSubsystem),
-                                                new ShoulderSetAngle(ShoulderConstants.kHighGoalShoulderAngle,
-                                                                m_shoulderSubsystem))
+                                                m_turretSubsystem.setPosition(270),
+                                                m_armSubsystem.moveToLocation(LocationType.High),
+                                                m_shoulderSubsystem.moveToLocation(LocationType.High))
                                                 .withName("place270HPrep"));
                 m_hashMap.put("place0HPrep",
                                 Commands.parallel(
-                                                new TurretSetAngle(0, m_turretSubsystem),
-                                                new ArmSetLength(ArmConstants.kHighGoalArmLength, m_armSubsystem),
-                                                new ShoulderSetAngle(ShoulderConstants.kHighGoalShoulderAngle,
-                                                                m_shoulderSubsystem))
+                                                m_turretSubsystem.setPosition(0),
+                                                m_armSubsystem.moveToLocation(LocationType.High),
+                                                m_shoulderSubsystem.moveToLocation(LocationType.High))
                                                 .withName("place0HPrep"));
                 m_hashMap.put("retract",
                                 Commands.parallel(
-                                                new TurretSetAngle(0, m_turretSubsystem),
-                                                new ArmSetLength(0, m_armSubsystem),
-                                                new ShoulderSetAngle(ShoulderConstants.kStartingDegrees,
-                                                                m_shoulderSubsystem))
+                                                m_turretSubsystem.setPosition(0),
+                                                m_armSubsystem.moveToLocation(LocationType.Starting),
+                                                m_shoulderSubsystem.moveToLocation(LocationType.Starting))
                                                 .withName("place0HPrep"));
                 m_hashMap.put("grabCu", m_clawSubsystem.grabCommand(PickupMode.Cube));
                 m_hashMap.put("grabCo", m_clawSubsystem.grabCommand(PickupMode.Cone));
@@ -184,6 +173,13 @@ public class RobotContainer {
 
                 SmartDashboard.putData("Auto Selector", m_chooser);
 
+                SmartDashboard.putData(m_armSubsystem);
+                SmartDashboard.putData(m_shoulderSubsystem);
+                SmartDashboard.putData(m_clawSubsystem);
+                SmartDashboard.putData(m_stoppyBarSubsystem);
+                SmartDashboard.putData(m_turretSubsystem);
+                SmartDashboard.putData(m_driveSubsystem);
+
                 SmartDashboard.putBoolean("PIDs On", false);
                 SmartDashboard.putData(CommandScheduler.getInstance());
 
@@ -200,8 +196,8 @@ public class RobotContainer {
                                                                 -m_driverController.getRightX()),
                                                 () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveArcade"));
 
-            /*     m_armSubsystem.setDefaultCommand(new ArmStopMovement(m_armSubsystem));
-                m_shoulderSubsystem.setDefaultCommand(new ShoulderStopMovement(m_shoulderSubsystem)); */
+                m_armSubsystem.lockPosition().schedule(); // TODO see if will work
+                m_shoulderSubsystem.lockPosition().schedule(); // TODO see if will work
 
         }
 
@@ -235,15 +231,15 @@ public class RobotContainer {
                 m_operatorController.rightBumper()
                                 .whileTrue(m_turretSubsystem.setSpeedCommand(0.15));
                 m_operatorController.leftTrigger()
-                                .whileTrue(m_armSubsystem.setSpeedCommand(-0.15));
+                                .onTrue(m_armSubsystem.incrementPosition(-1));
                 m_operatorController.rightTrigger()
-                                .whileTrue(m_armSubsystem.setSpeedCommand(0.01));
+                                .whileTrue(m_armSubsystem.incrementPosition(1));
                 m_operatorController.x().onTrue(m_clawSubsystem.grabCommand());
                 m_operatorController.b().onTrue(m_clawSubsystem.releaseCommand());
                 m_operatorController.pov(0)
-                                .whileTrue(m_shoulderSubsystem.setSpeedCommand(0.1));
+                                .whileTrue(m_shoulderSubsystem.incrementPosition(1));
                 m_operatorController.pov(180)
-                                .whileTrue(m_shoulderSubsystem.setSpeedCommand(-0.1));
+                                .whileTrue(m_shoulderSubsystem.incrementPosition(-1));
                 m_operatorController.y().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cone));
                 m_operatorController.a().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cube));
                 m_operatorController.back()
@@ -258,50 +254,78 @@ public class RobotContainer {
                 m_arcadePad.L3().onTrue(Commands.run(() -> LEDManager.start(), new Subsystem[0]));
                 m_arcadePad.R3().onTrue(Commands.run(() -> LEDManager.stop(), new Subsystem[0]));
 
+                // destructive!
+                m_arcadePad.share().onTrue(Commands.run(() -> {
+                        m_driveSubsystem.resetEncoders();
+                        m_armSubsystem.resetEncoders();
+                        m_shoulderSubsystem.resetEncoders();
+                        m_turretSubsystem.resetEncoders();
+                }, m_armSubsystem, m_turretSubsystem, m_shoulderSubsystem, m_driveSubsystem));
+                m_arcadePad.options().onTrue(Commands.run(() -> {
+                        m_driveSubsystem.tankDriveVolts(0, 0);
+                        m_driveSubsystem.setBrakeMode(false);
+                        m_armSubsystem.disableMotor();
+                        m_shoulderSubsystem.disableMotor();
+                        m_turretSubsystem.disableMotor();
+                }, m_armSubsystem, m_turretSubsystem, m_shoulderSubsystem, m_driveSubsystem));
+
                 // Smart bindings -->
                 // Operator controller bindings
 
                 // Turret directional
-                BooleanSupplier arcadePadPOVSupplier = () -> (m_arcadePad.getHID().getPOV() != -1);
-                new Trigger(arcadePadPOVSupplier)
-                                .whileTrue((new TurretSetAngle(m_arcadePad.getHID()::getPOV, m_turretSubsystem)
+                BooleanSupplier arcadePadPOVCheckSupplier = () -> (m_arcadePad.getHID().getPOV() != -1);
+                DoubleSupplier arcadePadPOVSupplier = () -> (m_arcadePad.getHID().getPOV());
+
+                new Trigger(arcadePadPOVCheckSupplier)
+                                .whileTrue((m_turretSubsystem.setPosition(arcadePadPOVSupplier.getAsDouble()) // TODO
+                                                                                                              // figure
+                                                                                                              // out
+                                                                                                              // more
+                                                                                                              // elegant
+                                                                                                              // TurretSetAngle
                                                 .beforeStarting(this::pidUp, new Subsystem[0]))
                                                 .finallyDo(this::pidDown).withName("SetTurretPOV"));
 
                 // Set shoulder and arm to HIGH GOAL
-                m_arcadePad.x().whileTrue((Commands.parallel(
-                                new ShoulderSetAngle(ShoulderConstants.kHighGoalShoulderAngle, m_shoulderSubsystem),
-                                new ArmSetLength(ArmConstants.kHighGoalArmLength, m_armSubsystem))
-                                .withName("HighGoal").beforeStarting(this::pidUp, new Subsystem[0]))
+                m_arcadePad.x().whileTrue(Commands.parallel(
+                                m_shoulderSubsystem.moveToLocation(LocationType.High),
+                                m_armSubsystem.moveToLocation(LocationType.High)
+                                                .withName("HighGoal").beforeStarting(this::pidUp, new Subsystem[0]))
                                 .finallyDo(this::pidDown));
 
                 // Set shoulder and arm to LOW GOAL
                 m_arcadePad.y().whileTrue((Commands.parallel(
-                                new ShoulderSetAngle(ShoulderConstants.kLowGoalShoulderAngle, m_shoulderSubsystem),
-                                new ArmSetLength(ArmConstants.kLowGoalArmLength, m_armSubsystem)).withName("LowGoal")
+                                m_shoulderSubsystem.moveToLocation(LocationType.Low),
+                                m_armSubsystem.moveToLocation(LocationType.Low)).withName("LowGoal")
                                 .beforeStarting(this::pidUp, new Subsystem[0])).finallyDo(this::pidDown));
 
                 // Set shoulder and arm to GROUND PICKUP/PLACE
-                m_arcadePad.rightBumper().whileTrue((Commands.parallel(
-                                new ShoulderSetAngle(ShoulderConstants.kGroundPickupShoulderAngle, m_shoulderSubsystem),
-                                new ArmSetLength(ArmConstants.kGroundPickupArmLength, m_armSubsystem))
-                                .withName("Ground").beforeStarting(this::pidUp, new Subsystem[0]))
+                m_arcadePad.rightBumper().whileTrue(Commands.parallel(
+                                m_shoulderSubsystem.moveToLocation(LocationType.Hybrid),
+                                m_armSubsystem.moveToLocation(LocationType.Hybrid)
+                                                .withName("Ground").beforeStarting(this::pidUp, new Subsystem[0]))
                                 .finallyDo(this::pidDown));
 
                 // Set shoulder and arm to SUBSTATION PICKUP
-                m_arcadePad.a().whileTrue((Commands.parallel(
-                                new ShoulderSetAngle(ShoulderConstants.kSubstationPickupShoulderAngle,
-                                                m_shoulderSubsystem),
-                                new ArmSetLength(ArmConstants.kSubstationPickupArmLength, m_armSubsystem))
-                                .withName("Substation").beforeStarting(this::pidUp, new Subsystem[0]))
+                m_arcadePad.a().whileTrue(Commands.parallel(
+                                m_shoulderSubsystem.moveToLocation(LocationType.SubstationHigh),
+                                m_armSubsystem.moveToLocation(LocationType.SubstationHigh)
+                                                .withName("Substation").beforeStarting(this::pidUp, new Subsystem[0]))
+                                .finallyDo(this::pidDown));
+
+                // Set shoulder and arm to CHUTE PICKUP
+                m_arcadePad.leftBumper().whileTrue(Commands.parallel(
+                                m_shoulderSubsystem.moveToLocation(LocationType.Chute),
+                                m_armSubsystem.moveToLocation(LocationType.Chute)
+                                                .withName("Chute").beforeStarting(this::pidUp, new Subsystem[0]))
                                 .finallyDo(this::pidDown));
 
                 // Set shoulder and arm to full starting/finishing retraction
-                m_arcadePad.b().whileTrue((Commands.parallel(
-                                new ShoulderSetAngle(ShoulderConstants.kStartingDegrees,
-                                                m_shoulderSubsystem),
-                                new ArmSetLength(0, m_armSubsystem))
-                                .withName("ResetStarting").beforeStarting(this::pidUp, new Subsystem[0]))
+                m_arcadePad.b().whileTrue(Commands.parallel(
+                                m_shoulderSubsystem.moveToLocation(LocationType.Starting),
+                                m_armSubsystem.moveToLocation(LocationType.Starting)
+                                                .withName("ResetStarting")
+                                                .beforeStarting(this::pidUp, new Subsystem[0]))
                                 .finallyDo(this::pidDown));
 
         }
@@ -358,7 +382,6 @@ public class RobotContainer {
                 m_driveSubsystem.limit(DriveConstants.kDriveSpeedLimit);
 
                 LimelightHelpers.setCameraMode_Driver(null);
-                ;
         }
 
         /**
@@ -375,8 +398,6 @@ public class RobotContainer {
         public void teleopInit() {
                 LEDManager.initialize();
                 LEDManager.start();
-
-                LimelightHelpers.setCameraMode_Driver(null);
 
                 m_armSubsystem.setArmLock(false);
                 m_driveSubsystem.setBrakeMode(m_driverController.leftStick().getAsBoolean());

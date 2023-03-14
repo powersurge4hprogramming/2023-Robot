@@ -8,22 +8,17 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.QuartetConstants.ClawConstants.*;
 import frc.robot.structs.LEDManager;
 
 public class ClawSubsystem extends SubsystemBase {
-  /** Enum for determining the mode of robot pickup, for pressures. */
-  public static enum PickupMode {
-    Cone,
-    Cube,
-    None
-  }
 
   // forward 30, reverse, 60
   private final DoubleSolenoid m_doubleSolenoidUpstream = new DoubleSolenoid(PneumaticsModuleType.REVPH,
@@ -52,7 +47,6 @@ public class ClawSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putString("CLAW MODE", m_pickupMode.name());
   }
 
   /**
@@ -144,5 +138,12 @@ public class ClawSubsystem extends SubsystemBase {
       m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff);
       m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kReverse);
     }).withName("Release");
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.setSmartDashboardType("");
+    builder.addStringProperty("Mode", () -> m_pickupMode.toString(), null);
+    builder.addBooleanProperty("Grabbed", () -> m_doubleSolenoidDownstream.get() == Value.kForward, null);
   }
 }

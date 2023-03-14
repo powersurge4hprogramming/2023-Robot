@@ -27,6 +27,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/ClawSubsystem": "Subsystem",
+      "/LiveWindow/MechQuartetSubsystem/Arm2dSubsystem": "Subsystem",
       "/LiveWindow/Ungrouped/ADXRS450_Gyro[0]": "Gyro",
       "/LiveWindow/Ungrouped/PIDController[10]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[11]": "PIDController",
@@ -81,7 +82,6 @@
           "length": 0.6600000262260437,
           "width": 0.6600000262260437
         },
-        "image": "C:\\Users\\power\\PathWeaver\\Games\\Charged Up\\field-image.png",
         "traj": {
           "arrows": false,
           "style": "Line"
@@ -93,11 +93,23 @@
     }
   },
   "NetworkTables": {
+    "Retained Values": {
+      "open": false
+    },
     "transitory": {
+      "LiveWindow": {
+        "open": true
+      },
       "SmartDashboard": {
+        "Scheduler": {
+          "open": true
+        },
         "open": true
       }
     }
+  },
+  "NetworkTables Info": {
+    "visible": true
   },
   "NetworkTables View": {
     "visible": false

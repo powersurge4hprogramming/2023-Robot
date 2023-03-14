@@ -23,6 +23,24 @@ import edu.wpi.first.wpilibj.util.Color;
  */
 public final class Constants {
   public static final class QuartetConstants {
+
+    public static enum LocationType {
+      SubstationHigh(0, 0), // TODO all
+      Chute(0, 0),
+      Hybrid(0, 0),
+      Low(0, 0),
+      High(0, 0),
+      Starting(-109.8, 0.0);
+
+      public final double shoulderDegrees;
+      public final double armInches;
+
+      private LocationType(double shoulderDegrees, double armInches) {
+        this.shoulderDegrees = shoulderDegrees;
+        this.armInches = armInches;
+      }
+    }
+
     public static final class TurretConstants {
       // for encoder
       private static final double kGearToothRatio = 20.0 / 147;
@@ -49,7 +67,7 @@ public final class Constants {
     public static final class ShoulderConstants {
       // for encoder
       private static final double kGearToothRatio = 1 / 6.0;
-      private static final double kGearboxRatio = 1 / 20.0;
+      private static final double kGearboxRatio = 1 / 100.0;
       // private static final double kSprocketRatio = 1 / 15.0;
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
 
@@ -65,12 +83,6 @@ public final class Constants {
 
       public static final double kMaxDegrees = 43;
       public static final double kMinDegrees = -110;
-      public static final double kStartingDegrees = -109.8;
-
-      public static final double kHighGoalShoulderAngle = 0; // TODO
-      public static final double kLowGoalShoulderAngle = 0; // TODO
-      public static final double kGroundPickupShoulderAngle = 0; // TODO
-      public static final double kSubstationPickupShoulderAngle = 0; // TODO
 
     }
 
@@ -97,12 +109,6 @@ public final class Constants {
 
       public static final double kMaxPosInches = 55.5;
       public static final double kMinPosInches = 0.0;
-
-      public static final double kHighGoalArmLength = 55;
-      public static final double kLowGoalArmLength = 0; // TODO
-      public static final double kGroundPickupArmLength = 0; // TODO
-      public static final double kSubstationPickupArmLength = 0; // TODO
-
     }
 
     public static final class ClawConstants {
@@ -113,6 +119,13 @@ public final class Constants {
       public static final int kClawDownstreamBkwd = 5;
 
       public static final int kSwivelMotor = 18;
+
+     /** Enum for determining the mode of robot pickup, for pressures. */
+      public static enum PickupMode {
+        Cone,
+        Cube,
+        None
+      }
     }
   }
 
@@ -122,7 +135,7 @@ public final class Constants {
     public static final int kRightMotorLeaderPort = 6;
     public static final int kRightMotorFollowerPort = 9;
 
-    public static final double kDriveSpeedLimit = 0.10; // TODO
+    public static final double kDriveSpeedLimit = 0.65; // TODO
 
     public static final double kTrackWidthMeters = 0.530352;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(

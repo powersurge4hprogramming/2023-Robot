@@ -6,6 +6,7 @@ package frc.robot.subsystems.drivetrain;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -89,5 +90,10 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
   /** Calibrate gyro (takes 5 seconds, robot MUST not move) */
   public void calibrateGyro() {
     m_gyro.calibrate();
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addBooleanProperty("Drive Brake", () -> m_brake, null);
   }
 }

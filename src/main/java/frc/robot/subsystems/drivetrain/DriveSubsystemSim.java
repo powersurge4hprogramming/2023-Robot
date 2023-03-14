@@ -98,8 +98,6 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
         m_leftEncoder.getDistance(),
         m_rightEncoder.getDistance());
     m_field.setRobotPose(m_odometry.getPoseMeters());
-
-    SmartDashboard.putBoolean("Drive Brake", m_brake);
   }
 
   @Override
