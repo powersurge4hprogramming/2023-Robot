@@ -61,9 +61,9 @@ public class RobotContainer {
         // <-- SUBSYSTEMS -->
         private final DriveSubsystemTemplate m_driveSubsystem;
 
-        private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
         private final ClawSubsystem m_clawSubsystem = new ClawSubsystem();
         private final ShoulderSubsystem m_shoulderSubsystem = new ShoulderSubsystem();
+        private final ArmSubsystem m_armSubsystem = new ArmSubsystem(m_shoulderSubsystem::getAngle);
         private final TurretSubsystem m_turretSubsystem = new TurretSubsystem();
 
         private final StoppyBarSubsystem m_stoppyBarSubsystem = new StoppyBarSubsystem();
@@ -113,7 +113,7 @@ public class RobotContainer {
          */
         public RobotContainer() {
                 new MechQuartetSubsystem(m_armSubsystem::getLength,
-                                m_shoulderSubsystem::getLength);
+                                m_shoulderSubsystem::getAngle);
 
                 // create sim or real object
                 if (RobotBase.isSimulation()) {

@@ -24,6 +24,8 @@ import frc.robot.Constants.QuartetConstants.LocationType;
 
 import static frc.robot.Constants.QuartetConstants.ArmConstants.*;
 
+import java.util.function.DoubleSupplier;
+
 public class ArmSubsystem extends SubsystemBase {
 
   private final DoubleSolenoid m_lockSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, kLockSolenoidFwd,
@@ -31,11 +33,14 @@ public class ArmSubsystem extends SubsystemBase {
   private final CANSparkMax m_motor;
   private final RelativeEncoder m_encoder;
   private final SparkMaxPIDController m_pidController;
+  private final DoubleSupplier m_shoulderAngle;
 
   private double m_setpoint = LocationType.Starting.armInches;
 
   /** Creates a new ArmSubsystem, position units are inches. */
-  public ArmSubsystem() {
+  public ArmSubsystem(DoubleSupplier shoulderAngle) {
+    m_shoulderAngle = shoulderAngle;
+
     m_motor = new CANSparkMax(kMotorPort, MotorType.kBrushless);
     m_encoder = m_motor.getEncoder();
     m_pidController = m_motor.getPIDController();
@@ -103,8 +108,21 @@ public class ArmSubsystem extends SubsystemBase {
         && (Math.abs(getVelocity()) <= kVelocityTolerance);
   }
 
+  private double maxSetpoint() {
+    double horizMax = (41 / (Math.cos(Math.toRadians(m_shoulderAngle.getAsDouble())))) - 7; // 41 = max ext. (real 48),
+                                                                                            // 7=arm ext. when enc 0
+    double vertMax = (41 / (Math.cos(Math.toRadians(90 - m_shoulderAngle.getAsDouble())))) - 7;
+
+    return Math.min(horizMax, vertMax);
+  }
+
   @Override
   public void periodic() {
+    if (m_setpoint > maxSetpoint()) {
+      m_pidController.setReference(maxSetpoint(), ControlType.kPosition);
+    } else if (m_setpoint < maxSetpoint()) {
+      m_pidController.setReference(m_setpoint, ControlType.kPosition);
+    }
   }
 
   /**
@@ -154,6 +172,7 @@ public class ArmSubsystem extends SubsystemBase {
     builder.setSmartDashboardType("");
     builder.addDoubleProperty("Angle", m_encoder::getPosition, null);
     builder.addDoubleProperty("Setpoint", () -> m_setpoint, null);
+    builder.addDoubleProperty("Max Setpoint", this::maxSetpoint, null);
     builder.addBooleanProperty("Reached", this::atSetpoint, null);
     builder.addBooleanProperty("Rev Limited", () -> m_motor.getFault(FaultID.kSoftLimitRev), null);
     builder.addBooleanProperty("Fwd Limited", () -> m_motor.getFault(FaultID.kSoftLimitFwd), null);

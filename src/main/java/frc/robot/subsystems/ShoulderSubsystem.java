@@ -78,7 +78,7 @@ public class ShoulderSubsystem extends SubsystemBase {
    * 
    * @return the position of the encoder in degrees
    */
-  public double getLength() {
+  public double getAngle() {
     return m_encoder.getPosition();
   }
 
@@ -92,7 +92,7 @@ public class ShoulderSubsystem extends SubsystemBase {
   }
 
   private boolean atSetpoint() {
-    return (Math.abs(m_setpoint - getLength()) <= kPositionTolerance)
+    return (Math.abs(m_setpoint - getAngle()) <= kPositionTolerance)
         && (Math.abs(getVelocity()) <= kVelocityTolerance);
   }
 
@@ -106,7 +106,7 @@ public class ShoulderSubsystem extends SubsystemBase {
   }
 
   public CommandBase incrementPosition(double increment) {
-    return this.runOnce(() -> setPosition(getLength() + increment)).andThen(new WaitUntilCommand(this::atSetpoint))
+    return this.runOnce(() -> setPosition(getAngle() + increment)).andThen(new WaitUntilCommand(this::atSetpoint))
         .withName("ShoulderIncrement" + increment);
   }
 
