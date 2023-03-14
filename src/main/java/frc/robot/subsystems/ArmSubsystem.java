@@ -75,8 +75,10 @@ public class ArmSubsystem extends SubsystemBase {
    * @param position the position (in subclass units) to set the motor to
    */
   private void setPosition(double position) {
-    m_setpoint = position;
-    m_pidController.setReference(position, ControlType.kPosition);
+    if (m_setpoint != position) {
+      m_setpoint = position;
+      m_pidController.setReference(position, ControlType.kPosition);
+    }
   }
 
   /** Stops motor from running, will interrupt any control mode. */
@@ -113,7 +115,8 @@ public class ArmSubsystem extends SubsystemBase {
                                                                                             // 7=arm ext. when enc 0
     double vertMax = (41 / (Math.cos(Math.toRadians(90 - m_shoulderAngle.getAsDouble())))) - 7;
 
-    return Math.min(horizMax, vertMax);
+    // return Math.min(horizMax, vertMax); // TODO make math work
+    return 100;
   }
 
   @Override
@@ -151,11 +154,13 @@ public class ArmSubsystem extends SubsystemBase {
 
   public CommandBase moveToLocation(LocationType location) {
     return this.runOnce(() -> setPosition(location.armInches)).andThen(new WaitUntilCommand(this::atSetpoint))
+    .handleInterrupt(() -> setPosition(m_encoder.getPosition()))
         .withName("ArmToLocation" + location.toString());
   }
 
   public CommandBase incrementPosition(double increment) {
     return this.runOnce(() -> setPosition(getLength() + increment)).andThen(new WaitUntilCommand(this::atSetpoint))
+        .handleInterrupt(() -> setPosition(m_encoder.getPosition()))
         .withName("ArmIncrement" + increment);
   }
 

@@ -72,11 +72,23 @@ public class TurretSubsystem extends SubsystemBase {
    * 
    * @param angle the position (in degrees) to set the motor to
    */
-  public CommandBase setPosition(double angle) {
-    return this.runOnce(() -> {
+  public void setPosition(double angle) {
+    if (m_setpoint != angle) {
       m_setpoint = angle;
       m_pidController.setReference(angle, ControlType.kPosition);
-    }).andThen(new WaitUntilCommand(this::atSetpoint));
+    }
+  }
+
+  /**
+   * Runs motor to a specified position.
+   * 
+   * @param angle the position (in degrees) to set the motor to
+   */
+  public CommandBase moveToAngle(double angle) {
+    return this.runOnce(() -> {
+      setPosition(angle);
+    }).handleInterrupt(() -> setPosition(m_encoder.getPosition()))
+        .andThen(new WaitUntilCommand(this::atSetpoint).withName("TurretToAngle"));
   }
 
   /** Stops motor from running, will interrupt any control mode. */

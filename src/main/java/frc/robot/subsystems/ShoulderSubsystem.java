@@ -63,8 +63,10 @@ public class ShoulderSubsystem extends SubsystemBase {
    * @param angle the position (in subclass units) to set the motor to
    */
   private void setPosition(double angle) {
-    m_setpoint = angle;
-    m_pidController.setReference(angle, ControlType.kPosition);
+    if (m_setpoint != angle) {
+      m_setpoint = angle;
+      m_pidController.setReference(angle, ControlType.kPosition);
+    }
   }
 
   /** Stops motor from running, will interrupt any control mode. */
@@ -102,11 +104,13 @@ public class ShoulderSubsystem extends SubsystemBase {
 
   public CommandBase moveToLocation(LocationType location) {
     return this.runOnce(() -> setPosition(location.shoulderDegrees)).andThen(new WaitUntilCommand(this::atSetpoint))
+    .handleInterrupt(() -> setPosition(m_encoder.getPosition()))
         .withName("ShoulderToLocation" + location.toString());
   }
 
   public CommandBase incrementPosition(double increment) {
     return this.runOnce(() -> setPosition(getAngle() + increment)).andThen(new WaitUntilCommand(this::atSetpoint))
+    .handleInterrupt(() -> setPosition(m_encoder.getPosition()))
         .withName("ShoulderIncrement" + increment);
   }
 
