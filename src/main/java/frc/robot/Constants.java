@@ -6,11 +6,8 @@ package frc.robot;
 
 import java.util.List;
 
-import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -26,34 +23,66 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
  */
 public final class Constants {
   public static final class QuartetConstants {
+
+    public static enum LocationType {
+      SubstationHigh(-58, 0), // TODO all
+      Chute(0, 0),
+      Hybrid(11, 0),
+      Low(-50, 57),
+      High(0, 0),
+      Starting(-109.8, 0.0);
+
+      public final double shoulderDegrees;
+      public final double armInches;
+
+      private LocationType(double shoulderDegrees, double armInches) {
+        this.shoulderDegrees = shoulderDegrees;
+        this.armInches = armInches;
+      }
+    }
+
     public static final class TurretConstants {
       // for encoder
       private static final double kGearToothRatio = 20.0 / 147;
       private static final double kGearboxRatio = 1.0 / 12;
-      private static final double kLossMultipler = 1.0-(2.25/90);
+      private static final double kLossMultipler = 1.0 - (2.25 / 90);
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360 * kLossMultipler;
 
-      public static final int kMotorPort = 16;
+      public static final int kMotorPort = 12;
 
-      public static final double kMaxRotations = 4; // TODO
+      public static final double kPositionTolerance = 2.5;
+      public static final double kVelocityTolerance = 1;
+      public static final double kP = 0.01;
+      public static final double kD = 0.01;
+      public static final double kF = 0.00;
+      public static final double kMin = -0.17;
+      public static final double kMax = 0.17;
+
+      public static final double kStartingDegrees = 135;
+
+      public static final double kMaxRotations = 1.5;
 
     }
 
     public static final class ShoulderConstants {
       // for encoder
-      private static final double kGearToothRatio = 1 / 100.0;
-      private static final double kGearboxRatio = 1 / 6.0;
+      private static final double kGearToothRatio = 1 / 6.0;
+      private static final double kGearboxRatio = 1 / 100.0;
+      // private static final double kSprocketRatio = 1 / 15.0;
       public static final double kDegreesPerRev = kGearToothRatio * kGearboxRatio * 360;
 
       public static final int kMotorPort = 17;
 
-      public static final int kMaxDegrees = 70; // TODO
-      public static final int kMinDegrees = -30; // TODO
+      public static final double kPositionTolerance = 2;
+      public static final double kVelocityTolerance = 5;
+      public static final double kP = 0.04;
+      public static final double kD = 0.00;
+      public static final double kF = 0.00;
+      public static final double kMin = -0.30;
+      public static final double kMax = 0.25;
 
-      public static final double kHighGoalShoulderAngle = 0; // TODO
-      public static final double kLowGoalShoulderAngle = 0; // TODO
-      public static final double kGroundPickupShoulderAngle = 0; // TODO
-      public static final double kSubstationPickupShoulderAngle = 0; // TODO
+      public static final double kMaxDegrees = 13;
+      public static final double kMinDegrees = -110;
 
     }
 
@@ -65,28 +94,38 @@ public final class Constants {
       // public static final double kDistancePerRevInches = kGearRatio * kSpoolRadius;
       public static final double kDistancePerRevInches = 0.1481470777; // This is empirically determined via testing
 
-      public static final int kMotorPort = 12;
+      public static final int kMotorPort = 16;
 
-      public static final int kLockSolenoidFwd = 9; // TODO
-      public static final int kLockSolenoidBkwd = 8; // TODO
+      public static final double kPositionTolerance = 2;
+      public static final double kVelocityTolerance = 5;
+      public static final double kP = 0.05;
+      public static final double kD = 0.00;
+      public static final double kF = 0.00;
+      public static final double kMin = -0.6;
+      public static final double kMax = 0.3;
 
-      public static final double kMaxPosInches = 46.23; // (51 is real max)
-      public static final double kMinPosInches = 0.0; //
+      public static final int kLockSolenoidFwd = 15;
+      public static final int kLockSolenoidBkwd = 14;
 
-      public static final double kHighGoalArmLength = 0; // TODO
-      public static final double kLowGoalArmLength = 0; // TODO
-      public static final double kGroundPickupArmLength = 0; // TODO
-      public static final double kSubstationPickupArmLength = 0; // TODO
-
+      public static final double kMaxPosInches = 55.5;
+      public static final double kMinPosInches = -3; // TODO fix offset
     }
 
     public static final class ClawConstants {
-      // foward, reverse for double solenoid
-      public static final Pair<Integer, Integer> kDoubleSolenoidClawUpstream = new Pair<Integer, Integer>(3, 2); // 2=60
-                                                                                                                 // 3=30
-      public static final Pair<Integer, Integer> kDoubleSolenoidClawDownstream = new Pair<Integer, Integer>(4, 5);
+      public static final int kClawUpstreamFwd = 3; // 30 PSI
+      public static final int kClawUpstreamBkwd = 2; // 60 PSI
+
+      public static final int kClawDownstreamFwd = 4;
+      public static final int kClawDownstreamBkwd = 5;
 
       public static final int kSwivelMotor = 18;
+
+      /** Enum for determining the mode of robot pickup, for pressures. */
+      public static enum PickupMode {
+        Cone,
+        Cube,
+        None
+      }
     }
   }
 
@@ -96,10 +135,7 @@ public final class Constants {
     public static final int kRightMotorLeaderPort = 6;
     public static final int kRightMotorFollowerPort = 9;
 
-    public static final boolean kLeftEncoderReversed = false;
-    public static final boolean kRightEncoderReversed = true;
-
-    public static final double kDriveSpeedLimit = 0.70; // TODO
+    public static final double kDriveSpeedLimit = 0.65; // TODO
 
     public static final double kTrackWidthMeters = 0.530352;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
@@ -133,8 +169,8 @@ public final class Constants {
   }
 
   public static final class StoppyBarConstants {
-    public static final int kFowardSolenoidPort = 1;
-    public static final int kBackwardSolenoidPort = 0;
+    public static final int kFowardSolenoidPort = 0;
+    public static final int kBackwardSolenoidPort = 1;
   }
 
   public static final class OIConstants {
@@ -155,25 +191,29 @@ public final class Constants {
     public static final String kAutoSelectionKey = "Auto Selector";
 
     // auto selections based on PathPlanner, from ./deploy/pathplanner dir
-    public static final String kDefaultAuto = "S1H-P1Cu-S2H-C";
-    public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-P1Co-S3H", "S9H-P1Cu-S8H-C",
-        "S9H-P4Cu-S8H-P3Co-S7H"); // TODO
-
-  }
-
-  public static final class VisionConstants {
-    // from photonvision webUI
-    public static final String kPhotonCameraName = "photonvision"; // TODO
-
-    // Camera location from center of robot
-    public static final Transform3d kRobotToCamera = new Transform3d(new Translation3d(0.5, 0.0, 0.5),
-        new Rotation3d(0, 0, 0)); // TODO Cam mounted facing forward, half a meter forward of center, half a meter
-                                  // up from center.
+    public static final String kDefaultAuto = "S6H-P1Cu-C";
+    public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-C", "S1H-P1Cu-S2H-P1Co",
+        "S9H-P1Cu-S8H-C", "S9H-P4Cu-S8H-P3Co");
 
   }
 
   public static final class LEDConstants {
-    public static final int kNumberOfLEDs = 26;
+    public static final int kNumberOfLEDs = 22;
     public static final int kLEDPWMPort = 0;
+
+    public static final Color kRedAllianceColor = new Color(145, 0, 0);
+    public static final Color kBlueAllianceColor = new Color(0, 0, 80);
+    public static final Color kInvalidAllianceColor = Color.kHotPink;
+
+    public static final List<Integer> kAllianceLEDIndexes = List.of(0, 8, 9, 10, 11, 20, 21);
+
+    public static final Color kConeColor = new Color(100, 28, 0);
+    public static final Color kCubeColor = new Color(100, 0, 60);
+    public static final Color kStoppybarColor = new Color(0, 140, 0); // "robot" green
+
+    public static final List<Integer> kPickupLEDIndexes = List.of(1, 2, 3, 4, 5, 6, 12, 13, 14, 15, 16, 17, 18, 19);
+
+    public static final Color kTransparentColor = new Color(0, 0, 0);
+
   }
 }

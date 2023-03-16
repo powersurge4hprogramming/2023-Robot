@@ -41,13 +41,13 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
   private final Encoder m_leftEncoder = new Encoder(
       0,
       1,
-      DriveConstants.kLeftEncoderReversed);
+      false);
 
   // The right-side drive encoder
   private final Encoder m_rightEncoder = new Encoder(
       2,
       3,
-      DriveConstants.kRightEncoderReversed);
+      true);
 
   // These are our EncoderSim objects, which we will only use in
   // simulation. However, you do not need to comment out these
@@ -172,7 +172,7 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
   }
 
   @Override
-  public CommandBase toggleBrakeModeCommand() {
+  public CommandBase setBrakeModeCommand(boolean brakeMode) {
     return this.runOnce(() -> {
       return;
     }).withName("ToggleBrakeMode");

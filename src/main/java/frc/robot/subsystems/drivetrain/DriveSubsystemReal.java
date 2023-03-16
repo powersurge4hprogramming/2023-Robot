@@ -46,6 +46,11 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystemReal() {
+    m_leftMotorLeader.restoreFactoryDefaults();
+    m_leftMotorFollower.restoreFactoryDefaults();
+    m_rightMotorLeader.restoreFactoryDefaults();
+    m_rightMotorFollower.restoreFactoryDefaults();
+
     m_leftMotorFollower.follow(m_leftMotorLeader);
     m_rightMotorFollower.follow(m_rightMotorLeader);
 
@@ -78,6 +83,8 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     m_odometry.update(m_gyro.getRotation2d(),
         m_leftEncoder.getPosition(),
         m_rightEncoder.getPosition());
+
+    SmartDashboard.putBoolean("Drive Brake", m_brake);
   }
 
   @Override
@@ -134,13 +141,13 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   }
 
   @Override
-  public CommandBase toggleBrakeModeCommand() {
+  public CommandBase setBrakeModeCommand(boolean brakeMode) {
     return this.runOnce(() -> {
-      m_brake = !m_brake;
-      updateBrakeMode();
+      setBrakeMode(brakeMode);
     }).withName("ToggleBrakeMode");
   }
 
+  /** Updates CANSparkMax brake mode based on {@code m_brake} */
   private void updateBrakeMode() {
     if (m_brake) {
       m_leftMotorLeader.setIdleMode(IdleMode.kBrake);

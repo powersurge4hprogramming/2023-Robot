@@ -4,18 +4,18 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.StoppyBarConstants;
+import static frc.robot.Constants.StoppyBarConstants.*;
 import frc.robot.structs.LEDManager;
 
 public class StoppyBarSubsystem extends SubsystemBase {
-  private final DoubleSolenoid m_doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH,
-      StoppyBarConstants.kFowardSolenoidPort, StoppyBarConstants.kBackwardSolenoidPort);
+  private final DoubleSolenoid m_doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, kFowardSolenoidPort,
+      kBackwardSolenoidPort);
 
   private boolean m_stoppyOn = false;
 
@@ -27,14 +27,19 @@ public class StoppyBarSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("STOPPY ON", m_stoppyOn);
   }
 
+  /** Update the LEDs in the {@link LEDManager} class */
   private void updateLEDs() {
     LEDManager.setStoppyBarLEDs(m_stoppyOn);
   }
 
-  /** sets stoppy bar on/off, runs once */
+  /**
+   * Sets stoppy bar on/off and updates LEDs
+   * 
+   * @param on whether the stoppy bar should be set on
+   * @return a command which updates the stoppy bar and LEDs, runs once
+   */
   public CommandBase setStop(boolean on) {
     return this.runOnce(() -> {
       m_stoppyOn = on;
@@ -45,5 +50,11 @@ public class StoppyBarSubsystem extends SubsystemBase {
         m_doubleSolenoid.set(Value.kReverse);
       }
     }).withName("SetStoppyBar");
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.setSmartDashboardType("");
+    builder.addBooleanProperty("On", () -> m_stoppyOn, null);
   }
 }

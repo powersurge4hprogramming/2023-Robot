@@ -6,6 +6,7 @@ package frc.robot.subsystems.drivetrain;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -66,21 +67,33 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
    */
   public abstract void tankDriveVolts(double leftVolts, double rightVolts);
 
-  /** Limits robot
-   * @param limit the -1 to 1 limit **/
+  /**
+   * Limits robot
+   * 
+   * @param limit the -1 to 1 limit
+   **/
   public abstract void limit(double limit);
 
   /** Resets the drive encoders to currently read a position of 0. */
   public abstract void resetEncoders();
 
-  /** Toggles break mode to true or false */
+  /** Toggles brake mode to true or false */
   public abstract void setBrakeMode(boolean brakeMode);
 
-  /** Toggles break mode to true or false */
-  public abstract CommandBase toggleBrakeModeCommand();
+  /**
+   * Toggles brake mode to true or false
+   * 
+   * @return a command which toggles the brake mode and then finishes
+   */
+  public abstract CommandBase setBrakeModeCommand(boolean brakeMode);
 
   /** Calibrate gyro (takes 5 seconds, robot MUST not move) */
   public void calibrateGyro() {
     m_gyro.calibrate();
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addBooleanProperty("Drive Brake", () -> m_brake, null);
   }
 }

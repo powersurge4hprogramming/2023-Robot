@@ -273,6 +273,33 @@ public class CommandPXNArcadeStickController extends CommandGenericHID {
     }
 
     /**
+     * Constructs an event instance around the R3 button's digital signal.
+     *
+     * @return an event instance representing the R3 button's digital signal
+     *         attached
+     *         to the {@link
+     *         CommandScheduler#getDefaultButtonLoop() default scheduler button
+     *         loop}.
+     * @see #R3(EventLoop)
+     */
+    public Trigger R3() {
+        return R3(CommandScheduler.getInstance().getDefaultButtonLoop());
+    }
+
+    /**
+     * Constructs an event instance around the R3 button's digital signal.
+     *
+     * @param loop the event loop instance to attach the event to.
+     * @return an event instance representing the options button's digital signal
+     *         attached
+     *         to the given
+     *         loop.
+     */
+    public Trigger R3(EventLoop loop) {
+        return m_hid.R3(loop).castTo(Trigger::new);
+    }
+
+    /**
      * Constructs a Trigger instance around the axis value of the left trigger. The
      * returned trigger
      * will be true when the axis value is greater than {@code threshold}.
