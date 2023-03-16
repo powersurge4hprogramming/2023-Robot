@@ -20,17 +20,14 @@ import static frc.robot.Constants.QuartetConstants.TurretConstants.*;
 
 public class TurretSubsystem extends SubsystemBase {
 
-  private final CANSparkMax m_motor;
-  private final RelativeEncoder m_encoder;
-  private final SparkMaxPIDController m_pidController;
+  private final CANSparkMax m_motor = new CANSparkMax(kMotorPort, MotorType.kBrushless);
+  private final RelativeEncoder m_encoder = m_motor.getEncoder();
+  private final SparkMaxPIDController m_pidController = m_motor.getPIDController();
 
   private double m_setpoint;
 
   /** Creates a new TurretSubsystem, position units are degrees. */
   public TurretSubsystem() {
-    m_motor = new CANSparkMax(kMotorPort, MotorType.kBrushless);
-    m_encoder = m_motor.getEncoder();
-    m_pidController = m_motor.getPIDController();
     m_motor.restoreFactoryDefaults();
 
     m_motor.setInverted(true);
@@ -58,56 +55,6 @@ public class TurretSubsystem extends SubsystemBase {
   }
 
   /**
-   * Runs motor to a specified speed, not for usage in the PID.
-   * 
-   * @speed the duty cycle speed (-1 to 1) to set the motor
-   */
-  private void setSpeed(double speed) {
-    // System.out.println("SetDuty" + getName());
-    m_motor.set(speed);
-  }
-
-  /**
-   * Runs motor to a specified position.
-   * 
-   * @param angle the position (in degrees) to set the motor to
-   */
-  public void setPosition(double angle) {
-    if (m_setpoint != angle) {
-      m_setpoint = angle;
-      m_pidController.setReference(angle, ControlType.kPosition);
-    }
-  }
-
-  /**
-   * Runs motor to a specified position.
-   * 
-   * @param angle the position (in degrees) to set the motor to
-   */
-  public CommandBase moveToAngle(double angle) {
-    return this.runOnce(() -> {
-      setPosition(angle);
-    }).handleInterrupt(() -> setPosition(m_encoder.getPosition()))
-        .andThen(new WaitUntilCommand(this::atSetpoint).withName("TurretToAngle"));
-  }
-
-  /** Stops motor from running, will interrupt any control mode. */
-  public void disableMotor() {
-    m_motor.setIdleMode(IdleMode.kCoast);
-    m_motor.stopMotor();
-  }
-
-  /**
-   * Runs the motor at a specified speed.
-   * 
-   * @param speed the duty cycle speed (-1 to 1) to set the motor
-   * @return a command which runs the motor until interrupted
-   */
-  public CommandBase setSpeedCommand(double speed) {
-    return this.startEnd(() -> setSpeed(speed), () -> disableMotor()).withName("RunSpeed" + getName());
-  }
-
-  /**
    * Gets the position
    * 
    * @return the position of the encoder in inches or degrees
@@ -125,15 +72,6 @@ public class TurretSubsystem extends SubsystemBase {
     return m_encoder.getVelocity();
   }
 
-  public boolean atSetpoint() {
-    return (Math.abs(m_setpoint - getLength()) <= kPositionTolerance)
-        && (Math.abs(getVelocity()) <= kVelocityTolerance);
-  }
-
-  @Override
-  public void periodic() {
-  }
-
   /**
    * Gets the rotations of the turret.
    * 
@@ -142,6 +80,53 @@ public class TurretSubsystem extends SubsystemBase {
    */
   private double getRotations() {
     return m_encoder.getPosition() / 360.0;
+  }
+
+  /**
+   * Runs motor to a specified position.
+   * 
+   * @param angle the position (in degrees) to set the motor to
+   */
+  public void setPosition(double angle) {
+    if (m_setpoint != angle) {
+      m_setpoint = angle;
+      m_pidController.setReference(angle, ControlType.kPosition);
+    }
+  }
+
+  public boolean atSetpoint() {
+    return (Math.abs(m_setpoint - getLength()) <= kPositionTolerance)
+        && (Math.abs(getVelocity()) <= kVelocityTolerance);
+  }
+
+  /** Stops motor from running, will interrupt any control mode. */
+  public void disableMotor() {
+    m_motor.setIdleMode(IdleMode.kCoast);
+    m_motor.stopMotor();
+  }
+
+  @Override
+  public void periodic() {
+  }
+
+  /**
+   * Runs motor to a specified position.
+   * 
+   * @param angle the position (in degrees) to set the motor to
+   */
+  public CommandBase moveToAngle(double angle) {
+    return this.runOnce(() -> {
+      setPosition(angle);
+    }).handleInterrupt(() -> setPosition(m_encoder.getPosition()))
+        .andThen(new WaitUntilCommand(this::atSetpoint).withName("TurretToAngle" + angle));
+  }
+
+  public CommandBase incrementPosition(double increment) {
+    return moveToAngle(m_setpoint + increment);
+  }
+
+  public CommandBase lockPosition() {
+    return moveToAngle(m_setpoint);
   }
 
   public void resetEncoders() {

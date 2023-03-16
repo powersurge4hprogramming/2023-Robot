@@ -22,18 +22,14 @@ import static frc.robot.Constants.QuartetConstants.ShoulderConstants.*;
 
 public class ShoulderSubsystem extends SubsystemBase {
 
-  private final CANSparkMax m_motor;
-  private final RelativeEncoder m_encoder;
-  private final SparkMaxPIDController m_pidController;
+  private final CANSparkMax m_motor = new CANSparkMax(kMotorPort, MotorType.kBrushless);
+  private final RelativeEncoder m_encoder = m_motor.getEncoder();
+  private final SparkMaxPIDController m_pidController = m_motor.getPIDController();
 
   private double m_setpoint;
 
   /** Creates a new ShoulderSubsystem, position units are degrees. */
   public ShoulderSubsystem() {
-    m_motor = new CANSparkMax(kMotorPort, MotorType.kBrushless);
-    m_encoder = m_motor.getEncoder();
-    m_pidController = m_motor.getPIDController();
-
     m_motor.restoreFactoryDefaults();
 
     m_encoder.setPositionConversionFactor(kDegreesPerRev);
@@ -58,24 +54,6 @@ public class ShoulderSubsystem extends SubsystemBase {
   }
 
   /**
-   * Runs motor to a specified position.
-   * 
-   * @param angle the position (in subclass units) to set the motor to
-   */
-  private void setPosition(double angle) {
-    if (m_setpoint != angle) {
-      m_setpoint = angle;
-      m_pidController.setReference(angle, ControlType.kPosition);
-    }
-  }
-
-  /** Stops motor from running, will interrupt any control mode. */
-  public void disableMotor() {
-    m_motor.setIdleMode(IdleMode.kCoast);
-    m_motor.stopMotor();
-  }
-
-  /**
    * Gets the position
    * 
    * @return the position of the encoder in degrees
@@ -93,29 +71,49 @@ public class ShoulderSubsystem extends SubsystemBase {
     return m_encoder.getVelocity();
   }
 
+  /**
+   * Runs motor to a specified position.
+   * 
+   * @param angle the position (in subclass units) to set the motor to
+   */
+  private void setPosition(double angle) {
+    if (m_setpoint != angle) {
+      m_setpoint = angle;
+      m_pidController.setReference(angle, ControlType.kPosition);
+    }
+  }
+
   private boolean atSetpoint() {
     return (Math.abs(m_setpoint - getAngle()) <= kPositionTolerance)
         && (Math.abs(getVelocity()) <= kVelocityTolerance);
+  }
+
+  /** Stops motor from running, will interrupt any control mode. */
+  public void disableMotor() {
+    m_motor.setIdleMode(IdleMode.kCoast);
+    m_motor.stopMotor();
   }
 
   @Override
   public void periodic() {
   }
 
+  private CommandBase moveToAngle(double angle) {
+    return this.runOnce(() -> setPosition(angle)).andThen(new WaitUntilCommand(this::atSetpoint))
+        .handleInterrupt(() -> setPosition(m_encoder.getPosition()))
+        .withName("ShoulderToAngle" + angle);
+  }
+
   public CommandBase moveToLocation(LocationType location) {
-    return this.runOnce(() -> setPosition(location.shoulderDegrees)).andThen(new WaitUntilCommand(this::atSetpoint))
-    .handleInterrupt(() -> setPosition(m_encoder.getPosition()))
-        .withName("ShoulderToLocation" + location.toString());
+    return moveToAngle(location.shoulderDegrees);
   }
 
   public CommandBase incrementPosition(double increment) {
-    return this.runOnce(() -> setPosition(getAngle() + increment)).andThen(new WaitUntilCommand(this::atSetpoint))
-    .handleInterrupt(() -> setPosition(m_encoder.getPosition()))
-        .withName("ShoulderIncrement" + increment);
+    return moveToAngle(m_setpoint + increment);
   }
 
   public CommandBase lockPosition() {
-    return incrementPosition(0);
+    return moveToAngle(m_setpoint);
   }
 
   public void resetEncoders() {

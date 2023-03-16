@@ -61,7 +61,7 @@ public class RobotContainer {
 
         private final ClawSubsystem m_clawSubsystem = new ClawSubsystem();
         private final ShoulderSubsystem m_shoulderSubsystem = new ShoulderSubsystem();
-        private final ArmSubsystem m_armSubsystem = new ArmSubsystem(m_shoulderSubsystem::getAngle);
+        private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
         private final TurretSubsystem m_turretSubsystem = new TurretSubsystem();
 
         private final StoppyBarSubsystem m_stoppyBarSubsystem = new StoppyBarSubsystem();
@@ -195,7 +195,8 @@ public class RobotContainer {
                                                 () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveArcade"));
 
                 m_armSubsystem.lockPosition().schedule(); // TODO see if will work
-                m_shoulderSubsystem.lockPosition().schedule(); // TODO see if will work
+                m_shoulderSubsystem.lockPosition().schedule();
+                m_turretSubsystem.lockPosition().schedule();
 
         }
 
@@ -225,9 +226,9 @@ public class RobotContainer {
 
                 // Operator controller bindings
                 m_operatorController.leftBumper()
-                                .whileTrue(m_turretSubsystem.setSpeedCommand(-0.17));
+                                .onTrue(m_turretSubsystem.incrementPosition(-3));
                 m_operatorController.rightBumper()
-                                .whileTrue(m_turretSubsystem.setSpeedCommand(0.17));
+                                .onTrue(m_turretSubsystem.incrementPosition(3));
                 m_operatorController.leftTrigger()
                                 .onTrue(m_armSubsystem.incrementPosition(-1));
                 m_operatorController.rightTrigger()
