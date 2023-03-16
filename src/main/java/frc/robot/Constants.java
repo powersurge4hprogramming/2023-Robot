@@ -25,10 +25,10 @@ public final class Constants {
   public static final class QuartetConstants {
 
     public static enum LocationType {
-      SubstationHigh(0, 0), // TODO all
+      SubstationHigh(-58, 0), // TODO all
       Chute(0, 0),
-      Hybrid(0, 0),
-      Low(0, 0),
+      Hybrid(11, 0),
+      Low(-50, 57),
       High(0, 0),
       Starting(-109.8, 0.0);
 
@@ -50,15 +50,15 @@ public final class Constants {
 
       public static final int kMotorPort = 12;
 
-      public static final double kPositionTolerance = 0.25;
+      public static final double kPositionTolerance = 2.5;
       public static final double kVelocityTolerance = 1;
       public static final double kP = 0.01;
       public static final double kD = 0.01;
       public static final double kF = 0.00;
-      public static final double kMin = -0.15;
-      public static final double kMax = 0.15;
+      public static final double kMin = -0.17;
+      public static final double kMax = 0.17;
 
-      public static final double kStartingDegrees = 180;
+      public static final double kStartingDegrees = 135;
 
       public static final double kMaxRotations = 1.5;
 
@@ -73,15 +73,15 @@ public final class Constants {
 
       public static final int kMotorPort = 17;
 
-      public static final double kPositionTolerance = 0.5;
-      public static final double kVelocityTolerance = 1;
-      public static final double kP = 0.01;
+      public static final double kPositionTolerance = 2;
+      public static final double kVelocityTolerance = 5;
+      public static final double kP = 0.04;
       public static final double kD = 0.00;
       public static final double kF = 0.00;
-      public static final double kMin = -0.7;
-      public static final double kMax = 0.3;
+      public static final double kMin = -0.30;
+      public static final double kMax = 0.25;
 
-      public static final double kMaxDegrees = 43;
+      public static final double kMaxDegrees = 13;
       public static final double kMinDegrees = -110;
 
     }
@@ -96,8 +96,8 @@ public final class Constants {
 
       public static final int kMotorPort = 16;
 
-      public static final double kPositionTolerance = 0.5;
-      public static final double kVelocityTolerance = 1;
+      public static final double kPositionTolerance = 2;
+      public static final double kVelocityTolerance = 5;
       public static final double kP = 0.05;
       public static final double kD = 0.00;
       public static final double kF = 0.00;
@@ -108,7 +108,7 @@ public final class Constants {
       public static final int kLockSolenoidBkwd = 14;
 
       public static final double kMaxPosInches = 55.5;
-      public static final double kMinPosInches = 0.0;
+      public static final double kMinPosInches = -3; // TODO fix offset
     }
 
     public static final class ClawConstants {
@@ -120,7 +120,7 @@ public final class Constants {
 
       public static final int kSwivelMotor = 18;
 
-     /** Enum for determining the mode of robot pickup, for pressures. */
+      /** Enum for determining the mode of robot pickup, for pressures. */
       public static enum PickupMode {
         Cone,
         Cube,
@@ -198,20 +198,20 @@ public final class Constants {
   }
 
   public static final class LEDConstants {
-    public static final int kNumberOfLEDs = 24;
+    public static final int kNumberOfLEDs = 22;
     public static final int kLEDPWMPort = 0;
 
     public static final Color kRedAllianceColor = new Color(145, 0, 0);
     public static final Color kBlueAllianceColor = new Color(0, 0, 80);
     public static final Color kInvalidAllianceColor = Color.kHotPink;
 
-    public static final List<Integer> kAllianceLEDIndexes = List.of(0, 1, 2, 10, 11, 12, 13, 22, 23);
+    public static final List<Integer> kAllianceLEDIndexes = List.of(0, 8, 9, 10, 11, 20, 21);
 
     public static final Color kConeColor = new Color(100, 28, 0);
     public static final Color kCubeColor = new Color(100, 0, 60);
     public static final Color kStoppybarColor = new Color(0, 140, 0); // "robot" green
 
-    public static final List<Integer> kPickupLEDIndexes = List.of(3, 4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 19, 20, 21);
+    public static final List<Integer> kPickupLEDIndexes = List.of(1, 2, 3, 4, 5, 6, 12, 13, 14, 15, 16, 17, 18, 19);
 
     public static final Color kTransparentColor = new Color(0, 0, 0);
 

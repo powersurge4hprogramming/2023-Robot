@@ -46,6 +46,11 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystemReal() {
+    m_leftMotorLeader.restoreFactoryDefaults();
+    m_leftMotorFollower.restoreFactoryDefaults();
+    m_rightMotorLeader.restoreFactoryDefaults();
+    m_rightMotorFollower.restoreFactoryDefaults();
+
     m_leftMotorFollower.follow(m_leftMotorLeader);
     m_rightMotorFollower.follow(m_rightMotorLeader);
 

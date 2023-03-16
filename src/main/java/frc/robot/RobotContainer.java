@@ -225,9 +225,9 @@ public class RobotContainer {
 
                 // Operator controller bindings
                 m_operatorController.leftBumper()
-                                .whileTrue(m_turretSubsystem.setSpeedCommand(-0.15));
+                                .whileTrue(m_turretSubsystem.setSpeedCommand(-0.17));
                 m_operatorController.rightBumper()
-                                .whileTrue(m_turretSubsystem.setSpeedCommand(0.15));
+                                .whileTrue(m_turretSubsystem.setSpeedCommand(0.17));
                 m_operatorController.leftTrigger()
                                 .onTrue(m_armSubsystem.incrementPosition(-1));
                 m_operatorController.rightTrigger()
