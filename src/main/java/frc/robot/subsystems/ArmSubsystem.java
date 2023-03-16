@@ -175,7 +175,7 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("");
-    builder.addDoubleProperty("Angle", m_encoder::getPosition, null);
+    builder.addDoubleProperty("Length", m_encoder::getPosition, null);
     builder.addDoubleProperty("Setpoint", () -> m_setpoint, null);
     builder.addDoubleProperty("Max Setpoint", this::maxSetpoint, null);
     builder.addBooleanProperty("Reached", this::atSetpoint, null);
