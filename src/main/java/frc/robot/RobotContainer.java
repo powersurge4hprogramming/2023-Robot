@@ -363,8 +363,6 @@ public class RobotContainer {
         public void robotInit() {
                 PathPlannerServer.startServer(5811); // TODO disable for competition
 
-                m_driveSubsystem.calibrateGyro();
-
                 // Set the drive limit
                 m_driveSubsystem.limit(DriveConstants.kDriveSpeedLimit);
         }
