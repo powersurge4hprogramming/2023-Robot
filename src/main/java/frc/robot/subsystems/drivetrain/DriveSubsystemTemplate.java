@@ -89,7 +89,10 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
 
   /** Calibrate gyro (takes 5 seconds, robot MUST not move) */
   public void calibrateGyro() {
+    System.out.println("Starting calibration");
     m_gyro.calibrate();
+    System.out.println("Finishing calibration");
+
   }
 
   @Override

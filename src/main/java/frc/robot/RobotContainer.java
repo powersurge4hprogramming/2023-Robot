@@ -211,7 +211,7 @@ public class RobotContainer {
          */
         private void configureButtonBindings() {
                 // nuclear codes (for endgame solenoids)
-                m_operatorController.rightStick().and(m_driverController.back()).onTrue(
+                m_driverController.back().onTrue(
                                 m_stoppyBarSubsystem.setStop(true));
                 m_driverController.start().onTrue(
                                 m_stoppyBarSubsystem.setStop(false));
@@ -221,7 +221,7 @@ public class RobotContainer {
 
                 // Set brake mode, with a debounce of 0.5 seconds to prevent accidental left
                 // stick activation
-                m_driverController.leftStick().debounce(0.5).onTrue(m_driveSubsystem.setBrakeModeCommand(true));
+                m_driverController.leftStick().debounce(0.25).onTrue(m_driveSubsystem.setBrakeModeCommand(true));
                 m_driverController.leftStick().onFalse(m_driveSubsystem.setBrakeModeCommand(false));
 
                 // Operator controller bindings
@@ -241,10 +241,6 @@ public class RobotContainer {
                                 .whileTrue(m_shoulderSubsystem.incrementPosition(-1));
                 m_operatorController.y().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cone));
                 m_operatorController.a().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cube));
-                m_operatorController.back()
-                                .whileTrue(m_clawSubsystem.runSwivelCommand(-0.60));
-                m_operatorController.start()
-                                .whileTrue(m_clawSubsystem.runSwivelCommand(0.60));
 
                 m_operatorController.leftStick().onTrue(m_armSubsystem.toggleArmLock());
 
@@ -371,8 +367,6 @@ public class RobotContainer {
 
                 // Set the drive limit
                 m_driveSubsystem.limit(DriveConstants.kDriveSpeedLimit);
-
-                LimelightHelpers.setCameraMode_Driver(null);
         }
 
         /**
@@ -392,6 +386,8 @@ public class RobotContainer {
 
                 m_armSubsystem.setArmLock(false);
                 m_driveSubsystem.setBrakeMode(m_driverController.leftStick().getAsBoolean());
+                LimelightHelpers.setCameraMode_Driver(null);
+
         }
 
 }

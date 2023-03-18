@@ -4,10 +4,6 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -28,14 +24,10 @@ public class ClawSubsystem extends SubsystemBase {
   private final DoubleSolenoid m_doubleSolenoidDownstream = new DoubleSolenoid(PneumaticsModuleType.REVPH,
       kClawDownstreamFwd, kClawDownstreamBkwd);
 
-  private final CANSparkMax m_swivelMotor = new CANSparkMax(kSwivelMotor, MotorType.kBrushed);
-
   private PickupMode m_pickupMode = PickupMode.None;
 
   /** Creates a new ClawSubsystem. */
   public ClawSubsystem() {
-    m_swivelMotor.setIdleMode(IdleMode.kBrake);
-
     new DoubleSolenoidSim(PneumaticsModuleType.REVPH, kClawUpstreamFwd, kClawUpstreamBkwd);
     new DoubleSolenoidSim(PneumaticsModuleType.REVPH, kClawDownstreamFwd, kClawDownstreamBkwd);
 
@@ -50,29 +42,10 @@ public class ClawSubsystem extends SubsystemBase {
   }
 
   /**
-   * Runs the swivel to a specified speed.
-   * 
-   * @param speed the duty cycle speed to set the motor (-1 to 1)
-   */
-  private void runSwivel(double speed) {
-    m_swivelMotor.set(speed);
-  }
-
-  /**
    * Updates the LEDs based on the {@link PickupMode} the robot is currently in.
    */
   private void updateLEDs() {
     LEDManager.setPickupLEDs(m_pickupMode);
-  }
-
-  /**
-   * Runs the swivel
-   * 
-   * @param speed the duty cycle speed to set the motor (-1 to 1)
-   * @return a command which runs the swivel until interrupted
-   */
-  public CommandBase runSwivelCommand(double speed) {
-    return this.startEnd(() -> runSwivel(speed), () -> runSwivel(0.0)).withName("RunSwivel");
   }
 
   /**

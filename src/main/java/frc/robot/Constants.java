@@ -104,21 +104,21 @@ public final class Constants {
       public static final double kMin = -0.6;
       public static final double kMax = 0.3;
 
-      public static final int kLockSolenoidFwd = 15;
-      public static final int kLockSolenoidBkwd = 14;
+      public static final int kLockSolenoidFwd = 14;
+      public static final int kLockSolenoidBkwd = 15;
 
       public static final double kMaxPosInches = 55.5;
-      public static final double kMinPosInches = -3; // TODO fix offset
+   //   public static final double kMinPosInches = -3; fix offset
+
+      public static final int kLimitSwitchPort = 0;
     }
 
     public static final class ClawConstants {
       public static final int kClawUpstreamFwd = 3; // 30 PSI
       public static final int kClawUpstreamBkwd = 2; // 60 PSI
 
-      public static final int kClawDownstreamFwd = 4;
-      public static final int kClawDownstreamBkwd = 5;
-
-      public static final int kSwivelMotor = 18;
+      public static final int kClawDownstreamFwd = 5;
+      public static final int kClawDownstreamBkwd = 4;
 
       /** Enum for determining the mode of robot pickup, for pressures. */
       public static enum PickupMode {
@@ -193,7 +193,7 @@ public final class Constants {
     // auto selections based on PathPlanner, from ./deploy/pathplanner dir
     public static final String kDefaultAuto = "S6H-P1Cu-C";
     public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-C", "S1H-P1Cu-S2H-P1Co",
-        "S9H-P1Cu-S8H-C", "S9H-P4Cu-S8H-P3Co");
+        "S9H-P1Cu-S8H-C", "S9H-P4Cu-S8H-P3Co", "S1-O", "S9-O");
 
   }
 
@@ -211,7 +211,7 @@ public final class Constants {
     public static final Color kCubeColor = new Color(100, 0, 60);
     public static final Color kStoppybarColor = new Color(0, 140, 0); // "robot" green
 
-    public static final List<Integer> kPickupLEDIndexes = List.of(1, 2, 3, 4, 5, 6, 12, 13, 14, 15, 16, 17, 18, 19);
+    public static final List<Integer> kPickupLEDIndexes = List.of(1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19);
 
     public static final Color kTransparentColor = new Color(0, 0, 0);
 

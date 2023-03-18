@@ -70,6 +70,8 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     // reset robot to (0,0) and encoders
     resetOdometry(new Pose2d());
 
+    calibrateGyro();
+
     SmartDashboard.putData(m_field);
     SmartDashboard.putData(m_drive);
 

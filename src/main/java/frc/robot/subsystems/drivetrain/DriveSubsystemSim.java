@@ -85,6 +85,8 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
     m_odometry = new DifferentialDriveOdometry(
         m_gyro.getRotation2d(), m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
 
+    calibrateGyro();
+
     SmartDashboard.putData(m_field);
     SmartDashboard.putData(m_drive);
   }

@@ -13,9 +13,11 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,6 +27,8 @@ import frc.robot.Constants.QuartetConstants.LocationType;
 import static frc.robot.Constants.QuartetConstants.ArmConstants.*;
 
 public class ArmSubsystem extends SubsystemBase {
+
+  private final DigitalInput m_limitSwitch = new DigitalInput(kLimitSwitchPort);
 
   private final DoubleSolenoid m_lockSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, kLockSolenoidFwd,
       kLockSolenoidBkwd);
@@ -45,7 +49,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
 
-    m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ((float) kMinPosInches));
+    //m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ((float) kMinPosInches));
     m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ((float) kMaxPosInches));
 
     m_motor.setSmartCurrentLimit(60, 30);
@@ -56,6 +60,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_pidController.setFF(kF);
 
     new DoubleSolenoidSim(PneumaticsModuleType.REVPH, kLockSolenoidFwd, kLockSolenoidFwd);
+    new DIOSim(m_limitSwitch);
 
     setName("ArmSubsystem");
   }
@@ -103,6 +108,12 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (m_limitSwitch.get() == true) {
+      m_encoder.setPosition(0);
+      if (m_motor.get() < 0) {
+        m_motor.set(0.0);
+      }
+    }
   }
 
   private CommandBase moveToLength(double length) {
@@ -157,6 +168,7 @@ public class ArmSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Length", m_encoder::getPosition, null);
     builder.addDoubleProperty("Setpoint", () -> m_setpoint, null);
     builder.addBooleanProperty("Reached", this::atSetpoint, null);
+    builder.addBooleanProperty("Down", () -> m_limitSwitch.get(), null);
     builder.addBooleanProperty("Rev Limited", () -> m_motor.getFault(FaultID.kSoftLimitRev), null);
     builder.addBooleanProperty("Fwd Limited", () -> m_motor.getFault(FaultID.kSoftLimitFwd), null);
   }
