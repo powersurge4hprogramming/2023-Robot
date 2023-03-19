@@ -39,8 +39,8 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
 
   // The left-side drive encoder
   private final Encoder m_leftEncoder = new Encoder(
-      0,
-      1,
+      4,
+      5,
       false);
 
   // The right-side drive encoder

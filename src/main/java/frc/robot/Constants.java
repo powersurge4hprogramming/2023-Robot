@@ -108,7 +108,7 @@ public final class Constants {
       public static final int kLockSolenoidBkwd = 15;
 
       public static final double kMaxPosInches = 55.5;
-   //   public static final double kMinPosInches = -3; fix offset
+      // public static final double kMinPosInches = -3; fix offset
 
       public static final int kLimitSwitchPort = 0;
     }
@@ -193,7 +193,7 @@ public final class Constants {
     // auto selections based on PathPlanner, from ./deploy/pathplanner dir
     public static final String kDefaultAuto = "S6H-P1Cu-C";
     public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-C", "S1H-P1Cu-S2H-P1Co",
-        "S9H-P1Cu-S8H-C", "S9H-P4Cu-S8H-P3Co", "S1-O", "S9-O");
+        "S9H-P1Cu-S8H-C", "S9H-P4Cu-S8H-P3Co", "S1-O", "S9-O", "S6H-O-C");
 
   }
 
