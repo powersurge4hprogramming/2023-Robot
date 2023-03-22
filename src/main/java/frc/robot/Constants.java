@@ -180,8 +180,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 2.0; // TODO, 4.48056*0.7 is actual
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0.75; // TODO
+    public static final double kMaxSpeedMetersPerSecond = 4.0; // TODO, 4.48056*0.7 is actual
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1.5; // TODO
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and
     // seconds
@@ -193,7 +193,7 @@ public final class Constants {
     // auto selections based on PathPlanner, from ./deploy/pathplanner dir
     public static final String kDefaultAuto = "S6H-P1Cu-C";
     public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-C", "S1H-P1Cu-S2H-P1Co",
-        "S9H-P1Cu-S8H-C", "S9H-P4Cu-S8H-P3Co", "S1-O", "S9-O", "S6H-O-C");
+        "S9H-P1Cu-S8H-C", "S9H-P4Cu-S8H-P3Co", "S1-O", "S9-O", "S6H-O-C", "test");
 
   }
 

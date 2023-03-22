@@ -54,6 +54,8 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     m_leftMotorFollower.follow(m_leftMotorLeader);
     m_rightMotorFollower.follow(m_rightMotorLeader);
 
+    // m_leftMotorLeader.getPIDController().setOutputRange(-0.9, 0.9);
+
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.

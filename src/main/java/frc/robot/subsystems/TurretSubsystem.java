@@ -14,6 +14,7 @@ import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import static frc.robot.Constants.QuartetConstants.TurretConstants.*;
@@ -127,6 +128,11 @@ public class TurretSubsystem extends SubsystemBase {
 
   public CommandBase lockPosition() {
     return moveToAngle(m_setpoint);
+  }
+
+  public CommandBase absoluteReset() {
+    return moveToAngle(0).beforeStarting(() -> m_pidController.setPositionPIDWrappingEnabled(false), new Subsystem[0])
+        .finallyDo((boolean interrupted) -> m_pidController.setPositionPIDWrappingEnabled(true)).withName("TurretAbsoluteReset");
   }
 
   public void resetEncoders() {

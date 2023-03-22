@@ -191,12 +191,8 @@ public class RobotContainer {
                                 m_driveSubsystem.runEnd(
                                                 () -> m_driveSubsystem.arcadeDrive(
                                                                 -m_driverController.getLeftY(),
-                                                                -m_driverController.getRightX()),
+                                                                (-m_driverController.getRightX() * 0.6)),
                                                 () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveArcade"));
-
-                m_armSubsystem.lockPosition().schedule(); // TODO see if will work
-                m_shoulderSubsystem.lockPosition().schedule();
-                m_turretSubsystem.lockPosition().schedule();
 
         }
 
@@ -318,6 +314,11 @@ public class RobotContainer {
                                 .beforeStarting(this::pidUp, new Subsystem[0])
                                 .finallyDo(this::pidDown));
 
+                m_operatorController.back()
+                                .whileTrue(m_turretSubsystem.absoluteReset()
+                                                .beforeStarting(this::pidUp, new Subsystem[0])
+                                                .finallyDo(this::pidDown));
+
         }
 
         private void pidUp() {
@@ -379,6 +380,11 @@ public class RobotContainer {
         }
 
         public void teleopInit() {
+
+                m_armSubsystem.lockPosition().schedule(); // TODO see if will work
+                m_shoulderSubsystem.lockPosition().schedule();
+                m_turretSubsystem.lockPosition().schedule();
+
                 LEDManager.initialize();
                 LEDManager.start();
 

@@ -43,7 +43,7 @@ public class ShoulderSubsystem extends SubsystemBase {
     m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) kMinDegrees);
     m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) kMaxDegrees);
 
-    m_motor.setSmartCurrentLimit(30, 25);
+    m_motor.setSmartCurrentLimit(20, 25);
 
     m_pidController.setOutputRange(kMin, kMax);
     m_pidController.setP(kP);
