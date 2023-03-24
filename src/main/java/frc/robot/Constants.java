@@ -50,15 +50,15 @@ public final class Constants {
 
       public static final int kMotorPort = 12;
 
-      public static final double kPositionTolerance = 2.5;
-      public static final double kVelocityTolerance = 1;
+      public static final double kPositionTolerance = 1;
+      public static final double kVelocityTolerance = 0.01;
       public static final double kP = 0.01;
       public static final double kD = 0.01;
       public static final double kF = 0.00;
-      public static final double kMin = -0.17;
-      public static final double kMax = 0.17;
+      public static final double kMin = -0.21;
+      public static final double kMax = 0.21;
 
-      public static final double kStartingDegrees = 135;
+      public static final double kStartingDegrees = 180;
 
       public static final double kMaxRotations = 1.5;
 
@@ -107,7 +107,7 @@ public final class Constants {
       public static final int kLockSolenoidFwd = 14;
       public static final int kLockSolenoidBkwd = 15;
 
-      public static final double kMaxPosInches = 55.5;
+      public static final double kMaxPosInches = 76;
       // public static final double kMinPosInches = -3; fix offset
 
       public static final int kLimitSwitchPort = 0;
