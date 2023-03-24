@@ -113,6 +113,12 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   @Override
   public void arcadeDrive(double fwd, double rot) {
     m_drive.arcadeDrive(fwd, rot);
+    // TODO see if valid fix
+    /*
+     * double leftSpeed = m_leftMotorLeader.get();
+     * if (Math.abs(leftSpeed) > 0.04)
+     * m_leftMotorLeader.set(m_leftMotorLeader.get() - 0.04);
+     */
   }
 
   @Override

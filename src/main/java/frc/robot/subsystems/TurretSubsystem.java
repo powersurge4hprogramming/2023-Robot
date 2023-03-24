@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -60,7 +61,7 @@ public class TurretSubsystem extends SubsystemBase {
    * 
    * @return the position of the encoder in inches or degrees
    */
-  private double getLength() {
+  public double getDegrees() {
     return m_encoder.getPosition();
   }
 
@@ -96,8 +97,18 @@ public class TurretSubsystem extends SubsystemBase {
   }
 
   public boolean atSetpoint() {
-    return (Math.abs(m_setpoint - getLength()) <= kPositionTolerance)
-        && (Math.abs(getVelocity()) <= kVelocityTolerance);
+    /*
+     * return (Math.abs(m_setpoint - getLength()) <= kPositionTolerance)
+     * && (Math.abs(getVelocity()) <= kVelocityTolerance);
+     */
+
+    if (Math.abs(getVelocity()) >= kVelocityTolerance) {
+      return false;
+    }
+
+    // from wpi PIDController
+    double positionError = MathUtil.inputModulus(m_setpoint - getDegrees(), -180, 180);
+    return (positionError <= kPositionTolerance);
   }
 
   /** Stops motor from running, will interrupt any control mode. */
@@ -127,12 +138,13 @@ public class TurretSubsystem extends SubsystemBase {
   }
 
   public CommandBase lockPosition() {
-    return moveToAngle(m_setpoint);
+    return moveToAngle(getDegrees());
   }
 
   public CommandBase absoluteReset() {
     return moveToAngle(0).beforeStarting(() -> m_pidController.setPositionPIDWrappingEnabled(false), new Subsystem[0])
-        .finallyDo((boolean interrupted) -> m_pidController.setPositionPIDWrappingEnabled(true)).withName("TurretAbsoluteReset");
+        .finallyDo((boolean interrupted) -> m_pidController.setPositionPIDWrappingEnabled(true))
+        .withName("TurretAbsoluteReset");
   }
 
   public void resetEncoders() {
@@ -143,10 +155,11 @@ public class TurretSubsystem extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("");
     builder.addDoubleProperty("Rotations", this::getRotations, null);
+    builder.addDoubleProperty("Angle", this::getDegrees, null);
     builder.addDoubleProperty("Setpoint", () -> m_setpoint, null);
-    builder.addBooleanProperty("Setpoint", this::atSetpoint, null);
-    builder.addBooleanProperty("Rev Limited", () -> m_motor.getFault(FaultID.kSoftLimitRev), null);
-    builder.addBooleanProperty("Fwd Limited", () -> m_motor.getFault(FaultID.kSoftLimitFwd), null);
+    builder.addBooleanProperty("Reached", this::atSetpoint, null);
+    builder.addBooleanProperty("Soft Limited",
+        () -> m_motor.getFault(FaultID.kSoftLimitRev) || m_motor.getFault(FaultID.kSoftLimitFwd), null);
   }
 
 }

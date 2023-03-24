@@ -104,8 +104,6 @@ public class RobotContainer {
         // constructor, just run .fullAuto(trajectory)
         private final RamseteAutoBuilder m_autoBuilder;
 
-        private int m_smartIndex = 0;
-
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -232,9 +230,9 @@ public class RobotContainer {
                 m_operatorController.x().onTrue(m_clawSubsystem.grabCommand());
                 m_operatorController.b().onTrue(m_clawSubsystem.releaseCommand());
                 m_operatorController.pov(0)
-                                .whileTrue(m_shoulderSubsystem.incrementPosition(1));
+                                .onTrue(m_shoulderSubsystem.incrementPosition(1));
                 m_operatorController.pov(180)
-                                .whileTrue(m_shoulderSubsystem.incrementPosition(-1));
+                                .onTrue(m_shoulderSubsystem.incrementPosition(-1));
                 m_operatorController.y().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cone));
                 m_operatorController.a().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cube));
 
@@ -268,76 +266,57 @@ public class RobotContainer {
                 // Turret directional
                 new Trigger(() -> (m_arcadePad.getHID().getPOV() != -1))
                                 .whileTrue(new TurretDynamicAngle(() -> m_arcadePad.getHID().getPOV(),
-                                                m_turretSubsystem)
-                                                .beforeStarting(this::pidUp, new Subsystem[0])
-                                                .finallyDo(this::pidDown).withName("SetTurretPOV"));
+                                                m_turretSubsystem).withName("SetTurretPOV"));
 
                 // Set shoulder and arm to HIGH GOAL
                 m_arcadePad.x().whileTrue(Commands.parallel(
                                 m_shoulderSubsystem.moveToLocation(LocationType.High),
                                 m_armSubsystem.moveToLocation(LocationType.High))
-                                .beforeStarting(this::pidUp, new Subsystem[0])
-                                .finallyDo(this::pidDown).withName("HighGoal"));
+                                .withName("HighGoal"));
 
                 // Set shoulder and arm to LOW GOAL
-                m_arcadePad.y().whileTrue((Commands.parallel(
+                m_arcadePad.y().whileTrue(Commands.parallel(
                                 m_shoulderSubsystem.moveToLocation(LocationType.Low),
                                 m_armSubsystem.moveToLocation(LocationType.Low))
-                                .beforeStarting(this::pidUp, new Subsystem[0])).finallyDo(this::pidDown)
                                 .withName("LowGoal"));
 
                 // Set shoulder and arm to GROUND PICKUP/PLACE
                 m_arcadePad.rightBumper().whileTrue(Commands.parallel(
                                 m_shoulderSubsystem.moveToLocation(LocationType.Hybrid),
                                 m_armSubsystem.moveToLocation(LocationType.Hybrid))
-                                .beforeStarting(this::pidUp, new Subsystem[0])
-                                .finallyDo(this::pidDown).withName("Ground"));
+                                .withName("Ground"));
 
                 // Set shoulder and arm to SUBSTATION PICKUP
                 m_arcadePad.a().whileTrue(Commands.parallel(
                                 m_shoulderSubsystem.moveToLocation(LocationType.SubstationHigh),
                                 m_armSubsystem.moveToLocation(LocationType.SubstationHigh))
-                                .beforeStarting(this::pidUp, new Subsystem[0])
-                                .finallyDo(this::pidDown).withName("Substation"));
+                                .withName("Substation"));
 
                 // Set shoulder and arm to CHUTE PICKUP
                 m_arcadePad.leftBumper().whileTrue(Commands.parallel(
                                 m_shoulderSubsystem.moveToLocation(LocationType.Chute),
                                 m_armSubsystem.moveToLocation(LocationType.Chute))
-                                .beforeStarting(this::pidUp, new Subsystem[0])
-                                .finallyDo(this::pidDown).withName("Chute"));
+                                .withName("Chute"));
 
                 // Set shoulder and arm to full starting/finishing retraction
                 m_arcadePad.b().whileTrue(Commands.parallel(
                                 m_shoulderSubsystem.moveToLocation(LocationType.Starting),
-                                m_armSubsystem.moveToLocation(LocationType.Starting)).withName("ResetStarting")
-                                .beforeStarting(this::pidUp, new Subsystem[0])
-                                .finallyDo(this::pidDown));
+                                m_armSubsystem.moveToLocation(LocationType.Starting))
+                                .withName("ResetStarting"));
 
                 m_operatorController.back()
                                 .whileTrue(m_turretSubsystem.absoluteReset()
-                                                .beforeStarting(this::pidUp, new Subsystem[0])
-                                                .finallyDo(this::pidDown));
+                                                .withName("TurretAbsReset"));
 
         }
 
-        private void pidUp() {
-                m_smartIndex++;
-                setRumble();
-        }
-
-        private void pidDown(boolean end) {
-                m_smartIndex--;
-                setRumble();
-        }
-
-        private void setRumble() {
-                if (m_smartIndex > 0) {
-                        m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0.5);
-                        SmartDashboard.putBoolean("PIDs On", true);
-                } else {
+        public void updatePIDStatus() {
+                if (m_turretSubsystem.atSetpoint() && m_shoulderSubsystem.atSetpoint() && m_armSubsystem.atSetpoint()) {
                         m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
                         SmartDashboard.putBoolean("PIDs On", false);
+                } else {
+                        m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0.5);
+                        SmartDashboard.putBoolean("PIDs On", true);
                 }
         }
 
@@ -377,6 +356,10 @@ public class RobotContainer {
 
                 m_armSubsystem.setArmLock(false);
                 m_driveSubsystem.setBrakeMode(true);
+
+                m_armSubsystem.lockPosition().schedule(); // TODO see if will work
+                m_shoulderSubsystem.lockPosition().schedule();
+                m_turretSubsystem.lockPosition().schedule();
         }
 
         public void teleopInit() {

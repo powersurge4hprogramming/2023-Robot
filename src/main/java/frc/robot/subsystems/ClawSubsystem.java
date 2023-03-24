@@ -116,7 +116,7 @@ public class ClawSubsystem extends SubsystemBase {
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("");
-    builder.addBooleanProperty("Mode", () -> m_pickupMode == PickupMode.Cone, null);
+    builder.addBooleanProperty("Cone Mode?", () -> m_pickupMode == PickupMode.Cone, null);
     builder.addBooleanProperty("Grabbed", () -> m_doubleSolenoidDownstream.get() == Value.kForward, null);
   }
 }

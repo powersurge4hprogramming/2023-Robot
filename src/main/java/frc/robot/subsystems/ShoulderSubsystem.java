@@ -83,7 +83,7 @@ public class ShoulderSubsystem extends SubsystemBase {
     }
   }
 
-  private boolean atSetpoint() {
+  public boolean atSetpoint() {
     return (Math.abs(m_setpoint - getAngle()) <= kPositionTolerance)
         && (Math.abs(getVelocity()) <= kVelocityTolerance);
   }
@@ -113,7 +113,7 @@ public class ShoulderSubsystem extends SubsystemBase {
   }
 
   public CommandBase lockPosition() {
-    return moveToAngle(m_setpoint);
+    return moveToAngle(getAngle());
   }
 
   public void resetEncoders() {
@@ -126,7 +126,7 @@ public class ShoulderSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Angle", m_encoder::getPosition, null);
     builder.addDoubleProperty("Setpoint", () -> m_setpoint, null);
     builder.addBooleanProperty("Reached", this::atSetpoint, null);
-    builder.addBooleanProperty("Rev Limited", () -> m_motor.getFault(FaultID.kSoftLimitRev), null);
-    builder.addBooleanProperty("Fwd Limited", () -> m_motor.getFault(FaultID.kSoftLimitFwd), null);
+    builder.addBooleanProperty("Soft Limited",
+        () -> m_motor.getFault(FaultID.kSoftLimitRev) || m_motor.getFault(FaultID.kSoftLimitFwd), null);
   }
 }

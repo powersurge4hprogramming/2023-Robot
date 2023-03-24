@@ -44,11 +44,12 @@ public class TurretDynamicAngle extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_turret.setPosition(m_turret.getDegrees());
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_turret.atSetpoint();
+    return false;
   }
 }

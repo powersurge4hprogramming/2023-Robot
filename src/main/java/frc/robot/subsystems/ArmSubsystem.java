@@ -49,7 +49,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
 
-    //m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ((float) kMinPosInches));
+    // m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ((float)
+    // kMinPosInches));
     m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ((float) kMaxPosInches));
 
     m_motor.setSmartCurrentLimit(60, 30);
@@ -95,7 +96,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
   }
 
-  private boolean atSetpoint() {
+  public boolean atSetpoint() {
     return (Math.abs(m_setpoint - getLength()) <= kPositionTolerance)
         && (Math.abs(getVelocity()) <= kVelocityTolerance);
   }
@@ -131,7 +132,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public CommandBase lockPosition() {
-    return moveToLength(m_setpoint);
+    return moveToLength(getLength());
   }
 
   public void resetEncoders() {
@@ -168,9 +169,11 @@ public class ArmSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Length", m_encoder::getPosition, null);
     builder.addDoubleProperty("Setpoint", () -> m_setpoint, null);
     builder.addBooleanProperty("Reached", this::atSetpoint, null);
+    builder.addBooleanProperty("Soft Limited",
+        () -> m_motor.getFault(FaultID.kSoftLimitRev) || m_motor.getFault(FaultID.kSoftLimitFwd), null);
     builder.addBooleanProperty("Down", () -> m_limitSwitch.get(), null);
-    builder.addBooleanProperty("Rev Limited", () -> m_motor.getFault(FaultID.kSoftLimitRev), null);
-    builder.addBooleanProperty("Fwd Limited", () -> m_motor.getFault(FaultID.kSoftLimitFwd), null);
+
+    builder.addBooleanProperty("Arm Locked", () -> m_lockSolenoid.get() == Value.kForward, null);
   }
 
 }

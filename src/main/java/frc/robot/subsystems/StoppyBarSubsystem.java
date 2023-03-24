@@ -17,8 +17,6 @@ public class StoppyBarSubsystem extends SubsystemBase {
   private final DoubleSolenoid m_doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, kFowardSolenoidPort,
       kBackwardSolenoidPort);
 
-  private boolean m_stoppyOn = false;
-
   /** Creates a new StoppyBarSubsystem. */
   public StoppyBarSubsystem() {
     m_doubleSolenoid.set(Value.kReverse);
@@ -31,7 +29,7 @@ public class StoppyBarSubsystem extends SubsystemBase {
 
   /** Update the LEDs in the {@link LEDManager} class */
   private void updateLEDs() {
-    LEDManager.setStoppyBarLEDs(m_stoppyOn);
+    LEDManager.setStoppyBarLEDs(m_doubleSolenoid.get() == Value.kForward);
   }
 
   /**
@@ -42,7 +40,6 @@ public class StoppyBarSubsystem extends SubsystemBase {
    */
   public CommandBase setStop(boolean on) {
     return this.runOnce(() -> {
-      m_stoppyOn = on;
       updateLEDs();
       if (on) {
         m_doubleSolenoid.set(Value.kForward);
@@ -55,6 +52,6 @@ public class StoppyBarSubsystem extends SubsystemBase {
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("");
-    builder.addBooleanProperty("On", () -> m_stoppyOn, null);
+    builder.addBooleanProperty("On", () -> m_doubleSolenoid.get() == Value.kForward, null);
   }
 }
