@@ -27,11 +27,6 @@ public class StoppyBarSubsystem extends SubsystemBase {
   public void periodic() {
   }
 
-  /** Update the LEDs in the {@link LEDManager} class */
-  private void updateLEDs() {
-    LEDManager.setStoppyBarLEDs(m_doubleSolenoid.get() == Value.kForward);
-  }
-
   /**
    * Sets stoppy bar on/off and updates LEDs
    * 
@@ -40,11 +35,12 @@ public class StoppyBarSubsystem extends SubsystemBase {
    */
   public CommandBase setStop(boolean on) {
     return this.runOnce(() -> {
-      updateLEDs();
       if (on) {
         m_doubleSolenoid.set(Value.kForward);
+        LEDManager.setStoppyBarLEDs(true);
       } else {
         m_doubleSolenoid.set(Value.kReverse);
+        LEDManager.setStoppyBarLEDs(false);
       }
     }).withName("SetStoppyBar");
   }

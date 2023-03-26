@@ -25,12 +25,13 @@ public final class Constants {
   public static final class QuartetConstants {
 
     public static enum LocationType {
-      SubstationHigh(-58, 0), // TODO all
-      Chute(0, 0),
-      Hybrid(11, 0),
-      Low(-50, 57),
-      High(0, 0),
-      Starting(-109.8, 0.0);
+      SubstationHigh(-59, 14), // TODO all
+      Chute(-58, 35),
+      Hybrid(22, 4),
+      Low(-30, 57),
+      High(-45, 67),
+      ChargeStation(0,0),
+      Starting(-104, 0.0);
 
       public final double shoulderDegrees;
       public final double armInches;
@@ -52,7 +53,7 @@ public final class Constants {
 
       public static final double kPositionTolerance = 1;
       public static final double kVelocityTolerance = 0.01;
-      public static final double kP = 0.01;
+      public static final double kP = 0.02;
       public static final double kD = 0.01;
       public static final double kF = 0.00;
       public static final double kMin = -0.21;
@@ -73,16 +74,16 @@ public final class Constants {
 
       public static final int kMotorPort = 17;
 
-      public static final double kPositionTolerance = 2;
-      public static final double kVelocityTolerance = 5;
-      public static final double kP = 0.04;
+      public static final double kPositionTolerance = 1;
+      public static final double kVelocityTolerance = 0.01;
+      public static final double kP = 0.05;
       public static final double kD = 0.00;
       public static final double kF = 0.00;
-      public static final double kMin = -0.30;
-      public static final double kMax = 0.25;
+      public static final double kMin = -0.50;
+      public static final double kMax = 0.40;
 
-      public static final double kMaxDegrees = 13;
-      public static final double kMinDegrees = -110;
+      public static final double kMaxDegrees = 22;
+      public static final double kMinDegrees = -104;
 
     }
 
@@ -96,13 +97,13 @@ public final class Constants {
 
       public static final int kMotorPort = 16;
 
-      public static final double kPositionTolerance = 2;
-      public static final double kVelocityTolerance = 5;
-      public static final double kP = 0.05;
-      public static final double kD = 0.00;
+      public static final double kPositionTolerance = 1.5;
+      public static final double kVelocityTolerance = 0.05;
+      public static final double kP = 0.1;
+      public static final double kD = 0.04;
       public static final double kF = 0.00;
-      public static final double kMin = -0.6;
-      public static final double kMax = 0.3;
+      public static final double kMin = -0.95;
+      public static final double kMax = 0.90;
 
       public static final int kLockSolenoidFwd = 14;
       public static final int kLockSolenoidBkwd = 15;

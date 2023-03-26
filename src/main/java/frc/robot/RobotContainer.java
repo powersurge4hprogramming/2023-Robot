@@ -135,6 +135,12 @@ public class RobotContainer {
                                                 m_armSubsystem.moveToLocation(LocationType.High),
                                                 m_shoulderSubsystem.moveToLocation(LocationType.High))
                                                 .withName("place270HPrep"));
+                m_hashMap.put("place180HPrep",
+                                Commands.parallel(
+                                                m_turretSubsystem.moveToAngle(180),
+                                                m_armSubsystem.moveToLocation(LocationType.High),
+                                                m_shoulderSubsystem.moveToLocation(LocationType.High))
+                                                .withName("place180HPrep"));
                 m_hashMap.put("place0HPrep",
                                 Commands.parallel(
                                                 m_turretSubsystem.moveToAngle(0),
@@ -205,9 +211,9 @@ public class RobotContainer {
          */
         private void configureButtonBindings() {
                 // nuclear codes (for endgame solenoids)
-                m_driverController.back().onTrue(
-                                m_stoppyBarSubsystem.setStop(true));
                 m_driverController.start().onTrue(
+                                m_stoppyBarSubsystem.setStop(true));
+                m_driverController.back().onTrue(
                                 m_stoppyBarSubsystem.setStop(false));
 
                 // Dumb bindings (non distance based)
@@ -220,19 +226,19 @@ public class RobotContainer {
 
                 // Operator controller bindings
                 m_operatorController.leftBumper()
-                                .onTrue(m_turretSubsystem.incrementPosition(-3));
+                                .onTrue(m_turretSubsystem.incrementAngle(-3));
                 m_operatorController.rightBumper()
-                                .onTrue(m_turretSubsystem.incrementPosition(3));
+                                .onTrue(m_turretSubsystem.incrementAngle(3));
                 m_operatorController.leftTrigger()
-                                .onTrue(m_armSubsystem.incrementPosition(-1));
+                                .onTrue(m_armSubsystem.incrementLength(-1));
                 m_operatorController.rightTrigger()
-                                .whileTrue(m_armSubsystem.incrementPosition(1));
+                                .onTrue(m_armSubsystem.incrementLength(1));
                 m_operatorController.x().onTrue(m_clawSubsystem.grabCommand());
                 m_operatorController.b().onTrue(m_clawSubsystem.releaseCommand());
                 m_operatorController.pov(0)
-                                .onTrue(m_shoulderSubsystem.incrementPosition(1));
+                                .onTrue(m_shoulderSubsystem.incrementAngle(2));
                 m_operatorController.pov(180)
-                                .onTrue(m_shoulderSubsystem.incrementPosition(-1));
+                                .onTrue(m_shoulderSubsystem.incrementAngle(-2));
                 m_operatorController.y().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cone));
                 m_operatorController.a().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cube));
 
@@ -293,7 +299,7 @@ public class RobotContainer {
                                 .withName("Substation"));
 
                 // Set shoulder and arm to CHUTE PICKUP
-                m_arcadePad.leftBumper().whileTrue(Commands.parallel(
+                m_arcadePad.leftTrigger().whileTrue(Commands.parallel(
                                 m_shoulderSubsystem.moveToLocation(LocationType.Chute),
                                 m_armSubsystem.moveToLocation(LocationType.Chute))
                                 .withName("Chute"));
@@ -303,6 +309,11 @@ public class RobotContainer {
                                 m_shoulderSubsystem.moveToLocation(LocationType.Starting),
                                 m_armSubsystem.moveToLocation(LocationType.Starting))
                                 .withName("ResetStarting"));
+
+                m_arcadePad.leftBumper().whileTrue(Commands.parallel(
+                                m_shoulderSubsystem.moveToLocation(LocationType.ChargeStation),
+                                m_armSubsystem.moveToLocation(LocationType.ChargeStation))
+                                .withName("ChargeStation"));
 
                 m_operatorController.back()
                                 .whileTrue(m_turretSubsystem.absoluteReset()

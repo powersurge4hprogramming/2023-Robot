@@ -46,14 +46,14 @@ public class ArmSubsystem extends SubsystemBase {
     m_motor.setIdleMode(IdleMode.kBrake);
     m_motor.setInverted(true);
 
-    m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+    m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, false);
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
 
     // m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, ((float)
     // kMinPosInches));
     m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, ((float) kMaxPosInches));
 
-    m_motor.setSmartCurrentLimit(60, 30);
+    m_motor.setSmartCurrentLimit(20, 25);
 
     m_pidController.setOutputRange(kMin, kMax);
     m_pidController.setP(kP);
@@ -96,6 +96,16 @@ public class ArmSubsystem extends SubsystemBase {
     }
   }
 
+  /**
+   * Runs motor to a specified position.
+   * 
+   * @param angle the position (in degrees) to set the motor to
+   */
+  private void incrementPosition(double increment) {
+    m_setpoint = m_setpoint + increment;
+    m_pidController.setReference(m_setpoint, ControlType.kPosition);
+  }
+
   public boolean atSetpoint() {
     return (Math.abs(m_setpoint - getLength()) <= kPositionTolerance)
         && (Math.abs(getVelocity()) <= kVelocityTolerance);
@@ -111,9 +121,7 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     if (m_limitSwitch.get() == true) {
       m_encoder.setPosition(0);
-      if (m_motor.get() < 0) {
-        m_motor.set(0.0);
-      }
+      setPosition(0.0);
     }
   }
 
@@ -127,8 +135,10 @@ public class ArmSubsystem extends SubsystemBase {
     return moveToLength(location.armInches);
   }
 
-  public CommandBase incrementPosition(double increment) {
-    return moveToLength(m_setpoint + increment);
+  public CommandBase incrementLength(double increment) {
+    return this.runOnce(() -> {
+      incrementPosition(increment);
+    }).withName("ArmIncrement" + increment);
   }
 
   public CommandBase lockPosition() {

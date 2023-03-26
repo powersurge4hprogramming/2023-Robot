@@ -113,12 +113,14 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   @Override
   public void arcadeDrive(double fwd, double rot) {
     m_drive.arcadeDrive(fwd, rot);
-    // TODO see if valid fix
-    /*
-     * double leftSpeed = m_leftMotorLeader.get();
-     * if (Math.abs(leftSpeed) > 0.04)
-     * m_leftMotorLeader.set(m_leftMotorLeader.get() - 0.04);
-     */
+
+    if (true) {
+      double leftSpeed = m_leftMotorLeader.get();
+      if (Math.abs(leftSpeed) > 0.04) {
+        m_leftMotorLeader.set(Math.signum(leftSpeed) * (Math.abs(leftSpeed)) - 0.04);
+      }
+    }
+
   }
 
   @Override
@@ -160,11 +162,22 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   /** Updates CANSparkMax brake mode based on {@code m_brake} */
   private void updateBrakeMode() {
     if (m_brake) {
+
+      m_leftMotorLeader.setOpenLoopRampRate(0.0);
+      m_leftMotorFollower.setOpenLoopRampRate(0.0);
+      m_rightMotorLeader.setOpenLoopRampRate(0.0);
+      m_rightMotorFollower.setOpenLoopRampRate(0.0);
+
       m_leftMotorLeader.setIdleMode(IdleMode.kBrake);
       m_leftMotorFollower.setIdleMode(IdleMode.kBrake);
       m_rightMotorLeader.setIdleMode(IdleMode.kBrake);
       m_rightMotorFollower.setIdleMode(IdleMode.kBrake);
     } else {
+      m_leftMotorLeader.setOpenLoopRampRate(0.5);
+      m_leftMotorFollower.setOpenLoopRampRate(0.5);
+      m_rightMotorLeader.setOpenLoopRampRate(0.5);
+      m_rightMotorFollower.setOpenLoopRampRate(0.5);
+
       m_leftMotorLeader.setIdleMode(IdleMode.kCoast);
       m_leftMotorFollower.setIdleMode(IdleMode.kCoast);
       m_rightMotorLeader.setIdleMode(IdleMode.kCoast);
