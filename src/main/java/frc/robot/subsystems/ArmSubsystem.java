@@ -84,6 +84,15 @@ public class ArmSubsystem extends SubsystemBase {
     return m_encoder.getVelocity();
   }
 
+  private void setSpeed(double speed) {
+    m_motor.set(speed);
+  }
+
+  public CommandBase setSpeedCmd(double speed) {
+    return this.startEnd(() -> setSpeed(speed), () -> setSpeed(0.0)).finallyDo((end) -> lockPosition())
+        .withName("ArmRunSpeed");
+  }
+
   /**
    * Runs motor to a specified position.
    * 
@@ -103,6 +112,11 @@ public class ArmSubsystem extends SubsystemBase {
    */
   private void incrementPosition(double increment) {
     m_setpoint = m_setpoint + increment;
+    m_pidController.setReference(m_setpoint, ControlType.kPosition);
+  }
+
+  private void lockPosition() {
+    m_setpoint = m_encoder.getPosition();
     m_pidController.setReference(m_setpoint, ControlType.kPosition);
   }
 
@@ -127,7 +141,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private CommandBase moveToLength(double length) {
     return this.runOnce(() -> setPosition(length)).andThen(new WaitUntilCommand(this::atSetpoint))
-        .handleInterrupt(() -> setPosition(m_encoder.getPosition()))
+        .handleInterrupt(this::lockPosition)
         .withName("ArmToLength" + length);
   }
 
@@ -141,8 +155,10 @@ public class ArmSubsystem extends SubsystemBase {
     }).withName("ArmIncrement" + increment);
   }
 
-  public CommandBase lockPosition() {
-    return moveToLength(getLength());
+  public CommandBase lockLength() {
+    return this.runOnce(() -> {
+      lockPosition();
+    }).withName("ArmPositionLock");
   }
 
   public void resetEncoders() {

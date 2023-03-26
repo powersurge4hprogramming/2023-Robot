@@ -84,6 +84,15 @@ public class TurretSubsystem extends SubsystemBase {
     return m_encoder.getPosition() / 360.0;
   }
 
+  private void setSpeed(double speed) {
+    m_motor.set(speed);
+  }
+
+  public CommandBase setSpeedCmd(double speed) {
+    return this.startEnd(() -> setSpeed(speed), () -> setSpeed(0.0)).finallyDo((end) -> lockPosition())
+        .withName("ArmRunSpeed");
+  }
+
   /**
    * Runs motor to a specified position.
    * 
@@ -103,6 +112,11 @@ public class TurretSubsystem extends SubsystemBase {
    */
   private void incrementPosition(double increment) {
     m_setpoint = m_setpoint + increment;
+    m_pidController.setReference(m_setpoint, ControlType.kPosition);
+  }
+
+  private void lockPosition() {
+    m_setpoint = m_encoder.getPosition();
     m_pidController.setReference(m_setpoint, ControlType.kPosition);
   }
 
@@ -139,7 +153,7 @@ public class TurretSubsystem extends SubsystemBase {
   public CommandBase moveToAngle(double angle) {
     return this.runOnce(() -> {
       setPosition(angle);
-    }).andThen(new WaitUntilCommand(this::atSetpoint)).handleInterrupt(() -> setPosition(m_encoder.getPosition()))
+    }).andThen(new WaitUntilCommand(this::atSetpoint)).handleInterrupt(this::lockPosition)
         .withName("TurretToAngle" + angle);
   }
 
@@ -149,8 +163,10 @@ public class TurretSubsystem extends SubsystemBase {
     }).withName("TurretIncrement" + increment);
   }
 
-  public CommandBase lockPosition() {
-    return moveToAngle(getDegrees());
+  public CommandBase lockAngle() {
+    return this.runOnce(() -> {
+      lockPosition();
+    }).withName("TurretAngleLock");
   }
 
   public CommandBase absoluteReset() {

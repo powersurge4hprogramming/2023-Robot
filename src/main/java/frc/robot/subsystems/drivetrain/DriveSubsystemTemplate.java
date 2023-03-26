@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriveConstants.DriveProfiles;
 
 public abstract class DriveSubsystemTemplate extends SubsystemBase {
   // The gyro sensor
@@ -20,7 +21,7 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
   protected final Field2d m_field = new Field2d();
 
   // the brake mode
-  protected boolean m_brake = false;
+  protected DriveProfiles m_driveProfile = DriveProfiles.CoastNoRamp;
 
   /**
    * Returns the currently-estimated pose of the robot.
@@ -78,14 +79,14 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
   public abstract void resetEncoders();
 
   /** Toggles brake mode to true or false */
-  public abstract void setBrakeMode(boolean brakeMode);
+  public abstract void setDriveProfile(DriveProfiles driveProfile);
 
   /**
    * Toggles brake mode to true or false
    * 
    * @return a command which toggles the brake mode and then finishes
    */
-  public abstract CommandBase setBrakeModeCommand(boolean brakeMode);
+  public abstract CommandBase setDriveProfileCmd(DriveProfiles driveProfile);
 
   /** Calibrate gyro (takes 5 seconds, robot MUST not move) */
   public void calibrateGyro() {
@@ -97,6 +98,7 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.addBooleanProperty("Drive Brake", () -> m_brake, null);
+    builder.setSmartDashboardType("");
+    builder.addStringProperty("Drive Brake", () -> m_driveProfile.toString(), null);
   }
 }

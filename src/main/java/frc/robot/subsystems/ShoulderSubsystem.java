@@ -71,14 +71,23 @@ public class ShoulderSubsystem extends SubsystemBase {
     return m_encoder.getVelocity();
   }
 
+  private void setSpeed(double speed) {
+    m_motor.set(speed);
+  }
+
+  public CommandBase setSpeedCmd(double speed) {
+    return this.startEnd(() -> setSpeed(speed), () -> setSpeed(0.0)).finallyDo((end) -> lockPosition())
+        .withName("ArmRunSpeed");
+  }
+
   /**
    * Runs motor to a specified position.
    * 
    * @param angle the position (in subclass units) to set the motor to
    */
   private void setPosition(double angle) {
-      m_setpoint = angle;
-      m_pidController.setReference(angle, ControlType.kPosition);
+    m_setpoint = angle;
+    m_pidController.setReference(angle, ControlType.kPosition);
   }
 
   /**
@@ -88,6 +97,11 @@ public class ShoulderSubsystem extends SubsystemBase {
    */
   private void incrementPosition(double increment) {
     m_setpoint = m_setpoint + increment;
+    m_pidController.setReference(m_setpoint, ControlType.kPosition);
+  }
+
+  private void lockPosition() {
+    m_setpoint = m_encoder.getPosition();
     m_pidController.setReference(m_setpoint, ControlType.kPosition);
   }
 
@@ -108,7 +122,7 @@ public class ShoulderSubsystem extends SubsystemBase {
 
   private CommandBase moveToAngle(double angle) {
     return this.runOnce(() -> setPosition(angle)).andThen(new WaitUntilCommand(this::atSetpoint))
-        .handleInterrupt(() -> setPosition(m_encoder.getPosition()))
+        .handleInterrupt(this::lockPosition)
         .withName("ShoulderToAngle" + angle);
   }
 
@@ -122,8 +136,10 @@ public class ShoulderSubsystem extends SubsystemBase {
     }).withName("ShoulderIncrement" + increment);
   }
 
-  public CommandBase lockPosition() {
-    return moveToAngle(getAngle());
+  public CommandBase lockAngle() {
+    return this.runOnce(() -> {
+      lockPosition();
+    }).withName("ShoulderAngleLock");
   }
 
   public void resetEncoders() {

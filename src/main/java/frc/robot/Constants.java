@@ -30,7 +30,7 @@ public final class Constants {
       Hybrid(22, 4),
       Low(-30, 57),
       High(-45, 67),
-      ChargeStation(0,0),
+      ChargeStation(0, 0),
       Starting(-104, 0.0);
 
       public final double shoulderDegrees;
@@ -136,7 +136,7 @@ public final class Constants {
     public static final int kRightMotorLeaderPort = 6;
     public static final int kRightMotorFollowerPort = 9;
 
-    public static final double kDriveSpeedLimit = 0.65; // TODO
+    public static final double kDriveSpeedLimit = 0.65;
 
     public static final double kTrackWidthMeters = 0.530352;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
@@ -167,6 +167,14 @@ public final class Constants {
     public static final double kaVoltSecondsSquaredPerMeter = 0.2;
 
     public static final double kPDriveVel = 8.5; // TODO
+
+    public static enum DriveProfiles {
+      BrakeNoRamp,
+      CoastRamp,
+      CoastNoRamp
+    }
+
+    public static final DriveProfiles kDriveProfileDefault = DriveProfiles.CoastNoRamp;
   }
 
   public static final class StoppyBarConstants {
