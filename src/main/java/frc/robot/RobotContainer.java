@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -154,9 +153,9 @@ public class RobotContainer {
                                                 m_armSubsystem.moveToLocation(LocationType.Starting),
                                                 m_shoulderSubsystem.moveToLocation(LocationType.Starting))
                                                 .withName("retract"));
-                m_autoCmdMap.put("grabCu", m_clawSubsystem.grabCommand(PickupMode.Cube));
-                m_autoCmdMap.put("grabCo", m_clawSubsystem.grabCommand(PickupMode.Cone));
-                m_autoCmdMap.put("release", m_clawSubsystem.releaseCommand());
+                m_autoCmdMap.put("grabCu", m_clawSubsystem.grabCommand(PickupMode.Cube).andThen(Commands.waitSeconds(1)));
+                m_autoCmdMap.put("grabCo", m_clawSubsystem.grabCommand(PickupMode.Cone).andThen(Commands.waitSeconds(1)));
+                m_autoCmdMap.put("release", m_clawSubsystem.releaseCommand().andThen(Commands.waitSeconds(1)));
                 m_autoCmdMap.put("climb", m_stoppyBarSubsystem.setStop(true));
 
                 // add all items to Auto Selector
@@ -199,10 +198,6 @@ public class RobotContainer {
                                                                 (-m_driverController.getRightX() * 0.6)),
                                                 () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveArcade"));
 
-                // set limelight mode at proper time
-                new Trigger(DriverStation::isDSAttached).onTrue(
-                                Commands.runOnce(() -> LimelightHelpers.setCameraMode_Driver(null), new Subsystem[0]));
-
         }
 
         /**
@@ -216,10 +211,14 @@ public class RobotContainer {
          */
         private void configureButtonBindings() {
                 // nuclear codes (for endgame solenoids)
-                m_driverController.start().onTrue(
-                                m_stoppyBarSubsystem.setStop(true));
                 m_driverController.back().onTrue(
+                                m_stoppyBarSubsystem.setStop(true));
+                m_driverController.start().onTrue(
                                 m_stoppyBarSubsystem.setStop(false));
+
+                m_driverController.a().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastNoRamp));
+                m_driverController.b().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.BrakeNoRamp));
+                m_driverController.y().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastRamp));
 
                 // Dumb bindings (non distance based)
                 // Drive bindings
@@ -255,17 +254,17 @@ public class RobotContainer {
 
                 // Speed Overrides
                 m_operatorController.start().and(m_operatorController.leftBumper())
-                                .onTrue(m_turretSubsystem.setSpeedCmd(-0.17));
+                                .whileTrue(m_turretSubsystem.setSpeedCmd(-0.17));
                 m_operatorController.start().and(m_operatorController.rightBumper())
-                                .onTrue(m_turretSubsystem.setSpeedCmd(0.17));
+                                .whileTrue(m_turretSubsystem.setSpeedCmd(0.17));
                 m_operatorController.start().and(m_operatorController.leftTrigger())
-                                .onTrue(m_armSubsystem.setSpeedCmd(-0.4));
+                                .whileTrue(m_armSubsystem.setSpeedCmd(-0.4));
                 m_operatorController.start().and(m_operatorController.rightTrigger())
-                                .onTrue(m_armSubsystem.setSpeedCmd(0.3));
+                                .whileTrue(m_armSubsystem.setSpeedCmd(0.3));
                 m_operatorController.start().and(m_operatorController.pov(0))
-                                .onTrue(m_shoulderSubsystem.setSpeedCmd(-0.3));
+                                .whileTrue(m_shoulderSubsystem.setSpeedCmd(-0.3));
                 m_operatorController.start().and(m_operatorController.pov(180))
-                                .onTrue(m_shoulderSubsystem.setSpeedCmd(0.2));
+                                .whileTrue(m_shoulderSubsystem.setSpeedCmd(0.2));
 
                 // arcade pad
                 m_arcadePad.L3().onTrue(Commands.run(() -> LEDManager.start(), new Subsystem[0]).withName("StartLEDs"));
@@ -403,6 +402,7 @@ public class RobotContainer {
 
                 m_armSubsystem.setArmLock(false);
                 m_driveSubsystem.setDriveProfile(DriveConstants.kDriveProfileDefault);
+                LimelightHelpers.setCameraMode_Driver(null);
         }
 
 }

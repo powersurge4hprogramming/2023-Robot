@@ -25,11 +25,11 @@ public final class Constants {
   public static final class QuartetConstants {
 
     public static enum LocationType {
-      SubstationHigh(-59, 14), // TODO all
-      Chute(-58, 35),
-      Hybrid(22, 4),
-      Low(-30, 57),
-      High(-45, 67),
+      SubstationHigh(-58, 11), // TODO all
+      Chute(-58, 15),
+      Hybrid(29, 8.5),
+      Low(-41, 34),
+      High(-49, 76),
       ChargeStation(0, 0),
       Starting(-104, 0.0);
 
@@ -82,7 +82,7 @@ public final class Constants {
       public static final double kMin = -0.50;
       public static final double kMax = 0.40;
 
-      public static final double kMaxDegrees = 22;
+      public static final double kMaxDegrees = 32;
       public static final double kMinDegrees = -104;
 
     }
@@ -200,9 +200,9 @@ public final class Constants {
     public static final String kAutoSelectionKey = "Auto Selector";
 
     // auto selections based on PathPlanner, from ./deploy/pathplanner dir
-    public static final String kDefaultAuto = "S6H-P1Cu-C";
-    public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-C", "S1H-P1Cu-S2H-P1Co",
-        "S9H-P1Cu-S8H-C", "S9H-P4Cu-S8H-P3Co", "S1-O", "S9-O", "S6H-O-C", "test");
+    public static final String kDefaultAuto = "S6H-P3Cu-C";
+    public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-C", "S1H-P1Cu-S2H-P2Co",
+        "S9H-P4Cu-S8H-C", "S9H-P4Cu-S8H-P3Co", "S1-O", "S9-O", "S6H-O-C", "test");
 
   }
 

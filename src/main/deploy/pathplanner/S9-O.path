@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.7641719643628866,
-        "y": 4.957921385037083
+        "x": 1.7736698980506969,
+        "y": 0.4464028833270936
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.764171964362888,
-        "y": 4.957921385037083
+        "x": 2.773669898050699,
+        "y": 0.4464028833270936
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -16,45 +16,24 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "grabCo",
+          "place180HPrep",
+          "release"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 4.357107861135154,
-        "y": 4.948423451349273
+        "x": 6.577808761894272,
+        "y": 0.8576593472730455
       },
       "prevControl": {
-        "x": 3.357107861135155,
-        "y": 4.948423451349273
-      },
-      "nextControl": {
-        "x": 5.344892964667446,
-        "y": 4.948423451349273
-      },
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 6.503640874580328,
-        "y": 5.793739549564407
-      },
-      "prevControl": {
-        "x": 5.5728433731749,
-        "y": 4.986415186100514
+        "x": 5.4571338814574935,
+        "y": 0.7318693096729998
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -63,12 +42,22 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "collect0GPrep",
+          "grabCu"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "position": 0.07999999999999959,
+      "names": [
+        "retract"
+      ]
+    }
+  ]
 }

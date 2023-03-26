@@ -90,7 +90,7 @@ public class TurretSubsystem extends SubsystemBase {
 
   public CommandBase setSpeedCmd(double speed) {
     return this.startEnd(() -> setSpeed(speed), () -> setSpeed(0.0)).finallyDo((end) -> lockPosition())
-        .withName("ArmRunSpeed");
+        .withName("TurretRunSpeed");
   }
 
   /**
@@ -170,7 +170,7 @@ public class TurretSubsystem extends SubsystemBase {
   }
 
   public CommandBase absoluteReset() {
-    return moveToAngle(0).beforeStarting(() -> m_pidController.setPositionPIDWrappingEnabled(false), new Subsystem[0])
+    return moveToAngle(kStartingDegrees).beforeStarting(() -> m_pidController.setPositionPIDWrappingEnabled(false), new Subsystem[0])
         .finallyDo((boolean interrupted) -> m_pidController.setPositionPIDWrappingEnabled(true))
         .withName("TurretAbsoluteReset");
   }

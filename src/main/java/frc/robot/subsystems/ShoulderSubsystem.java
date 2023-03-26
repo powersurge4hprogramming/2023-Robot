@@ -77,7 +77,7 @@ public class ShoulderSubsystem extends SubsystemBase {
 
   public CommandBase setSpeedCmd(double speed) {
     return this.startEnd(() -> setSpeed(speed), () -> setSpeed(0.0)).finallyDo((end) -> lockPosition())
-        .withName("ArmRunSpeed");
+        .withName("ShoulderRunSpeed");
   }
 
   /**
