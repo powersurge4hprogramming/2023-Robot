@@ -45,8 +45,10 @@
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "grabCu"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -67,24 +69,36 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "climb",
+          "retract"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
+  "maxVelocity": null,
+  "maxAcceleration": 1.5,
+  "isReversed": null,
   "markers": [
     {
       "position": 0.6787878787879229,
       "names": [
-        "collect0Prep"
+        "collect0GPrep"
       ]
     },
     {
       "position": 1.1515151515152167,
       "names": [
-        "retract"
+        "chargeStation"
+      ]
+    },
+    {
+      "position": 0.1272727272727273,
+      "names": [
+        "chargeStation"
       ]
     }
   ]

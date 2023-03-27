@@ -112,7 +112,7 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   public void arcadeDrive(double fwd, double rot) {
     m_drive.arcadeDrive(fwd, rot);
 
-    if (true) {
+    if (false) {
       double leftSpeed = m_leftMotorLeader.get();
       if (Math.abs(leftSpeed) > 0.04) {
         m_leftMotorLeader.set(Math.signum(leftSpeed) * (Math.abs(leftSpeed)) - 0.03);
@@ -156,7 +156,7 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   public CommandBase setDriveProfileCmd(DriveProfiles driveProfile) {
     return this.runOnce(() -> {
       setDriveProfile(driveProfile);
-    }).withName("SetBrakeMode");
+    }).withName("SetDriveProfile");
   }
 
   /** Updates CANSparkMax brake mode based on {@code m_brake} */

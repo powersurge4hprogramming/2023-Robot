@@ -43,20 +43,29 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "collect0GPrep",
-          "grabCu"
+          "grabCu",
+          "retract"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
+  "maxVelocity": null,
+  "maxAcceleration": 1.5,
+  "isReversed": null,
   "markers": [
     {
       "position": 0.07999999999999959,
       "names": [
         "retract"
+      ]
+    },
+    {
+      "position": 0.6636363636363631,
+      "names": [
+        "collect0GPrep"
       ]
     }
   ]

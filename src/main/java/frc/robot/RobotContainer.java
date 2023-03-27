@@ -153,12 +153,17 @@ public class RobotContainer {
                                                 m_armSubsystem.moveToLocation(LocationType.Starting),
                                                 m_shoulderSubsystem.moveToLocation(LocationType.Starting))
                                                 .withName("retract"));
+                m_autoCmdMap.put("chargeStation",
+                                Commands.parallel(m_turretSubsystem.moveToAngle(0),
+                                                m_armSubsystem.moveToLocation(LocationType.ChargeStation),
+                                                m_shoulderSubsystem.moveToLocation(LocationType.ChargeStation))
+                                                .withName("chargeStation"));
                 m_autoCmdMap.put("grabCu",
-                                m_clawSubsystem.grabCommand(PickupMode.Cube).andThen(Commands.waitSeconds(1)));
+                                m_clawSubsystem.grabCommand(PickupMode.Cube).andThen(Commands.waitSeconds(0.5)));
                 m_autoCmdMap.put("grabCo",
-                                m_clawSubsystem.grabCommand(PickupMode.Cone).andThen(Commands.waitSeconds(1)));
-                m_autoCmdMap.put("release", m_clawSubsystem.releaseCommand().andThen(Commands.waitSeconds(1)));
-                m_autoCmdMap.put("climb", m_stoppyBarSubsystem.setStop(true));
+                                m_clawSubsystem.grabCommand(PickupMode.Cone).andThen(Commands.waitSeconds(0.5)));
+                m_autoCmdMap.put("release", m_clawSubsystem.releaseCommand().andThen(Commands.waitSeconds(0.5)));
+                m_autoCmdMap.put("climb", m_stoppyBarSubsystem.setStop(true).andThen(Commands.waitSeconds(1.5)));
 
                 // add all items to Auto Selector
                 m_autoChooser.setDefaultOption(AutoConstants.kDefaultAuto, AutoConstants.kDefaultAuto);
@@ -246,9 +251,9 @@ public class RobotContainer {
                 m_operatorController.x().onTrue(m_clawSubsystem.grabCommand());
                 m_operatorController.b().onTrue(m_clawSubsystem.releaseCommand());
                 m_operatorController.pov(0)
-                                .onTrue(m_shoulderSubsystem.incrementAngle(2));
-                m_operatorController.pov(180)
                                 .onTrue(m_shoulderSubsystem.incrementAngle(-2));
+                m_operatorController.pov(180)
+                                .onTrue(m_shoulderSubsystem.incrementAngle(2));
                 m_operatorController.y().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cone));
                 m_operatorController.a().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cube));
 

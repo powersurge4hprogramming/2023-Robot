@@ -19,8 +19,7 @@
         "names": [
           "grabCo",
           "place180HPrep",
-          "release",
-          "retract"
+          "release"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -54,12 +53,12 @@
     },
     {
       "anchorPoint": {
-        "x": 3.7533862968081824,
-        "y": 3.3
+        "x": 3.632207264414529,
+        "y": 3.2956565913131834
       },
       "prevControl": {
-        "x": 5.00892489997178,
-        "y": 3.3
+        "x": 4.887745867578126,
+        "y": 3.2956565913131834
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -68,12 +67,25 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "climb",
+          "retract"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "markers": []
+  "maxVelocity": null,
+  "maxAcceleration": 1.5,
+  "isReversed": null,
+  "markers": [
+    {
+      "position": 0.1090909090909091,
+      "names": [
+        "chargeStation"
+      ]
+    }
+  ]
 }

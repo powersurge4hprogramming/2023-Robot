@@ -28,16 +28,16 @@
     },
     {
       "anchorPoint": {
-        "x": 6.503385083311627,
-        "y": 0.9260451688869351
+        "x": 6.590794449194532,
+        "y": 0.945579496792797
       },
       "prevControl": {
-        "x": 5.503385083311627,
-        "y": 0.9260451688869351
+        "x": 5.590794449194532,
+        "y": 0.945579496792797
       },
       "nextControl": {
-        "x": 5.503385083311627,
-        "y": 0.9260451688869351
+        "x": 5.590794449194532,
+        "y": 0.945579496792797
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -75,7 +75,7 @@
         "names": [
           "release"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -107,12 +107,12 @@
     },
     {
       "anchorPoint": {
-        "x": 6.779080951526832,
-        "y": 1.7286239311815117
+        "x": 6.788378224643773,
+        "y": 1.7359145985897613
       },
       "prevControl": {
-        "x": 6.276019020020768,
-        "y": 0.8876623748025945
+        "x": 6.285316293137709,
+        "y": 0.894953042210844
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -124,30 +124,48 @@
         "names": [
           "grabCo"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "maxVelocity": 2.0,
-  "maxAcceleration": 1.0,
+  "maxVelocity": 4.0,
+  "maxAcceleration": 1.5,
   "isReversed": null,
   "markers": [
     {
       "position": 0.12121212121211433,
       "names": [
-        "collect0GPrep"
+        "retract"
       ]
     },
     {
       "position": 1.1212121212122685,
       "names": [
-        "place180HPrep"
+        "retract"
       ]
     },
     {
       "position": 2.212121212121268,
+      "names": [
+        "retract"
+      ]
+    },
+    {
+      "position": 0.6545454545454547,
+      "names": [
+        "collect0GPrep"
+      ]
+    },
+    {
+      "position": 1.6363636363636367,
+      "names": [
+        "place180HPrep"
+      ]
+    },
+    {
+      "position": 3.2363636363636297,
       "names": [
         "collect0GPrep"
       ]
