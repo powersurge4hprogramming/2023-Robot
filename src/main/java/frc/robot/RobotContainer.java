@@ -153,8 +153,10 @@ public class RobotContainer {
                                                 m_armSubsystem.moveToLocation(LocationType.Starting),
                                                 m_shoulderSubsystem.moveToLocation(LocationType.Starting))
                                                 .withName("retract"));
-                m_autoCmdMap.put("grabCu", m_clawSubsystem.grabCommand(PickupMode.Cube).andThen(Commands.waitSeconds(1)));
-                m_autoCmdMap.put("grabCo", m_clawSubsystem.grabCommand(PickupMode.Cone).andThen(Commands.waitSeconds(1)));
+                m_autoCmdMap.put("grabCu",
+                                m_clawSubsystem.grabCommand(PickupMode.Cube).andThen(Commands.waitSeconds(1)));
+                m_autoCmdMap.put("grabCo",
+                                m_clawSubsystem.grabCommand(PickupMode.Cone).andThen(Commands.waitSeconds(1)));
                 m_autoCmdMap.put("release", m_clawSubsystem.releaseCommand().andThen(Commands.waitSeconds(1)));
                 m_autoCmdMap.put("climb", m_stoppyBarSubsystem.setStop(true));
 
@@ -292,7 +294,8 @@ public class RobotContainer {
                 // Turret directional
                 new Trigger(() -> (m_arcadePad.getHID().getPOV() != -1))
                                 .whileTrue(new TurretDynamicAngle(() -> m_arcadePad.getHID().getPOV(),
-                                                m_turretSubsystem).withName("SetTurretPOV"));
+                                                m_driveSubsystem::getAngle, m_turretSubsystem)
+                                                .withName("SetTurretPOV"));
 
                 // Set shoulder and arm to HIGH GOAL
                 m_arcadePad.x().whileTrue(Commands.parallel(
