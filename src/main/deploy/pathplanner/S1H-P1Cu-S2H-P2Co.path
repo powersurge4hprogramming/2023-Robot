@@ -110,7 +110,7 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 0.21818181818185126,
+      "position": 0.13636363636363633,
       "names": [
         "retract"
       ]
@@ -122,7 +122,7 @@
       ]
     },
     {
-      "position": 2.157575757575805,
+      "position": 2.1,
       "names": [
         "retract"
       ]
@@ -140,7 +140,7 @@
       ]
     },
     {
-      "position": 2.4818181818181766,
+      "position": 2.4818181818181824,
       "names": [
         "collect0GPrep"
       ]

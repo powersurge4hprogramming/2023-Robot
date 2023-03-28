@@ -25,11 +25,13 @@ public final class Constants {
   public static final class QuartetConstants {
 
     public static enum LocationType {
-      SubstationHigh(-58, 11), // TODO all
+      SubstationHigh(-58, 11),
       Chute(-58, 15),
       Hybrid(29, 8.5),
-      Low(-41, 34),
-      High(-49, 76),
+      LowCube(-41, 34),
+      LowCone(-43, 34),
+      HighCone(-49, 76),
+      HighCube(-53, 76),
       ChargeStation(0, 0),
       Starting(-104, 0.0);
 
@@ -149,11 +151,7 @@ public final class Constants {
                                                                                                            // already
                                                                                                            // taken into
                                                                                                            // account!
-    public static final double kEncoderVelocityConversion = (2 * kWheelRadiusMeters * Math.PI) / (60 * kGearRatio); // TODO
-                                                                                                                    // ensure
-                                                                                                                    // this
-                                                                                                                    // is
-                                                                                                                    // correct
+    public static final double kEncoderVelocityConversion = (2 * kWheelRadiusMeters * Math.PI) / (60 * kGearRatio);
 
     // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
     // These characterization values MUST be determined either experimentally or
@@ -189,8 +187,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 4.0; // TODO, 4.48056*0.7 is actual
-    public static final double kMaxAccelerationMetersPerSecondSquared = 1.5; // TODO
+    public static final double kMaxSpeedMetersPerSecond = 4.0;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and
     // seconds
@@ -202,7 +200,7 @@ public final class Constants {
     // auto selections based on PathPlanner, from ./deploy/pathplanner dir
     public static final String kDefaultAuto = "S6H-P3Cu-C";
     public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-C", "S1H-P1Cu-S2H-P2Co",
-        "S9H-P4Cu-S8H-C", "S9H-P4Cu-S8H-P3Co", "S1-O", "S9-O", "S6H-O-C", "test");
+        "S9H-P4Cu-S8H-C", "S9H-P4Cu-S8H-P3Co", "S1-P1Cu", "S9-P1Cu", "S6H-O-C", "test");
 
   }
 

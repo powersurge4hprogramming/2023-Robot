@@ -112,7 +112,7 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   public void arcadeDrive(double fwd, double rot) {
     m_drive.arcadeDrive(fwd, rot);
 
-    if (false) {
+    if (true) {
       double leftSpeed = m_leftMotorLeader.get();
       if (Math.abs(leftSpeed) > 0.04) {
         m_leftMotorLeader.set(Math.signum(leftSpeed) * (Math.abs(leftSpeed)) - 0.03);

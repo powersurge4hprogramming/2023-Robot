@@ -132,20 +132,44 @@ public class RobotContainer {
                 m_autoCmdMap.put("place270HPrep",
                                 Commands.parallel(
                                                 m_turretSubsystem.moveToAngle(270),
-                                                m_armSubsystem.moveToLocation(LocationType.High),
-                                                m_shoulderSubsystem.moveToLocation(LocationType.High))
+                                                Commands.either(Commands.parallel(
+                                                                m_armSubsystem.moveToLocation(LocationType.HighCone),
+                                                                m_shoulderSubsystem
+                                                                                .moveToLocation(LocationType.HighCone)),
+                                                                Commands.parallel(
+                                                                                m_armSubsystem.moveToLocation(
+                                                                                                LocationType.HighCube),
+                                                                                m_shoulderSubsystem.moveToLocation(
+                                                                                                LocationType.HighCube)),
+                                                                () -> m_clawSubsystem.m_pickupMode == PickupMode.Cone))
                                                 .withName("place270HPrep"));
                 m_autoCmdMap.put("place180HPrep",
                                 Commands.parallel(
                                                 m_turretSubsystem.moveToAngle(180),
-                                                m_armSubsystem.moveToLocation(LocationType.High),
-                                                m_shoulderSubsystem.moveToLocation(LocationType.High))
+                                                Commands.either(Commands.parallel(
+                                                                m_armSubsystem.moveToLocation(LocationType.HighCone),
+                                                                m_shoulderSubsystem
+                                                                                .moveToLocation(LocationType.HighCone)),
+                                                                Commands.parallel(
+                                                                                m_armSubsystem.moveToLocation(
+                                                                                                LocationType.HighCube),
+                                                                                m_shoulderSubsystem.moveToLocation(
+                                                                                                LocationType.HighCube)),
+                                                                () -> m_clawSubsystem.m_pickupMode == PickupMode.Cone))
                                                 .withName("place180HPrep"));
                 m_autoCmdMap.put("place0HPrep",
                                 Commands.parallel(
                                                 m_turretSubsystem.moveToAngle(0),
-                                                m_armSubsystem.moveToLocation(LocationType.High),
-                                                m_shoulderSubsystem.moveToLocation(LocationType.High))
+                                                Commands.either(Commands.parallel(
+                                                                m_armSubsystem.moveToLocation(LocationType.HighCone),
+                                                                m_shoulderSubsystem
+                                                                                .moveToLocation(LocationType.HighCone)),
+                                                                Commands.parallel(
+                                                                                m_armSubsystem.moveToLocation(
+                                                                                                LocationType.HighCube),
+                                                                                m_shoulderSubsystem.moveToLocation(
+                                                                                                LocationType.HighCube)),
+                                                                () -> m_clawSubsystem.m_pickupMode == PickupMode.Cone))
                                                 .withName("place0HPrep"));
                 m_autoCmdMap.put("retract",
                                 Commands.parallel(
@@ -237,7 +261,7 @@ public class RobotContainer {
                  * setDriveProfileCmd(true));
                  * m_driverController.leftStick().onFalse(m_driveSubsystem.setDriveProfileCmd())
                  * ;
-                 */ // TODO re-add these?
+                 */
 
                 // Operator controller bindings
                 m_operatorController.leftBumper()
@@ -303,15 +327,29 @@ public class RobotContainer {
                                                 .withName("SetTurretPOV"));
 
                 // Set shoulder and arm to HIGH GOAL
-                m_arcadePad.x().whileTrue(Commands.parallel(
-                                m_shoulderSubsystem.moveToLocation(LocationType.High),
-                                m_armSubsystem.moveToLocation(LocationType.High))
+                m_arcadePad.x().whileTrue(Commands.either(Commands.parallel(
+                                m_armSubsystem.moveToLocation(LocationType.HighCone),
+                                m_shoulderSubsystem
+                                                .moveToLocation(LocationType.HighCone)),
+                                Commands.parallel(
+                                                m_armSubsystem.moveToLocation(
+                                                                LocationType.HighCube),
+                                                m_shoulderSubsystem.moveToLocation(
+                                                                LocationType.HighCube)),
+                                () -> m_clawSubsystem.m_pickupMode == PickupMode.Cone)
                                 .withName("HighGoal"));
 
                 // Set shoulder and arm to LOW GOAL
-                m_arcadePad.y().whileTrue(Commands.parallel(
-                                m_shoulderSubsystem.moveToLocation(LocationType.Low),
-                                m_armSubsystem.moveToLocation(LocationType.Low))
+                m_arcadePad.y().whileTrue(Commands.either(Commands.parallel(
+                                m_armSubsystem.moveToLocation(LocationType.LowCone),
+                                m_shoulderSubsystem
+                                                .moveToLocation(LocationType.LowCone)),
+                                Commands.parallel(
+                                                m_armSubsystem.moveToLocation(
+                                                                LocationType.LowCube),
+                                                m_shoulderSubsystem.moveToLocation(
+                                                                LocationType.LowCube)),
+                                () -> m_clawSubsystem.m_pickupMode == PickupMode.Cone)
                                 .withName("LowGoal"));
 
                 // Set shoulder and arm to GROUND PICKUP/PLACE

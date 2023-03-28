@@ -24,7 +24,7 @@ public class ClawSubsystem extends SubsystemBase {
   private final DoubleSolenoid m_doubleSolenoidDownstream = new DoubleSolenoid(PneumaticsModuleType.REVPH,
       kClawDownstreamFwd, kClawDownstreamBkwd);
 
-  private PickupMode m_pickupMode = PickupMode.None;
+  public PickupMode m_pickupMode = PickupMode.None;
 
   /** Creates a new ClawSubsystem. */
   public ClawSubsystem() {

@@ -132,10 +132,10 @@
   ],
   "maxVelocity": 4.0,
   "maxAcceleration": 1.5,
-  "isReversed": null,
+  "isReversed": false,
   "markers": [
     {
-      "position": 0.12121212121211433,
+      "position": 0.07272727272727267,
       "names": [
         "retract"
       ]
