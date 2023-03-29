@@ -35,7 +35,7 @@ public class TurretSubsystem extends SubsystemBase {
     m_motor.setInverted(true);
     m_encoder.setPositionConversionFactor(kDegreesPerRev);
     m_encoder.setPosition(kStartingDegrees);
-    m_motor.setIdleMode(IdleMode.kCoast);
+    m_motor.setIdleMode(IdleMode.kBrake);
 
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);

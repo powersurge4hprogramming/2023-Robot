@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.764171964362888,
-        "y": 4.957921385037083
+        "x": 2.6554466803655434,
+        "y": 4.951553298256383
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -21,44 +21,46 @@
           "place180HPrep",
           "release"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 4.357107861135154,
-        "y": 4.948423451349273
+        "x": 5.1140701425482735,
+        "y": 4.734279596947211
       },
       "prevControl": {
-        "x": 3.357107861135155,
-        "y": 4.948423451349273
+        "x": 4.725248564076434,
+        "y": 4.782882294256191
       },
       "nextControl": {
-        "x": 5.344892964667446,
-        "y": 4.948423451349273
+        "x": 5.571488461093898,
+        "y": 4.677102307129007
       },
       "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "collect0GPrep"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 6.6049075760123355,
-        "y": 4.699671230328376
+        "x": 6.589244219857912,
+        "y": 4.585618643419883
       },
       "prevControl": {
-        "x": 5.546423064677117,
-        "y": 4.883141878959814
+        "x": 5.971729489821319,
+        "y": 4.608489559347165
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -68,8 +70,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "grabCu",
-          "retract"
+          "grabCu"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -79,15 +80,9 @@
   ],
   "markers": [
     {
-      "position": 0.12727272727272726,
+      "position": 0.029090909090903304,
       "names": [
         "retract"
-      ]
-    },
-    {
-      "position": 0.6727272727272728,
-      "names": [
-        "collect0GPrep"
       ]
     }
   ]

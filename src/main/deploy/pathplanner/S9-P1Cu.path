@@ -28,12 +28,39 @@
     },
     {
       "anchorPoint": {
-        "x": 6.577808761894272,
-        "y": 0.8576593472730455
+        "x": 5.022586478839148,
+        "y": 0.6518211039275126
       },
       "prevControl": {
-        "x": 5.4571338814574935,
-        "y": 0.7318693096729998
+        "x": 4.439378122693478,
+        "y": 0.5374665242911069
+      },
+      "nextControl": {
+        "x": 5.53744451506532,
+        "y": 0.7527736600502912
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "collect0GPrep"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.589244219857912,
+        "y": 0.8805302632003253
+      },
+      "prevControl": {
+        "x": 5.845939452221272,
+        "y": 0.8347884313457624
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -43,8 +70,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "grabCu",
-          "retract"
+          "grabCu"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -60,12 +86,6 @@
       "position": 0.07999999999999959,
       "names": [
         "retract"
-      ]
-    },
-    {
-      "position": 0.6636363636363631,
-      "names": [
-        "collect0GPrep"
       ]
     }
   ]

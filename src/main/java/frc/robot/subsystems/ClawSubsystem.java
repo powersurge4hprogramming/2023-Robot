@@ -72,7 +72,21 @@ public class ClawSubsystem extends SubsystemBase {
     return this.runOnce(() -> {
       m_pickupMode = mode;
       updateLEDs();
-      grabCommand();
+      switch (m_pickupMode) {
+        case Cone:
+          m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kReverse);
+          m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kForward);
+          break;
+        case Cube:
+          m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kForward);
+          m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kForward);
+          break;
+        case None:
+        default:
+          m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff);
+          m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kOff);
+          break;
+      }
     }).withName("GrabModeSet");
   }
 

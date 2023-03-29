@@ -43,6 +43,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.RamseteAutoBuilder;
+import com.pathplanner.lib.server.PathPlannerServer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -182,6 +183,8 @@ public class RobotContainer {
                                                 m_armSubsystem.moveToLocation(LocationType.ChargeStation),
                                                 m_shoulderSubsystem.moveToLocation(LocationType.ChargeStation))
                                                 .withName("chargeStation"));
+
+                m_autoCmdMap.put("turret0", m_turretSubsystem.moveToAngle(0));
                 m_autoCmdMap.put("grabCu",
                                 m_clawSubsystem.grabCommand(PickupMode.Cube).andThen(Commands.waitSeconds(0.5)));
                 m_autoCmdMap.put("grabCo",
@@ -418,6 +421,7 @@ public class RobotContainer {
         }
 
         public void robotInit() {
+                PathPlannerServer.startServer(5811); //  TODO comp disable
                 // Set the drive limit
                 m_driveSubsystem.limit(DriveConstants.kDriveSpeedLimit);
         }

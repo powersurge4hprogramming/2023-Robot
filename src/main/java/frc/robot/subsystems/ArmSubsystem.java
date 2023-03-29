@@ -200,6 +200,7 @@ public class ArmSubsystem extends SubsystemBase {
     builder.addBooleanProperty("Down", () -> m_limitSwitch.get(), null);
 
     builder.addBooleanProperty("Arm Locked", () -> m_lockSolenoid.get() == Value.kForward, null);
+    builder.addDoubleProperty("Arm Vel", m_encoder::getVelocity, null);
   }
 
 }

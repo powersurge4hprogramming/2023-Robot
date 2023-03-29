@@ -27,11 +27,11 @@ public final class Constants {
     public static enum LocationType {
       SubstationHigh(-58, 11),
       Chute(-58, 15),
-      Hybrid(29, 8.5),
-      LowCube(-41, 34),
-      LowCone(-43, 34),
-      HighCone(-49, 76),
-      HighCube(-53, 76),
+      Hybrid(21, 8.5),
+      LowCube(-41, 38),
+      LowCone(-52, 40),
+      HighCone(-51, 76),
+      HighCube(-43, 76),
       ChargeStation(0, 0),
       Starting(-104, 0.0);
 
@@ -76,7 +76,7 @@ public final class Constants {
 
       public static final int kMotorPort = 17;
 
-      public static final double kPositionTolerance = 1;
+      public static final double kPositionTolerance = 1.25;
       public static final double kVelocityTolerance = 0.01;
       public static final double kP = 0.05;
       public static final double kD = 0.00;
@@ -99,10 +99,10 @@ public final class Constants {
 
       public static final int kMotorPort = 16;
 
-      public static final double kPositionTolerance = 1.5;
-      public static final double kVelocityTolerance = 0.05;
+      public static final double kPositionTolerance = 1.25;
+      public static final double kVelocityTolerance = 60;
       public static final double kP = 0.1;
-      public static final double kD = 0.04;
+      public static final double kD = 0.06;
       public static final double kF = 0.00;
       public static final double kMin = -0.95;
       public static final double kMax = 0.90;
@@ -187,8 +187,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 4.0;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
+    public static final double kMaxSpeedMetersPerSecond = 3.0;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1.25;
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and
     // seconds
@@ -198,9 +198,8 @@ public final class Constants {
     public static final String kAutoSelectionKey = "Auto Selector";
 
     // auto selections based on PathPlanner, from ./deploy/pathplanner dir
-    public static final String kDefaultAuto = "S6H-P3Cu-C";
-    public static final List<String> kAutoList = List.of("S1H-P1Cu-S2H-C", "S1H-P1Cu-S2H-P2Co",
-        "S9H-P4Cu-S8H-C", "S9H-P4Cu-S8H-P3Co", "S1-P1Cu", "S9-P1Cu", "S6H-O-C", "test");
+    public static final String kDefaultAuto = "S1-P1Cu";
+    public static final List<String> kAutoList = List.of("S9-P1Cu", "S6H-O-C", "test");
 
   }
 
