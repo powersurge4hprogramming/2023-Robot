@@ -29,8 +29,8 @@ public final class Constants {
       Chute(-58, 15),
       Hybrid(21, 8.5),
       LowCube(-41, 38),
-      LowCone(-52, 40),
-      HighCone(-51, 76),
+      LowCone(-49, 38),
+      HighCone(-49, 76),
       HighCube(-43, 76),
       ChargeStation(0, 0),
       Starting(-104, 0.0);

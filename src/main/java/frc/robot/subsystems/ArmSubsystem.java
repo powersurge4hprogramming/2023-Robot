@@ -121,8 +121,8 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public boolean atSetpoint() {
-    return (Math.abs(m_setpoint - getLength()) <= kPositionTolerance)
-        && (Math.abs(getVelocity()) <= kVelocityTolerance);
+    return (Math.abs(m_setpoint - getLength()) <= kPositionTolerance);
+    // && (Math.abs(getVelocity()) <= kVelocityTolerance);
   }
 
   /** Stops motor from running, will interrupt any control mode. */
@@ -133,7 +133,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (m_limitSwitch.get() == true) {
+    if ((m_limitSwitch.get() == true) && (m_setpoint <= 0.0)) {
       m_encoder.setPosition(0);
       setPosition(0.0);
     }
@@ -198,9 +198,7 @@ public class ArmSubsystem extends SubsystemBase {
     builder.addBooleanProperty("Soft Limited",
         () -> m_motor.getFault(FaultID.kSoftLimitRev) || m_motor.getFault(FaultID.kSoftLimitFwd), null);
     builder.addBooleanProperty("Down", () -> m_limitSwitch.get(), null);
-
     builder.addBooleanProperty("Arm Locked", () -> m_lockSolenoid.get() == Value.kForward, null);
-    builder.addDoubleProperty("Arm Vel", m_encoder::getVelocity, null);
   }
 
 }
