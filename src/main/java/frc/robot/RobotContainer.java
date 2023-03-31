@@ -369,9 +369,9 @@ public class RobotContainer {
 
                 // Set shoulder and arm to CHUTE PICKUP
                 m_arcadePad.leftTrigger().whileTrue(Commands.parallel(
-                                m_shoulderSubsystem.moveToLocation(LocationType.Chute),
-                                m_armSubsystem.moveToLocation(LocationType.Chute))
-                                .withName("Chute"));
+                        m_shoulderSubsystem.moveToLocation(LocationType.SubstationHigh),
+                        m_armSubsystem.moveToLocation(LocationType.SubstationHigh))
+                        .withName("Substation"));
 
                 // Set shoulder and arm to full starting/finishing retraction
                 m_arcadePad.b().whileTrue(Commands.parallel(
