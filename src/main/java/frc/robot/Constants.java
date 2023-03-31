@@ -81,8 +81,8 @@ public final class Constants {
       public static final double kP = 0.05;
       public static final double kD = 0.00;
       public static final double kF = 0.00;
-      public static final double kMin = -0.50;
-      public static final double kMax = 0.40;
+      public static final double kMin = -0.55;
+      public static final double kMax = 0.65;
 
       public static final double kMaxDegrees = 32;
       public static final double kMinDegrees = -104;
