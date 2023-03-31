@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.7849817906041519,
-        "y": 3.3
+        "x": 1.7736698980506969,
+        "y": 0.4464028833270936
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7849817906041503,
-        "y": 3.3
+        "x": 2.773669898050699,
+        "y": 0.4464028833270936
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -28,37 +28,39 @@
     },
     {
       "anchorPoint": {
-        "x": 6.42547164097887,
-        "y": 3.3
+        "x": 5.022586478839148,
+        "y": 0.6518211039275126
       },
       "prevControl": {
-        "x": 5.42547164097887,
-        "y": 3.3
+        "x": 4.439378122693478,
+        "y": 0.5374665242911069
       },
       "nextControl": {
-        "x": 5.42547164097887,
-        "y": 3.3
+        "x": 5.53744451506532,
+        "y": 0.7527736600502912
       },
       "holonomicAngle": 0,
-      "isReversal": true,
+      "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "collect0GPrep"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 3.632207264414529,
-        "y": 3.2956565913131834
+        "x": 6.589244219857912,
+        "y": 0.8805302632003253
       },
       "prevControl": {
-        "x": 4.887745867578126,
-        "y": 3.2956565913131834
+        "x": 5.845939452221272,
+        "y": 0.8347884313457624
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -68,8 +70,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "climb",
-          "retract"
+          "grabCu"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -82,9 +83,9 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 0.1090909090909091,
+      "position": 0.07999999999999959,
       "names": [
-        "chargeStation"
+        "retract"
       ]
     }
   ]

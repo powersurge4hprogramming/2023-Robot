@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.764171964362888,
-        "y": 4.957921385037083
+        "x": 2.6554466803655434,
+        "y": 4.951553298256383
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -16,45 +16,51 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "grabCo",
+          "place180HPrep",
+          "release"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 4.357107861135154,
-        "y": 4.948423451349273
+        "x": 5.068328310693712,
+        "y": 4.631360475274445
       },
       "prevControl": {
-        "x": 3.357107861135155,
-        "y": 4.948423451349273
+        "x": 4.679506732221872,
+        "y": 4.679963172583425
       },
       "nextControl": {
-        "x": 5.344892964667446,
-        "y": 4.948423451349273
+        "x": 5.525746629239336,
+        "y": 4.574183185456241
       },
       "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "collect0GPrep"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 6.503640874580328,
-        "y": 5.793739549564407
+        "x": 6.589244219857912,
+        "y": 4.5170058956380394
       },
       "prevControl": {
-        "x": 5.5728433731749,
-        "y": 4.986415186100514
+        "x": 5.971729489821319,
+        "y": 4.539876811565321
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -63,12 +69,21 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "grabCu"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "markers": []
+  "markers": [
+    {
+      "position": 0.029090909090903304,
+      "names": [
+        "retract"
+      ]
+    }
+  ]
 }

@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -34,7 +35,7 @@ public class TurretSubsystem extends SubsystemBase {
     m_motor.setInverted(true);
     m_encoder.setPositionConversionFactor(kDegreesPerRev);
     m_encoder.setPosition(kStartingDegrees);
-    m_motor.setIdleMode(IdleMode.kCoast);
+    m_motor.setIdleMode(IdleMode.kBrake);
 
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
@@ -60,7 +61,7 @@ public class TurretSubsystem extends SubsystemBase {
    * 
    * @return the position of the encoder in inches or degrees
    */
-  private double getLength() {
+  public double getDegrees() {
     return m_encoder.getPosition();
   }
 
@@ -83,6 +84,15 @@ public class TurretSubsystem extends SubsystemBase {
     return m_encoder.getPosition() / 360.0;
   }
 
+  private void setSpeed(double speed) {
+    m_motor.set(speed);
+  }
+
+  public CommandBase setSpeedCmd(double speed) {
+    return this.startEnd(() -> setSpeed(speed), () -> setSpeed(0.0)).finallyDo((end) -> lockPosition())
+        .withName("TurretRunSpeed");
+  }
+
   /**
    * Runs motor to a specified position.
    * 
@@ -91,13 +101,38 @@ public class TurretSubsystem extends SubsystemBase {
   public void setPosition(double angle) {
     if (m_setpoint != angle) {
       m_setpoint = angle;
-      m_pidController.setReference(angle, ControlType.kPosition);
+      m_pidController.setReference(m_setpoint, ControlType.kPosition);
     }
   }
 
+  /**
+   * Runs motor to a specified position.
+   * 
+   * @param angle the position (in degrees) to set the motor to
+   */
+  private void incrementPosition(double increment) {
+    m_setpoint = m_setpoint + increment;
+    m_pidController.setReference(m_setpoint, ControlType.kPosition);
+  }
+
+  private void lockPosition() {
+    m_setpoint = m_encoder.getPosition();
+    m_pidController.setReference(m_setpoint, ControlType.kPosition);
+  }
+
   public boolean atSetpoint() {
-    return (Math.abs(m_setpoint - getLength()) <= kPositionTolerance)
-        && (Math.abs(getVelocity()) <= kVelocityTolerance);
+    /*
+     * return (Math.abs(m_setpoint - getLength()) <= kPositionTolerance)
+     * && (Math.abs(getVelocity()) <= kVelocityTolerance);
+     */
+
+    if (Math.abs(getVelocity()) >= kVelocityTolerance) {
+      return false;
+    }
+
+    // from wpi PIDController
+    double positionError = MathUtil.inputModulus(m_setpoint - getDegrees(), -180, 180);
+    return (positionError <= kPositionTolerance);
   }
 
   /** Stops motor from running, will interrupt any control mode. */
@@ -118,21 +153,26 @@ public class TurretSubsystem extends SubsystemBase {
   public CommandBase moveToAngle(double angle) {
     return this.runOnce(() -> {
       setPosition(angle);
-    }).handleInterrupt(() -> setPosition(m_encoder.getPosition()))
-        .andThen(new WaitUntilCommand(this::atSetpoint).withName("TurretToAngle" + angle));
+    }).andThen(new WaitUntilCommand(this::atSetpoint)).handleInterrupt(this::lockPosition)
+        .withName("TurretToAngle" + angle);
   }
 
-  public CommandBase incrementPosition(double increment) {
-    return moveToAngle(m_setpoint + increment);
+  public CommandBase incrementAngle(double increment) {
+    return this.runOnce(() -> {
+      incrementPosition(increment);
+    }).withName("TurretIncrement" + increment);
   }
 
-  public CommandBase lockPosition() {
-    return moveToAngle(m_setpoint);
+  public CommandBase lockAngle() {
+    return this.runOnce(() -> {
+      lockPosition();
+    }).withName("TurretAngleLock");
   }
 
   public CommandBase absoluteReset() {
-    return moveToAngle(0).beforeStarting(() -> m_pidController.setPositionPIDWrappingEnabled(false), new Subsystem[0])
-        .finallyDo((boolean interrupted) -> m_pidController.setPositionPIDWrappingEnabled(true)).withName("TurretAbsoluteReset");
+    return moveToAngle(kStartingDegrees).beforeStarting(() -> m_pidController.setPositionPIDWrappingEnabled(false), new Subsystem[0])
+        .finallyDo((boolean interrupted) -> m_pidController.setPositionPIDWrappingEnabled(true))
+        .withName("TurretAbsoluteReset");
   }
 
   public void resetEncoders() {
@@ -143,10 +183,11 @@ public class TurretSubsystem extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("");
     builder.addDoubleProperty("Rotations", this::getRotations, null);
+    builder.addDoubleProperty("Angle", this::getDegrees, null);
     builder.addDoubleProperty("Setpoint", () -> m_setpoint, null);
-    builder.addBooleanProperty("Setpoint", this::atSetpoint, null);
-    builder.addBooleanProperty("Rev Limited", () -> m_motor.getFault(FaultID.kSoftLimitRev), null);
-    builder.addBooleanProperty("Fwd Limited", () -> m_motor.getFault(FaultID.kSoftLimitFwd), null);
+    builder.addBooleanProperty("Reached", this::atSetpoint, null);
+    builder.addBooleanProperty("Soft Limited",
+        () -> m_motor.getFault(FaultID.kSoftLimitRev) || m_motor.getFault(FaultID.kSoftLimitFwd), null);
   }
 
 }

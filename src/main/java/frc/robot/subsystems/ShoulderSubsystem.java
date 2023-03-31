@@ -71,19 +71,41 @@ public class ShoulderSubsystem extends SubsystemBase {
     return m_encoder.getVelocity();
   }
 
+  private void setSpeed(double speed) {
+    m_motor.set(speed);
+  }
+
+  public CommandBase setSpeedCmd(double speed) {
+    return this.startEnd(() -> setSpeed(speed), () -> setSpeed(0.0)).finallyDo((end) -> lockPosition())
+        .withName("ShoulderRunSpeed");
+  }
+
   /**
    * Runs motor to a specified position.
    * 
    * @param angle the position (in subclass units) to set the motor to
    */
   private void setPosition(double angle) {
-    if (m_setpoint != angle) {
-      m_setpoint = angle;
-      m_pidController.setReference(angle, ControlType.kPosition);
-    }
+    m_setpoint = angle;
+    m_pidController.setReference(angle, ControlType.kPosition);
   }
 
-  private boolean atSetpoint() {
+  /**
+   * Runs motor to a specified position.
+   * 
+   * @param angle the position (in degrees) to set the motor to
+   */
+  private void incrementPosition(double increment) {
+    m_setpoint = m_setpoint + increment;
+    m_pidController.setReference(m_setpoint, ControlType.kPosition);
+  }
+
+  private void lockPosition() {
+    m_setpoint = m_encoder.getPosition();
+    m_pidController.setReference(m_setpoint, ControlType.kPosition);
+  }
+
+  public boolean atSetpoint() {
     return (Math.abs(m_setpoint - getAngle()) <= kPositionTolerance)
         && (Math.abs(getVelocity()) <= kVelocityTolerance);
   }
@@ -100,7 +122,7 @@ public class ShoulderSubsystem extends SubsystemBase {
 
   private CommandBase moveToAngle(double angle) {
     return this.runOnce(() -> setPosition(angle)).andThen(new WaitUntilCommand(this::atSetpoint))
-        .handleInterrupt(() -> setPosition(m_encoder.getPosition()))
+        .handleInterrupt(this::lockPosition)
         .withName("ShoulderToAngle" + angle);
   }
 
@@ -108,12 +130,16 @@ public class ShoulderSubsystem extends SubsystemBase {
     return moveToAngle(location.shoulderDegrees);
   }
 
-  public CommandBase incrementPosition(double increment) {
-    return moveToAngle(m_setpoint + increment);
+  public CommandBase incrementAngle(double increment) {
+    return this.runOnce(() -> {
+      incrementPosition(increment);
+    }).withName("ShoulderIncrement" + increment);
   }
 
-  public CommandBase lockPosition() {
-    return moveToAngle(m_setpoint);
+  public CommandBase lockAngle() {
+    return this.runOnce(() -> {
+      lockPosition();
+    }).withName("ShoulderAngleLock");
   }
 
   public void resetEncoders() {
@@ -126,7 +152,7 @@ public class ShoulderSubsystem extends SubsystemBase {
     builder.addDoubleProperty("Angle", m_encoder::getPosition, null);
     builder.addDoubleProperty("Setpoint", () -> m_setpoint, null);
     builder.addBooleanProperty("Reached", this::atSetpoint, null);
-    builder.addBooleanProperty("Rev Limited", () -> m_motor.getFault(FaultID.kSoftLimitRev), null);
-    builder.addBooleanProperty("Fwd Limited", () -> m_motor.getFault(FaultID.kSoftLimitFwd), null);
+    builder.addBooleanProperty("Soft Limited",
+        () -> m_motor.getFault(FaultID.kSoftLimitRev) || m_motor.getFault(FaultID.kSoftLimitFwd), null);
   }
 }

@@ -24,7 +24,7 @@ public class ClawSubsystem extends SubsystemBase {
   private final DoubleSolenoid m_doubleSolenoidDownstream = new DoubleSolenoid(PneumaticsModuleType.REVPH,
       kClawDownstreamFwd, kClawDownstreamBkwd);
 
-  private PickupMode m_pickupMode = PickupMode.None;
+  public PickupMode m_pickupMode = PickupMode.None;
 
   /** Creates a new ClawSubsystem. */
   public ClawSubsystem() {
@@ -72,7 +72,21 @@ public class ClawSubsystem extends SubsystemBase {
     return this.runOnce(() -> {
       m_pickupMode = mode;
       updateLEDs();
-      grabCommand();
+      switch (m_pickupMode) {
+        case Cone:
+          m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kReverse);
+          m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kForward);
+          break;
+        case Cube:
+          m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kForward);
+          m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kForward);
+          break;
+        case None:
+        default:
+          m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff);
+          m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kOff);
+          break;
+      }
     }).withName("GrabModeSet");
   }
 
@@ -116,7 +130,7 @@ public class ClawSubsystem extends SubsystemBase {
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("");
-    builder.addBooleanProperty("Mode", () -> m_pickupMode == PickupMode.Cone, null);
+    builder.addBooleanProperty("Cone Mode?", () -> m_pickupMode == PickupMode.Cone, null);
     builder.addBooleanProperty("Grabbed", () -> m_doubleSolenoidDownstream.get() == Value.kForward, null);
   }
 }

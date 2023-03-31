@@ -11,7 +11,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.simulation.ADXRS450_GyroSim;
@@ -23,16 +22,18 @@ import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSiz
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
+import static frc.robot.Constants.DriveConstants.*;
+
 public class DriveSubsystemSim extends DriveSubsystemTemplate {
   // The motors on the left side of the drive.
   private final MotorControllerGroup m_leftMotors = new MotorControllerGroup(
-      new PWMSparkMax(DriveConstants.kLeftMotorLeaderPort),
-      new PWMSparkMax(DriveConstants.kLeftMotorFollowerPort));
+      new PWMSparkMax(kLeftMotorLeaderPort),
+      new PWMSparkMax(kLeftMotorFollowerPort));
 
   // The motors on the right side of the drive.
   private final MotorControllerGroup m_rightMotors = new MotorControllerGroup(
-      new PWMSparkMax(DriveConstants.kRightMotorLeaderPort),
-      new PWMSparkMax(DriveConstants.kRightMotorFollowerPort));
+      new PWMSparkMax(kRightMotorLeaderPort),
+      new PWMSparkMax(kRightMotorFollowerPort));
 
   // The robot's drive
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotors, m_rightMotors);
@@ -78,8 +79,8 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
     m_rightMotors.setInverted(true);
 
     // Sets the distance per pulse for the encoders
-    m_leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
-    m_rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+    m_leftEncoder.setDistancePerPulse(kEncoderDistancePerPulse);
+    m_rightEncoder.setDistancePerPulse(kEncoderDistancePerPulse);
 
     resetEncoders();
     m_odometry = new DifferentialDriveOdometry(
@@ -169,12 +170,12 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
   }
 
   @Override
-  public void setBrakeMode(boolean brakeMode) {
+  public void setDriveProfile(DriveProfiles brakeMode) {
     return;
   }
 
   @Override
-  public CommandBase setBrakeModeCommand(boolean brakeMode) {
+  public CommandBase setDriveProfileCmd(DriveProfiles brakeMode) {
     return this.runOnce(() -> {
       return;
     }).withName("ToggleBrakeMode");
