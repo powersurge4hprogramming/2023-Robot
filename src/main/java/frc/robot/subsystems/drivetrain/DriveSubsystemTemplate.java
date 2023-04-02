@@ -100,6 +100,10 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
     return m_gyro.getAngle();
   }
 
+  public void resetGyro() {
+    m_gyro.reset();
+  }
+
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("");

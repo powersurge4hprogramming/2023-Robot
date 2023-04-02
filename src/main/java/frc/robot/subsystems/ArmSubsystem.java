@@ -133,7 +133,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if ((m_limitSwitch.get() == true) && (m_setpoint <= 0.0)) {
+    if ((m_limitSwitch.get() == true) && (m_motor.getAppliedOutput() <= 0.0)) {
       m_encoder.setPosition(0);
       setPosition(0.0);
     }
@@ -199,6 +199,8 @@ public class ArmSubsystem extends SubsystemBase {
         () -> m_motor.getFault(FaultID.kSoftLimitRev) || m_motor.getFault(FaultID.kSoftLimitFwd), null);
     builder.addBooleanProperty("Down", () -> m_limitSwitch.get(), null);
     builder.addBooleanProperty("Arm Locked", () -> m_lockSolenoid.get() == Value.kForward, null);
+    builder.addDoubleProperty("Duty Cycle", () -> m_motor.getAppliedOutput(), null);
+
   }
 
 }

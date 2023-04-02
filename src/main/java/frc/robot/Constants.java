@@ -32,8 +32,9 @@ public final class Constants {
       LowCone(-49, 38),
       HighCone(-49, 76),
       HighCube(-43, 76),
-      ChargeStation(0, 0),
-      Starting(-104, 0.0);
+      ChargeStation(0, -76),
+      RetractSlightOnlyArm(-1, 30),
+      Starting(-104, -76);
 
       public final double shoulderDegrees;
       public final double armInches;
@@ -63,7 +64,7 @@ public final class Constants {
 
       public static final double kStartingDegrees = 180;
 
-      public static final double kMaxRotations = 1.5;
+      public static final double kMaxRotations = 2;
 
     }
 
@@ -101,10 +102,10 @@ public final class Constants {
 
       public static final double kPositionTolerance = 1.25;
       public static final double kVelocityTolerance = 60;
-      public static final double kP = 0.1;
+      public static final double kP = 0.15; // 1.0 defualt
       public static final double kD = 0.06;
       public static final double kF = 0.00;
-      public static final double kMin = -0.95;
+      public static final double kMin = -1;
       public static final double kMax = 0.90;
 
       public static final int kLockSolenoidFwd = 14;
@@ -198,8 +199,8 @@ public final class Constants {
     public static final String kAutoSelectionKey = "Auto Selector";
 
     // auto selections based on PathPlanner, from ./deploy/pathplanner dir
-    public static final String kDefaultAuto = "S1-P1Cu";
-    public static final List<String> kAutoList = List.of("S9-P1Cu", "S6H-O-C", "test");
+    public static final String kDefaultAuto = "Nothing";
+    public static final List<String> kAutoList = List.of("S9-P1Cu", "S1-P1Cu", "Co-No", "Cu-No");
 
   }
 

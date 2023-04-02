@@ -18,8 +18,9 @@
       "stopEvent": {
         "names": [
           "grabCo",
-          "place180HPrep",
-          "release"
+          "place180MPrep",
+          "release",
+          "retract"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -83,9 +84,9 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 0.07999999999999959,
+      "position": 0.11636363636362976,
       "names": [
-        "retract"
+        "turret0"
       ]
     }
   ]
