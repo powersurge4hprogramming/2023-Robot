@@ -77,6 +77,7 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
 
     SmartDashboard.putData(m_field);
     SmartDashboard.putData(m_drive);
+    SmartDashboard.putData(m_gyro);
   }
 
   @Override
@@ -104,6 +105,7 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   @Override
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
+    m_gyro.reset();
     m_odometry.resetPosition(
         m_gyro.getRotation2d(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition(), pose);
   }

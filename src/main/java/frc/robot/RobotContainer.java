@@ -30,8 +30,11 @@ import frc.robot.subsystems.drivetrain.DriveSubsystemReal;
 import frc.robot.subsystems.drivetrain.DriveSubsystemSim;
 import frc.robot.subsystems.drivetrain.DriveSubsystemTemplate;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -158,6 +161,20 @@ public class RobotContainer {
                                                                                                 LocationType.HighCube)),
                                                                 () -> m_clawSubsystem.m_pickupMode == PickupMode.Cone))
                                                 .withName("place180HPrep"));
+                m_autoCmdMap.put("place180MPrep",
+                                Commands.parallel(
+                                                m_turretSubsystem.moveToAngle(180),
+                                                Commands.either(Commands.parallel(
+                                                                m_armSubsystem.moveToLocation(LocationType.LowCone),
+                                                                m_shoulderSubsystem
+                                                                                .moveToLocation(LocationType.LowCone)),
+                                                                Commands.parallel(
+                                                                                m_armSubsystem.moveToLocation(
+                                                                                                LocationType.LowCube),
+                                                                                m_shoulderSubsystem.moveToLocation(
+                                                                                                LocationType.LowCube)),
+                                                                () -> m_clawSubsystem.m_pickupMode == PickupMode.Cone))
+                                                .withName("place180MPrep"));
                 m_autoCmdMap.put("place0HPrep",
                                 Commands.parallel(
                                                 m_turretSubsystem.moveToAngle(0),
@@ -174,7 +191,6 @@ public class RobotContainer {
                                                 .withName("place0HPrep"));
                 m_autoCmdMap.put("retract",
                                 Commands.parallel(
-                                                m_turretSubsystem.moveToAngle(0),
                                                 m_armSubsystem.moveToLocation(LocationType.Starting),
                                                 m_shoulderSubsystem.moveToLocation(LocationType.Starting))
                                                 .withName("retract"));
@@ -189,7 +205,7 @@ public class RobotContainer {
                                 m_clawSubsystem.grabCommand(PickupMode.Cube).andThen(Commands.waitSeconds(0.5)));
                 m_autoCmdMap.put("grabCo",
                                 m_clawSubsystem.grabCommand(PickupMode.Cone).andThen(Commands.waitSeconds(0.5)));
-                m_autoCmdMap.put("release", m_clawSubsystem.releaseCommand().andThen(Commands.waitSeconds(0.5)));
+                m_autoCmdMap.put("release", m_clawSubsystem.releaseCommand().andThen(Commands.waitSeconds(0.75)));
                 m_autoCmdMap.put("climb", m_stoppyBarSubsystem.setStop(true).andThen(Commands.waitSeconds(1.5)));
 
                 // add all items to Auto Selector
@@ -285,6 +301,8 @@ public class RobotContainer {
                 m_operatorController.a().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cube));
 
                 m_operatorController.leftStick().onTrue(m_armSubsystem.toggleArmLock());
+                m_operatorController.rightStick()
+                                .onTrue(Commands.runOnce(() -> m_driveSubsystem.resetGyro(), m_driveSubsystem));
 
                 // Speed Overrides
                 m_operatorController.start().and(m_operatorController.leftBumper())
@@ -369,14 +387,19 @@ public class RobotContainer {
 
                 // Set shoulder and arm to CHUTE PICKUP
                 m_arcadePad.leftTrigger().whileTrue(Commands.parallel(
-                        m_shoulderSubsystem.moveToLocation(LocationType.SubstationHigh),
-                        m_armSubsystem.moveToLocation(LocationType.SubstationHigh))
-                        .withName("Substation"));
+                                m_shoulderSubsystem.moveToLocation(LocationType.SubstationHigh),
+                                m_armSubsystem.moveToLocation(LocationType.SubstationHigh))
+                                .withName("Substation"));
 
                 // Set shoulder and arm to full starting/finishing retraction
-                m_arcadePad.b().whileTrue(Commands.parallel(
-                                m_shoulderSubsystem.moveToLocation(LocationType.Starting),
-                                m_armSubsystem.moveToLocation(LocationType.Starting))
+                m_arcadePad.b().whileTrue(Commands.sequence(
+                                new ConditionalCommand(m_armSubsystem.moveToLocation(LocationType.RetractSlightOnlyArm),
+                                                new PrintCommand(""),
+                                                () -> (m_armSubsystem
+                                                                .getLength() > LocationType.RetractSlightOnlyArm.armInches)),
+                                Commands.parallel(
+                                                m_shoulderSubsystem.moveToLocation(LocationType.Starting),
+                                                m_armSubsystem.moveToLocation(LocationType.Starting)))
                                 .withName("ResetStarting"));
 
                 m_arcadePad.leftBumper().whileTrue(Commands.parallel(
@@ -410,18 +433,26 @@ public class RobotContainer {
                 // Get the PathPlanner key from the SendableChooser
                 final String runAuto = m_autoChooser.getSelected();
 
+                if (runAuto == "Nothing") {
+                        return null;
+                }
+
                 // load the Path group from the deploy pathplanner directory, with the default
                 // constraints outlined in AutoConstants
                 final List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(runAuto,
                                 AutoConstants.kMaxSpeedMetersPerSecond,
                                 AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+                if (runAuto == "Co-No" || runAuto == "Cu-No") {
+                        return m_autoBuilder.stopEventGroup(pathGroup.get(0).getStartStopEvent());
+                }
 
                 return m_autoBuilder.fullAuto(pathGroup).andThen(() -> m_driveSubsystem.tankDriveVolts(0, 0),
                                 m_driveSubsystem);
+
         }
 
         public void robotInit() {
-                PathPlannerServer.startServer(5811); //  TODO comp disable
+                // PathPlannerServer.startServer(5811);
                 // Set the drive limit
                 m_driveSubsystem.limit(DriveConstants.kDriveSpeedLimit);
         }
