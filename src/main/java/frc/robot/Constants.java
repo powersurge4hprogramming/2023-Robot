@@ -27,7 +27,7 @@ public final class Constants {
     public static enum LocationType {
       SubstationHigh(-58, 11),
       Chute(-58, 15),
-      Hybrid(21, 8.5),
+      Hybrid(19, 8.5),
       LowCube(-41, 38),
       LowCone(-49, 38),
       HighCone(-49, 76),

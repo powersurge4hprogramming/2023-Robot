@@ -300,7 +300,11 @@ public class RobotContainer {
                 m_operatorController.y().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cone));
                 m_operatorController.a().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cube));
 
-                m_operatorController.leftStick().onTrue(m_armSubsystem.toggleArmLock());
+                m_operatorController.leftStick()
+                                .onTrue(Commands.runOnce(() -> m_armSubsystem.setArmLock(true), m_armSubsystem));
+                m_operatorController.leftStick()
+                                .onFalse((Commands.runOnce(() -> m_armSubsystem.setArmLock(false), m_armSubsystem)));
+
                 m_operatorController.rightStick()
                                 .onTrue(Commands.runOnce(() -> m_driveSubsystem.resetGyro(), m_driveSubsystem));
 
@@ -470,6 +474,8 @@ public class RobotContainer {
                 m_armSubsystem.lockLength().schedule();
                 m_shoulderSubsystem.lockAngle().schedule();
                 m_turretSubsystem.lockAngle().schedule();
+
+                LimelightHelpers.setCameraMode_Driver(null);
         }
 
         public void teleopInit() {
@@ -481,8 +487,9 @@ public class RobotContainer {
                 LEDManager.initialize();
                 LEDManager.start();
 
-                m_armSubsystem.setArmLock(false);
+                m_armSubsystem.setArmLock(m_operatorController.leftStick().getAsBoolean());
                 m_driveSubsystem.setDriveProfile(DriveConstants.kDriveProfileDefault);
+
                 LimelightHelpers.setCameraMode_Driver(null);
         }
 

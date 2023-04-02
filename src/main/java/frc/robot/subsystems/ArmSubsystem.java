@@ -133,7 +133,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if ((m_limitSwitch.get() == true) && (m_motor.getAppliedOutput() <= 0.0)) {
+    if ((m_limitSwitch.get() == true) && (m_motor.getAppliedOutput() <= 0.0 || m_setpoint <= 0.0)) {
       m_encoder.setPosition(0);
       setPosition(0.0);
     }

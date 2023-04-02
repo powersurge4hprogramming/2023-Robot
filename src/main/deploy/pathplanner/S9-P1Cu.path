@@ -56,12 +56,12 @@
     },
     {
       "anchorPoint": {
-        "x": 6.589244219857912,
-        "y": 0.8805302632003253
+        "x": 6.669292425603397,
+        "y": 0.8690948052366854
       },
       "prevControl": {
-        "x": 5.845939452221272,
-        "y": 0.8347884313457624
+        "x": 5.925987657966758,
+        "y": 0.8233529733821224
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -71,7 +71,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "grabCu"
+          "grabCo"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",

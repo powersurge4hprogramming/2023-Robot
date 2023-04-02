@@ -4,9 +4,13 @@
 
 package frc.robot;
 
+import java.util.List;
+
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.structs.LEDManager;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -108,14 +112,18 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
   }
 
+  /* (non-Javadoc)
+   * @see edu.wpi.first.wpilibj.IterativeRobotBase#testInit()
+   */
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
-    // CommandScheduler.getInstance().cancelAll();
+    CommandScheduler.getInstance().cancelAll();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    m_robotContainer.teleopInit();
+    LEDManager.start();
+    LEDManager.setIndexesColor(List.of(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20), new Color(3,252 , 182));
   }
 
   /** This function is called periodically during test mode. */

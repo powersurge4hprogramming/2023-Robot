@@ -71,7 +71,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "grabCu"
+          "grabCo"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",

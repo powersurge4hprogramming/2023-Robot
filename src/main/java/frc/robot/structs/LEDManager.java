@@ -33,7 +33,7 @@ public class LEDManager {
      * @param indexes the indexes of LEDs to be switched
      * @param color   the color to be sent to the LEDs (unconverted)
      */
-    private static void setIndexesColor(List<Integer> indexes, Color color) {
+    public static void setIndexesColor(List<Integer> indexes, Color color) {
         if (!m_initialized) {
             initialize();
         }
