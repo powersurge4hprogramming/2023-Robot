@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -13,7 +14,7 @@ import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -44,7 +45,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotorLeader, m_rightMotorLeader);
 
   // The gyro sensor
-  private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
+  private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
 
   // Field for visualizing robot odometry
   private final Field2d m_field = new Field2d();
@@ -86,11 +87,8 @@ public class DriveSubsystem extends SubsystemBase {
     // reset robot to (0,0) and encoders
     resetOdometry(new Pose2d());
 
-    calibrateGyro();
-
     SmartDashboard.putData(m_field);
     SmartDashboard.putData(m_drive);
-    SmartDashboard.putData(m_gyro);
   }
 
   @Override
@@ -241,14 +239,6 @@ public class DriveSubsystem extends SubsystemBase {
     }
   }
 
-  /** Calibrate gyro (takes 5 seconds, robot MUST not move) */
-  public void calibrateGyro() {
-    System.out.println("Starting calibration");
-    m_gyro.calibrate();
-    System.out.println("Finishing calibration");
-
-  }
-
   public double getAngle() {
     return m_gyro.getAngle();
   }
@@ -260,6 +250,14 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("");
-    builder.addStringProperty("Drive Brake", () -> m_driveProfile.toString(), null);
+    builder.addStringProperty("Drive Profile", () -> m_driveProfile.toString(), null);
+    builder.addBooleanProperty("Gyro Connected", () -> m_gyro.isConnected(), null);
+    builder.addBooleanProperty("Gyro Calibrating", () -> m_gyro.isCalibrating(), null);
+    builder.addDoubleProperty("Gyro Angle", () -> m_gyro.getAngle(), null);
+    builder.addDoubleProperty("Gyro Yaw", () -> m_gyro.getYaw(), null);
+    builder.addDoubleProperty("Gyro Roll", () -> m_gyro.getRoll(), null);
+    builder.addDoubleProperty("Gyro Pitch", () -> m_gyro.getPitch(), null);
+    builder.addBooleanProperty("Is Moving?", () -> m_gyro.isMoving(), null);
+    builder.addBooleanProperty("Is Rotating?", () -> m_gyro.isRotating(), null);
   }
 }

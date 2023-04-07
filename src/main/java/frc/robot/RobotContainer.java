@@ -331,7 +331,6 @@ public class RobotContainer {
                 // destructive!
                 m_arcadePad.share().onTrue(Commands.run(() -> {
                         m_driveSubsystem.resetEncoders();
-                        m_driveSubsystem.calibrateGyro();
                         m_armSubsystem.resetEncoders();
                         m_shoulderSubsystem.resetEncoders();
                         m_turretSubsystem.resetEncoders();
