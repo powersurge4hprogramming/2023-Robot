@@ -18,11 +18,12 @@ import frc.robot.Constants.DriveConstants.DriveProfiles;
 import frc.robot.Constants.QuartetConstants.LocationType;
 import frc.robot.Constants.QuartetConstants.ClawConstants.PickupMode;
 import frc.robot.commands.TurretDynamicAngle;
-import frc.robot.structs.LEDManager;
+import frc.robot.commands.led.LEDCompetition;
 import frc.robot.structs.LimelightHelpers;
 import frc.robot.structs.hid.CommandPXNArcadeStickController;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShoulderSubsystem;
 import frc.robot.subsystems.StoppyBarSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
@@ -30,7 +31,6 @@ import frc.robot.subsystems.drivetrain.DriveSubsystemReal;
 import frc.robot.subsystems.drivetrain.DriveSubsystemSim;
 import frc.robot.subsystems.drivetrain.DriveSubsystemTemplate;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -46,7 +46,6 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.RamseteAutoBuilder;
-import com.pathplanner.lib.server.PathPlannerServer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -67,6 +66,8 @@ public class RobotContainer {
         private final TurretSubsystem m_turretSubsystem = new TurretSubsystem();
 
         private final StoppyBarSubsystem m_stoppyBarSubsystem = new StoppyBarSubsystem();
+
+        private final LEDSubsystem m_ledSubsystem = new LEDSubsystem();
 
         // <-- END SUBSYSTEMS -->
 
@@ -145,7 +146,8 @@ public class RobotContainer {
                                                                                                 LocationType.HighCube),
                                                                                 m_shoulderSubsystem.moveToLocation(
                                                                                                 LocationType.HighCube)),
-                                                                () -> m_clawSubsystem.m_pickupMode == PickupMode.Cone))
+                                                                () -> m_clawSubsystem
+                                                                                .getPickupMode() == PickupMode.Cone))
                                                 .withName("place270HPrep"));
                 m_autoCmdMap.put("place180HPrep",
                                 Commands.parallel(
@@ -159,7 +161,8 @@ public class RobotContainer {
                                                                                                 LocationType.HighCube),
                                                                                 m_shoulderSubsystem.moveToLocation(
                                                                                                 LocationType.HighCube)),
-                                                                () -> m_clawSubsystem.m_pickupMode == PickupMode.Cone))
+                                                                () -> m_clawSubsystem
+                                                                                .getPickupMode() == PickupMode.Cone))
                                                 .withName("place180HPrep"));
                 m_autoCmdMap.put("place180MPrep",
                                 Commands.parallel(
@@ -173,7 +176,8 @@ public class RobotContainer {
                                                                                                 LocationType.LowCube),
                                                                                 m_shoulderSubsystem.moveToLocation(
                                                                                                 LocationType.LowCube)),
-                                                                () -> m_clawSubsystem.m_pickupMode == PickupMode.Cone))
+                                                                () -> m_clawSubsystem
+                                                                                .getPickupMode() == PickupMode.Cone))
                                                 .withName("place180MPrep"));
                 m_autoCmdMap.put("place0HPrep",
                                 Commands.parallel(
@@ -187,7 +191,8 @@ public class RobotContainer {
                                                                                                 LocationType.HighCube),
                                                                                 m_shoulderSubsystem.moveToLocation(
                                                                                                 LocationType.HighCube)),
-                                                                () -> m_clawSubsystem.m_pickupMode == PickupMode.Cone))
+                                                                () -> m_clawSubsystem
+                                                                                .getPickupMode() == PickupMode.Cone))
                                                 .withName("place0HPrep"));
                 m_autoCmdMap.put("retract",
                                 Commands.parallel(
@@ -247,6 +252,12 @@ public class RobotContainer {
                                                                 -m_driverController.getLeftY(),
                                                                 (-m_driverController.getRightX() * 0.6)),
                                                 () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveArcade"));
+
+                m_ledSubsystem.setDefaultCommand(new LEDCompetition(m_ledSubsystem, m_stoppyBarSubsystem::stoppyOn,
+                                m_clawSubsystem::getPickupMode));
+
+                // in order the command all the time, make a new one set as default.
+                // m_ledSubsystem.setDefaultCommand(new ExampleLEDCommand(m_ledSubsystem));
 
         }
 
@@ -323,8 +334,10 @@ public class RobotContainer {
                                 .whileTrue(m_shoulderSubsystem.setSpeedCmd(0.2));
 
                 // arcade pad
-                m_arcadePad.L3().onTrue(Commands.run(() -> LEDManager.start(), new Subsystem[0]).withName("StartLEDs"));
-                m_arcadePad.R3().onTrue(Commands.run(() -> LEDManager.stop(), new Subsystem[0]).withName("StopLEDs"));
+                m_arcadePad.L3().onTrue(
+                                Commands.run(() -> m_ledSubsystem.start(), new Subsystem[0]).withName("StartLEDs"));
+                m_arcadePad.R3().onTrue(
+                                Commands.run(() -> m_ledSubsystem.stop(), new Subsystem[0]).withName("StopLEDs"));
 
                 // destructive!
                 m_arcadePad.share().onTrue(Commands.run(() -> {
@@ -361,7 +374,7 @@ public class RobotContainer {
                                                                 LocationType.HighCube),
                                                 m_shoulderSubsystem.moveToLocation(
                                                                 LocationType.HighCube)),
-                                () -> m_clawSubsystem.m_pickupMode == PickupMode.Cone)
+                                () -> m_clawSubsystem.getPickupMode() == PickupMode.Cone)
                                 .withName("HighGoal"));
 
                 // Set shoulder and arm to LOW GOAL
@@ -374,7 +387,7 @@ public class RobotContainer {
                                                                 LocationType.LowCube),
                                                 m_shoulderSubsystem.moveToLocation(
                                                                 LocationType.LowCube)),
-                                () -> m_clawSubsystem.m_pickupMode == PickupMode.Cone)
+                                () -> m_clawSubsystem.getPickupMode() == PickupMode.Cone)
                                 .withName("LowGoal"));
 
                 // Set shoulder and arm to GROUND PICKUP/PLACE
@@ -465,8 +478,7 @@ public class RobotContainer {
          * Init autonomous, before the auto command is scheduled
          */
         public void autonomousInit() {
-                LEDManager.initialize();
-                LEDManager.start();
+                m_ledSubsystem.start();
 
                 m_armSubsystem.setArmLock(false);
                 m_driveSubsystem.setDriveProfile(DriveProfiles.BrakeNoRamp);
@@ -484,8 +496,7 @@ public class RobotContainer {
                 m_shoulderSubsystem.lockAngle().schedule();
                 m_turretSubsystem.lockAngle().schedule();
 
-                LEDManager.initialize();
-                LEDManager.start();
+                m_ledSubsystem.start();
 
                 m_armSubsystem.setArmLock(m_operatorController.leftStick().getAsBoolean());
                 m_driveSubsystem.setDriveProfile(DriveConstants.kDriveProfileDefault);

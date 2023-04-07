@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.simulation.DoubleSolenoidSim;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.QuartetConstants.ClawConstants.*;
-import frc.robot.structs.LEDManager;
 
 public class ClawSubsystem extends SubsystemBase {
 
@@ -24,7 +23,7 @@ public class ClawSubsystem extends SubsystemBase {
   private final DoubleSolenoid m_doubleSolenoidDownstream = new DoubleSolenoid(PneumaticsModuleType.REVPH,
       kClawDownstreamFwd, kClawDownstreamBkwd);
 
-  public PickupMode m_pickupMode = PickupMode.None;
+  private PickupMode m_pickupMode = PickupMode.None;
 
   /** Creates a new ClawSubsystem. */
   public ClawSubsystem() {
@@ -41,11 +40,8 @@ public class ClawSubsystem extends SubsystemBase {
   public void periodic() {
   }
 
-  /**
-   * Updates the LEDs based on the {@link PickupMode} the robot is currently in.
-   */
-  private void updateLEDs() {
-    LEDManager.setPickupLEDs(m_pickupMode);
+  public PickupMode getPickupMode() {
+    return m_pickupMode;
   }
 
   /**
@@ -57,7 +53,6 @@ public class ClawSubsystem extends SubsystemBase {
   public CommandBase setPickupModeCommand(PickupMode mode) {
     return this.runOnce(() -> {
       m_pickupMode = mode;
-      updateLEDs();
     }).withName("SetPickupMode");
   }
 
@@ -71,22 +66,7 @@ public class ClawSubsystem extends SubsystemBase {
   public CommandBase grabCommand(PickupMode mode) {
     return this.runOnce(() -> {
       m_pickupMode = mode;
-      updateLEDs();
-      switch (m_pickupMode) {
-        case Cone:
-          m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kReverse);
-          m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kForward);
-          break;
-        case Cube:
-          m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kForward);
-          m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kForward);
-          break;
-        case None:
-        default:
-          m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff);
-          m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kOff);
-          break;
-      }
+      grabCommand();
     }).withName("GrabModeSet");
   }
 

@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.StoppyBarConstants.*;
-import frc.robot.structs.LEDManager;
 
 public class StoppyBarSubsystem extends SubsystemBase {
   private final DoubleSolenoid m_doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, kFowardSolenoidPort,
@@ -37,17 +36,19 @@ public class StoppyBarSubsystem extends SubsystemBase {
     return this.runOnce(() -> {
       if (on) {
         m_doubleSolenoid.set(Value.kForward);
-        LEDManager.setStoppyBarLEDs(true);
       } else {
         m_doubleSolenoid.set(Value.kReverse);
-        LEDManager.setStoppyBarLEDs(false);
       }
     }).withName("SetStoppyBar");
+  }
+
+  public boolean stoppyOn() {
+    return m_doubleSolenoid.get() == Value.kForward;
   }
 
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("");
-    builder.addBooleanProperty("On", () -> m_doubleSolenoid.get() == Value.kForward, null);
+    builder.addBooleanProperty("On", this::stoppyOn, null);
   }
 }

@@ -7,7 +7,6 @@ package frc.robot;
 import java.util.List;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -207,20 +206,6 @@ public final class Constants {
   public static final class LEDConstants {
     public static final int kNumberOfLEDs = 22;
     public static final int kLEDPWMPort = 0;
-
-    public static final Color kRedAllianceColor = new Color(145, 0, 0);
-    public static final Color kBlueAllianceColor = new Color(0, 0, 80);
-    public static final Color kInvalidAllianceColor = Color.kHotPink;
-
-    public static final List<Integer> kAllianceLEDIndexes = List.of(0, 8, 9, 10, 11, 20, 21);
-
-    public static final Color kConeColor = new Color(100, 28, 0);
-    public static final Color kCubeColor = new Color(100, 0, 60);
-    public static final Color kStoppybarColor = new Color(0, 140, 0); // "robot" green
-
-    public static final List<Integer> kPickupLEDIndexes = List.of(1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19);
-
-    public static final Color kTransparentColor = new Color(0, 0, 0);
 
   }
 }
