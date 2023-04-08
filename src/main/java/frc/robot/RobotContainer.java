@@ -16,6 +16,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.DriveConstants.DriveProfiles;
 import frc.robot.Constants.QuartetConstants.LocationType;
 import frc.robot.Constants.QuartetConstants.ClawConstants.PickupMode;
+import frc.robot.commands.Autobalance;
 import frc.robot.commands.TurretDynamicAngle;
 import frc.robot.commands.led.LEDCompetition;
 import frc.robot.structs.LimelightHelpers;
@@ -266,21 +267,12 @@ public class RobotContainer {
                 m_driverController.start().onTrue(
                                 m_stoppyBarSubsystem.setStop(false));
 
+                // drive bindings
                 m_driverController.a().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastNoRamp));
                 m_driverController.b().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.BrakeNoRamp));
                 m_driverController.y().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastRamp));
 
-                // Dumb bindings (non distance based)
-                // Drive bindings
-
-                // Set brake mode, with a debounce of 0.5 seconds to prevent accidental left
-                // stick activation
-                /*
-                 * m_driverController.leftStick().debounce(0.25).onTrue(m_driveSubsystem.
-                 * setDriveProfileCmd(true));
-                 * m_driverController.leftStick().onFalse(m_driveSubsystem.setDriveProfileCmd())
-                 * ;
-                 */
+                m_driverController.leftBumper().whileTrue((new Autobalance(m_driveSubsystem)));
 
                 // Operator controller bindings
                 m_operatorController.leftBumper()
@@ -390,7 +382,7 @@ public class RobotContainer {
                                 m_armSubsystem.moveToLocation(LocationType.SubstationHigh))
                                 .withName("Substation"));
 
-                // Set shoulder and arm to CHUTE PICKUP
+                // Set shoulder and arm to SUBSTATION PICKUP
                 m_arcadePad.leftTrigger().whileTrue(Commands.parallel(
                                 m_shoulderSubsystem.moveToLocation(LocationType.SubstationHigh),
                                 m_armSubsystem.moveToLocation(LocationType.SubstationHigh))

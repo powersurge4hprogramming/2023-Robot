@@ -243,6 +243,14 @@ public class DriveSubsystem extends SubsystemBase {
     return m_gyro.getAngle();
   }
 
+  public double getPitch() {
+    return m_gyro.getPitch();
+  }
+  
+  public boolean isMoving() {
+    return m_gyro.isMoving();
+  }
+
   public void resetGyro() {
     m_gyro.reset();
   }
