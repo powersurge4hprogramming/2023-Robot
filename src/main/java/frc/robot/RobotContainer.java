@@ -6,6 +6,9 @@ package frc.robot;
 
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.networktables.NetworkTableEvent;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -14,6 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.AutoConstants.Auto;
+import frc.robot.Constants.AutoConstants.AutoType;
 import frc.robot.Constants.DriveConstants.DriveProfiles;
 import frc.robot.Constants.QuartetConstants.LocationType;
 import frc.robot.Constants.QuartetConstants.ClawConstants.PickupMode;
@@ -40,12 +45,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.RamseteAutoBuilder;
+import com.pathplanner.lib.server.PathPlannerServer;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -101,7 +108,7 @@ public class RobotContainer {
         private final HashMap<String, Command> m_autoCmdMap = new HashMap<>();
 
         // A chooser for autonomous commands
-        private final SendableChooser<String> m_autoChooser = new SendableChooser<>();
+        private final SendableChooser<Auto> m_autoChooser = new SendableChooser<>();
 
         // the Autonomous builder for Path planning, doesn't have trajectory
         // constructor, just run .fullAuto(trajectory)
@@ -214,9 +221,9 @@ public class RobotContainer {
                 m_autoCmdMap.put("climb", m_stoppyBarSubsystem.setStop(true).andThen(Commands.waitSeconds(1.5)));
 
                 // add all items to Auto Selector
-                m_autoChooser.setDefaultOption(AutoConstants.kDefaultAuto, AutoConstants.kDefaultAuto);
-                for (String opt : AutoConstants.kAutoList) {
-                        m_autoChooser.addOption(opt, opt);
+                m_autoChooser.setDefaultOption(AutoConstants.kDefaultAuto.prettyName, AutoConstants.kDefaultAuto);
+                for (Auto opt : AutoConstants.kAutoList) {
+                        m_autoChooser.addOption(opt.prettyName, opt);
                 }
 
                 m_autoBuilder = new RamseteAutoBuilder(m_driveSubsystem::getPose, m_driveSubsystem::resetOdometry,
@@ -242,6 +249,12 @@ public class RobotContainer {
 
                 // Configure the button bindings
                 configureButtonBindings();
+
+                // on limelight attached, switch to camera mode
+                NetworkTableInstance.getDefault().addListener(NetworkTableInstance.getDefault().getTopic("limelight"),
+                                EnumSet.of(NetworkTableEvent.Kind.kConnected), event -> {
+                                        LimelightHelpers.setCameraMode_Driver(null);
+                                });
 
                 // Configure default commands
                 m_driveSubsystem.setDefaultCommand(
@@ -448,18 +461,19 @@ public class RobotContainer {
         public Command getAutonomousCommand() {
 
                 // Get the PathPlanner key from the SendableChooser
-                final String runAuto = m_autoChooser.getSelected();
+                final Auto runAuto = m_autoChooser.getSelected();
 
-                if (runAuto == "Nothing") {
+                if (runAuto.runType == AutoType.Nothing) {
                         return null;
                 }
 
                 // load the Path group from the deploy pathplanner directory, with the default
                 // constraints outlined in AutoConstants
-                final List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(runAuto,
+                final List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(runAuto.pathName,
                                 AutoConstants.kMaxSpeedMetersPerSecond,
                                 AutoConstants.kMaxAccelerationMetersPerSecondSquared);
-                if (runAuto == "Co-No" || runAuto == "Cu-No") {
+
+                if (runAuto.runType == AutoType.StartEventOnly) {
                         return m_autoBuilder.stopEventGroup(pathGroup.get(0).getStartStopEvent());
                 }
 
@@ -469,7 +483,10 @@ public class RobotContainer {
         }
 
         public void robotInit() {
-                // PathPlannerServer.startServer(5811);
+                if (!DriverStation.isFMSAttached()) {
+                        PathPlannerServer.startServer(5811);
+                }
+
                 // Set the drive limit
                 m_driveSubsystem.limit(DriveConstants.kDriveSpeedLimit);
         }
@@ -486,8 +503,6 @@ public class RobotContainer {
                 m_armSubsystem.lockLength().schedule();
                 m_shoulderSubsystem.lockAngle().schedule();
                 m_turretSubsystem.lockAngle().schedule();
-
-                LimelightHelpers.setCameraMode_Driver(null);
         }
 
         public void teleopInit() {
@@ -500,8 +515,6 @@ public class RobotContainer {
 
                 m_armSubsystem.setArmLock(m_operatorController.leftStick().getAsBoolean());
                 m_driveSubsystem.setDriveProfile(DriveConstants.kDriveProfileDefault);
-
-                LimelightHelpers.setCameraMode_Driver(null);
         }
 
 }

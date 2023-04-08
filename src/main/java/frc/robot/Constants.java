@@ -140,7 +140,7 @@ public final class Constants {
 
     public static final double kDriveSpeedLimit = 0.65;
 
-    public static final double kTrackWidthMeters = 0.530352;
+    private static final double kTrackWidthMeters = 0.530352;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
         kTrackWidthMeters);
 
@@ -197,9 +197,30 @@ public final class Constants {
 
     public static final String kAutoSelectionKey = "Auto Selector";
 
+    public static enum AutoType {
+      FullAuto,
+      StartEventOnly,
+      Nothing
+    }
+
+    public static final class Auto {
+      public final String prettyName;
+      public final String pathName;
+      public final AutoType runType;
+
+      Auto(String prettyName, String pathName, AutoType runType) {
+        this.prettyName = prettyName;
+        this.pathName = pathName;
+        this.runType = runType;
+      }
+    }
+
     // auto selections based on PathPlanner, from ./deploy/pathplanner dir
-    public static final String kDefaultAuto = "Nothing";
-    public static final List<String> kAutoList = List.of("S9-P1Cu", "S1-P1Cu", "Co-No", "Cu-No");
+    public static final Auto kDefaultAuto = new Auto("Nothing", "", AutoType.Nothing);
+    public static final List<Auto> kAutoList = List.of(new Auto("Place 9 Pickup #4 Cube", "S9-P4Cu", AutoType.FullAuto),
+        new Auto("Place 1 Pickup #1 Cube", "S1-P1Cu", AutoType.FullAuto),
+        new Auto("Place cone", "Co-No", AutoType.StartEventOnly),
+        new Auto("Place cube", "Cu-No", AutoType.StartEventOnly));
 
   }
 
