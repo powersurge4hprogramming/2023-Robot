@@ -47,6 +47,8 @@ public class LEDCompetition extends CommandBase {
     m_clawHook = clawHook;
     m_clawLast = m_clawHook.get();
 
+    setName("LEDCompetitionCommand");
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_ledSubsystem);
   }

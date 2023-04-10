@@ -14,6 +14,8 @@ public class TemplateLEDCommand extends CommandBase {
   public TemplateLEDCommand(LEDSubsystem ledSubsystem) {
     m_ledSubsystem = ledSubsystem;
 
+    setName("TemplateLEDCommand");
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_ledSubsystem);
   }

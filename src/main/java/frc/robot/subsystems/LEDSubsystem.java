@@ -25,6 +25,8 @@ public class LEDSubsystem extends SubsystemBase {
     m_led.setLength(kNumberOfLEDs);
 
     new AddressableLEDSim(m_led);
+
+    setName("LEDSubsystem");
   }
 
   @Override

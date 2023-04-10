@@ -284,6 +284,8 @@ public class RobotContainer {
          * {@link JoystickButton}.
          */
         private void configureButtonBindings() {
+                // Drive bindings
+
                 // nuclear codes (for endgame solenoids)
                 m_driverController.back().onTrue(
                                 m_stoppyBarSubsystem.setStop(true));
@@ -292,19 +294,7 @@ public class RobotContainer {
 
                 m_driverController.a().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastNoRamp));
                 m_driverController.b().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.BrakeNoRamp));
-                m_driverController.y().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastRamp));
-
-                // Dumb bindings (non distance based)
-                // Drive bindings
-
-                // Set brake mode, with a debounce of 0.5 seconds to prevent accidental left
-                // stick activation
-                /*
-                 * m_driverController.leftStick().debounce(0.25).onTrue(m_driveSubsystem.
-                 * setDriveProfileCmd(true));
-                 * m_driverController.leftStick().onFalse(m_driveSubsystem.setDriveProfileCmd())
-                 * ;
-                 */
+                m_driverController.y().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastRamp));                
 
                 // Operator controller bindings
                 m_operatorController.leftBumper()
