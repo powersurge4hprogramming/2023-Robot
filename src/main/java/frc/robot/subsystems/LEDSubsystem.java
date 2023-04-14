@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -25,11 +26,8 @@ public class LEDSubsystem extends SubsystemBase {
     m_led.setLength(kNumberOfLEDs);
 
     new AddressableLEDSim(m_led);
-  }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+    setName("LEDSubsystem");
   }
 
   public void pushUpdates() {
@@ -74,5 +72,16 @@ public class LEDSubsystem extends SubsystemBase {
   public void turnOff() {
     setIndexesColor(List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21),
         new Color(0, 0, 0));
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.setSmartDashboardType("");
+    builder.addStringProperty("Cmd", () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "none", null);
   }
 }

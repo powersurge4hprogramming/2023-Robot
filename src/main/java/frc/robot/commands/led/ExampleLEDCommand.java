@@ -28,6 +28,8 @@ public class ExampleLEDCommand extends CommandBase {
   public ExampleLEDCommand(LEDSubsystem ledSubsystem) {
     m_ledSubsystem = ledSubsystem;
 
+    setName("PinkBlinkCommand");
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_ledSubsystem);
   }

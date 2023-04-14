@@ -32,6 +32,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private final DoubleSolenoid m_lockSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, kLockSolenoidFwd,
       kLockSolenoidBkwd);
+
   private final CANSparkMax m_motor = new CANSparkMax(kMotorPort, MotorType.kBrushless);
   private final RelativeEncoder m_encoder = m_motor.getEncoder();
   private final SparkMaxPIDController m_pidController = m_motor.getPIDController();
@@ -43,6 +44,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_motor.restoreFactoryDefaults();
 
     m_encoder.setPositionConversionFactor(kDistancePerRevInches);
+    m_encoder.setPosition(m_setpoint);
     m_motor.setIdleMode(IdleMode.kBrake);
     m_motor.setInverted(true);
 
@@ -66,6 +68,74 @@ public class ArmSubsystem extends SubsystemBase {
     setName("ArmSubsystem");
   }
 
+  private void setSpeed(double speed) {
+    m_motor.set(speed);
+  }
+
+  /**
+   * Sets the speed of the arm
+   * 
+   * @param speed the speed from -1 to 1 of the arm motor
+   * @return a command which sets the arm to the speed and then zeroes and locks
+   *         the arm on interrupt
+   */
+  public CommandBase setSpeedCmd(double speed) {
+    return this.startEnd(() -> setSpeed(speed), () -> setSpeed(0.0)).finallyDo((end) -> lockPosition())
+        .withName("ArmRunSpeed");
+  }
+
+  /**
+   * Runs arm to a specified position.
+   * 
+   * @param position the length to set the motor to
+   */
+  private void setPosition(double position) {
+    if (m_setpoint != position) {
+      m_setpoint = position;
+      m_pidController.setReference(position, ControlType.kPosition);
+    }
+  }
+
+  private CommandBase moveToLength(double length) {
+    return this.runOnce(() -> setPosition(length)).andThen(new WaitUntilCommand(this::atSetpoint))
+        .handleInterrupt(this::lockPosition)
+        .withName("ArmToLength" + length);
+  }
+
+  public CommandBase moveToLocation(LocationType location) {
+    return moveToLength(location.armInches);
+  }
+
+  private void incrementPosition(double increment) {
+    m_setpoint = m_setpoint + increment;
+    m_pidController.setReference(m_setpoint, ControlType.kPosition);
+  }
+
+  /**
+   * Increments arm a specified amount
+   * 
+   * @param increment the length to increment the arm
+   * @return a command which increments the arm setpoint without awaiting the
+   *         setpoint
+   */
+  public CommandBase incrementLength(double increment) {
+    return this.runOnce(() -> incrementPosition(increment)).withName("ArmIncrement" + increment);
+  }
+
+  private void lockPosition() {
+    m_setpoint = m_encoder.getPosition();
+    m_pidController.setReference(m_setpoint, ControlType.kPosition);
+  }
+
+  /**
+   * Locks the arm
+   * 
+   * @return a command which sets the arm to the current setpoint
+   */
+  public CommandBase lockLength() {
+    return this.runOnce(() -> lockPosition()).withName("ArmPositionLock");
+  }
+
   /**
    * Gets the position
    * 
@@ -84,85 +154,32 @@ public class ArmSubsystem extends SubsystemBase {
     return m_encoder.getVelocity();
   }
 
-  private void setSpeed(double speed) {
-    m_motor.set(speed);
-  }
-
-  public CommandBase setSpeedCmd(double speed) {
-    return this.startEnd(() -> setSpeed(speed), () -> setSpeed(0.0)).finallyDo((end) -> lockPosition())
-        .withName("ArmRunSpeed");
-  }
-
-  /**
-   * Runs motor to a specified position.
-   * 
-   * @param position the position (in subclass units) to set the motor to
-   */
-  private void setPosition(double position) {
-    if (m_setpoint != position) {
-      m_setpoint = position;
-      m_pidController.setReference(position, ControlType.kPosition);
-    }
-  }
-
-  /**
-   * Runs motor to a specified position.
-   * 
-   * @param angle the position (in degrees) to set the motor to
-   */
-  private void incrementPosition(double increment) {
-    m_setpoint = m_setpoint + increment;
-    m_pidController.setReference(m_setpoint, ControlType.kPosition);
-  }
-
-  private void lockPosition() {
-    m_setpoint = m_encoder.getPosition();
-    m_pidController.setReference(m_setpoint, ControlType.kPosition);
-  }
-
   public boolean atSetpoint() {
     return (Math.abs(m_setpoint - getLength()) <= kPositionTolerance);
     // && (Math.abs(getVelocity()) <= kVelocityTolerance);
   }
 
-  /** Stops motor from running, will interrupt any control mode. */
-  public void disableMotor() {
+  private void disableMotor() {
     m_motor.setIdleMode(IdleMode.kCoast);
     m_motor.stopMotor();
   }
 
-  @Override
-  public void periodic() {
-    if ((m_limitSwitch.get() == true) && (m_motor.getAppliedOutput() <= 0.0 || m_setpoint <= 0.0)) {
-      m_encoder.setPosition(0);
-      setPosition(0.0);
-    }
+  /**
+   * @return an IRREVERSIBLE command which stops the arm from running and sends it
+   *         to coast,
+   *         will interrupt any control
+   *         mode.
+   */
+  public CommandBase disableMotorCommand() {
+    return this.runOnce(() -> disableMotor()).withName("DisableArmMotor");
   }
 
-  private CommandBase moveToLength(double length) {
-    return this.runOnce(() -> setPosition(length)).andThen(new WaitUntilCommand(this::atSetpoint))
-        .handleInterrupt(this::lockPosition)
-        .withName("ArmToLength" + length);
-  }
-
-  public CommandBase moveToLocation(LocationType location) {
-    return moveToLength(location.armInches);
-  }
-
-  public CommandBase incrementLength(double increment) {
-    return this.runOnce(() -> {
-      incrementPosition(increment);
-    }).withName("ArmIncrement" + increment);
-  }
-
-  public CommandBase lockLength() {
-    return this.runOnce(() -> {
-      lockPosition();
-    }).withName("ArmPositionLock");
-  }
-
-  public void resetEncoders() {
+  private void resetEncoder() {
     m_encoder.setPosition(LocationType.Starting.armInches);
+  }
+
+  public CommandBase resetEncoderCommand() {
+    return this.runOnce(() -> resetEncoder()).withName("ResetArmEncoder");
   }
 
   /**
@@ -170,7 +187,7 @@ public class ArmSubsystem extends SubsystemBase {
    * 
    * @param locked whether the arm should be locked
    */
-  public void setArmLock(boolean locked) {
+  private void setArmLock(boolean locked) {
     if (locked) {
       m_lockSolenoid.set(Value.kForward);
     } else {
@@ -179,14 +196,21 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   /**
-   * Toggles the arm's locking
+   * Sets the lock mode on the arm.
    * 
-   * @return a command which toggles the arm lock and the finishes
+   * @param locked whether the arm should be locked
+   * @return a command which sets the arm lock and finishes
    */
-  public CommandBase toggleArmLock() {
-    return this.runOnce(() -> {
-      m_lockSolenoid.toggle();
-    }).withName("ToggleArmLock");
+  public CommandBase setArmLockCommand(boolean locked) {
+    return this.runOnce(() -> setArmLock(locked)).withName("SetArmLock");
+  }
+
+  @Override
+  public void periodic() {
+    if ((m_limitSwitch.get() == true) && (m_motor.getAppliedOutput() <= 0.0 || m_setpoint <= 0.0)) {
+      m_encoder.setPosition(0);
+      setPosition(0.0);
+    }
   }
 
   @Override
