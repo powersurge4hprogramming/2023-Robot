@@ -243,6 +243,7 @@ public class RobotContainer {
                 SmartDashboard.putData("StoppyBar", m_stoppyBarSubsystem);
                 SmartDashboard.putData("Turret", m_turretSubsystem);
                 SmartDashboard.putData("Drive", m_driveSubsystem);
+                SmartDashboard.putData("LEDs", m_ledSubsystem);
 
                 SmartDashboard.putBoolean("PIDs On", false);
                 SmartDashboard.putData(CommandScheduler.getInstance());
@@ -294,7 +295,7 @@ public class RobotContainer {
 
                 m_driverController.a().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastNoRamp));
                 m_driverController.b().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.BrakeNoRamp));
-                m_driverController.y().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastRamp));                
+                m_driverController.y().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastRamp));
 
                 // Operator controller bindings
                 m_operatorController.leftBumper()
