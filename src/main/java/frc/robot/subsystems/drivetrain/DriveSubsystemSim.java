@@ -163,21 +163,27 @@ public class DriveSubsystemSim extends DriveSubsystemTemplate {
     m_drive.setMaxOutput(limit);
   }
 
-  @Override
-  public void resetEncoders() {
+  private void resetEncoders() {
     m_leftEncoder.reset();
     m_rightEncoder.reset();
   }
 
   @Override
-  public void setDriveProfile(DriveProfiles brakeMode) {
-    return;
+  public CommandBase resetEncodersCommand() {
+    return this.runOnce(() -> resetEncoders()).withName("ResetDriveEncoders");
   }
 
   @Override
   public CommandBase setDriveProfileCmd(DriveProfiles brakeMode) {
     return this.runOnce(() -> {
-      return;
-    }).withName("ToggleBrakeMode");
+    }
+
+    ).withName("ToggleBrakeMode");
+  }
+
+  @Override
+  public CommandBase disableMotorsCommand() {
+    return this.runOnce(() -> {
+    });
   }
 }

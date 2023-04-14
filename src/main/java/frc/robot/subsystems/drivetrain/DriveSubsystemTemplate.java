@@ -76,10 +76,7 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
   public abstract void limit(double limit);
 
   /** Resets the drive encoders to currently read a position of 0. */
-  public abstract void resetEncoders();
-
-  /** Toggles brake mode to true or false */
-  public abstract void setDriveProfile(DriveProfiles driveProfile);
+  public abstract CommandBase resetEncodersCommand();
 
   /**
    * Toggles brake mode to true or false
@@ -87,6 +84,11 @@ public abstract class DriveSubsystemTemplate extends SubsystemBase {
    * @return a command which toggles the brake mode and then finishes
    */
   public abstract CommandBase setDriveProfileCmd(DriveProfiles driveProfile);
+
+  /**
+   * Sets motors to coast and turns them off, will interrupt any control mode
+   */
+  public abstract CommandBase disableMotorsCommand();
 
   /** Calibrate gyro (takes 5 seconds, robot MUST not move) */
   public void calibrateGyro() {

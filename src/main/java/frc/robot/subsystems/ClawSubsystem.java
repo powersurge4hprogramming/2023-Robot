@@ -36,12 +36,8 @@ public class ClawSubsystem extends SubsystemBase {
     setName("ClawSubsystem");
   }
 
-  @Override
-  public void periodic() {
-  }
-
-  public PickupMode getPickupMode() {
-    return m_pickupMode;
+  private void setPickupMode(PickupMode mode) {
+    m_pickupMode = mode;
   }
 
   /**
@@ -51,9 +47,38 @@ public class ClawSubsystem extends SubsystemBase {
    * @return a command which changes the pickup mode, runs once
    */
   public CommandBase setPickupModeCommand(PickupMode mode) {
-    return this.runOnce(() -> {
-      m_pickupMode = mode;
-    }).withName("SetPickupMode");
+    return this.runOnce(() -> setPickupMode(mode)).withName("SetPickupMode");
+  }
+
+  public PickupMode getPickupMode() {
+    return m_pickupMode;
+  }
+
+  private void grab() {
+    switch (m_pickupMode) {
+      case Cone:
+        m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kReverse);
+        m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kForward);
+        break;
+      case Cube:
+        m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kForward);
+        m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kForward);
+        break;
+      case None:
+      default:
+        m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff);
+        m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kOff);
+        break;
+    }
+  }
+
+  /**
+   * Grabs the object based on the saved pickup mode
+   * 
+   * @return a command which grabs the object, runs once
+   */
+  public CommandBase grabCommand() {
+    return this.runOnce(() -> grab()).withName("GrabUseMode");
   }
 
   /**
@@ -66,33 +91,13 @@ public class ClawSubsystem extends SubsystemBase {
   public CommandBase grabCommand(PickupMode mode) {
     return this.runOnce(() -> {
       m_pickupMode = mode;
-      grabCommand();
+      grab();
     }).withName("GrabModeSet");
   }
 
-  /**
-   * Grabs the object based on the saved pickup mode
-   * 
-   * @return a command which grabs the object, runs once
-   */
-  public CommandBase grabCommand() {
-    return this.runOnce(() -> {
-      switch (m_pickupMode) {
-        case Cone:
-          m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kReverse);
-          m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kForward);
-          break;
-        case Cube:
-          m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kForward);
-          m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kForward);
-          break;
-        case None:
-        default:
-          m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff);
-          m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kOff);
-          break;
-      }
-    }).withName("GrabUseMode");
+  private void release() {
+    m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff);
+    m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kReverse);
   }
 
   /**
@@ -101,10 +106,11 @@ public class ClawSubsystem extends SubsystemBase {
    * @return a command which releases the claw, runs once
    */
   public CommandBase releaseCommand() {
-    return this.runOnce(() -> {
-      m_doubleSolenoidUpstream.set(DoubleSolenoid.Value.kOff);
-      m_doubleSolenoidDownstream.set(DoubleSolenoid.Value.kReverse);
-    }).withName("Release");
+    return this.runOnce(() -> release()).withName("Release");
+  }
+
+  @Override
+  public void periodic() {
   }
 
   @Override

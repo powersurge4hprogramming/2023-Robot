@@ -142,23 +142,43 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     m_drive.setMaxOutput(limit);
   }
 
-  @Override
-  public void resetEncoders() {
+  private void resetEncoders() {
     m_leftEncoder.setPosition(0);
     m_rightEncoder.setPosition(0);
   }
 
   @Override
-  public void setDriveProfile(DriveProfiles driveProfile) {
+  public CommandBase resetEncodersCommand() {
+    return this.runOnce(() -> resetEncoders()).withName("ResetDriveEncoders");
+  }
+
+  private void disableMotors() {
+    tankDriveVolts(0, 0);
+
+    m_leftMotorLeader.setIdleMode(IdleMode.kCoast);
+    m_leftMotorFollower.setIdleMode(IdleMode.kCoast);
+    m_rightMotorLeader.setIdleMode(IdleMode.kCoast);
+    m_rightMotorFollower.setIdleMode(IdleMode.kCoast);
+
+    m_leftMotorLeader.stopMotor();
+    m_leftMotorFollower.stopMotor();
+    m_rightMotorLeader.stopMotor();
+    m_rightMotorFollower.stopMotor();
+  }
+
+  @Override
+  public CommandBase disableMotorsCommand() {
+    return this.runOnce(() -> disableMotors()).withName("DisableDriveMotors");
+  }
+
+  private void setDriveProfile(DriveProfiles driveProfile) {
     m_driveProfile = driveProfile;
     updateBrakeMode();
   }
 
   @Override
   public CommandBase setDriveProfileCmd(DriveProfiles driveProfile) {
-    return this.runOnce(() -> {
-      setDriveProfile(driveProfile);
-    }).withName("SetDriveProfile");
+    return this.runOnce(() -> setDriveProfile(driveProfile)).withName("SetDriveProfile");
   }
 
   /** Updates CANSparkMax brake mode based on {@code m_brake} */

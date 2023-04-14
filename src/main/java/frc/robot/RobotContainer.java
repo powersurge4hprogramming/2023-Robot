@@ -10,6 +10,7 @@ import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -218,7 +219,7 @@ public class RobotContainer {
                 m_autoCmdMap.put("grabCo",
                                 m_clawSubsystem.grabCommand(PickupMode.Cone).andThen(Commands.waitSeconds(0.5)));
                 m_autoCmdMap.put("release", m_clawSubsystem.releaseCommand().andThen(Commands.waitSeconds(0.75)));
-                m_autoCmdMap.put("climb", m_stoppyBarSubsystem.setStop(true).andThen(Commands.waitSeconds(1.5)));
+                m_autoCmdMap.put("climb", m_stoppyBarSubsystem.setStopCommand(true).andThen(Commands.waitSeconds(1.5)));
 
                 // add all items to Auto Selector
                 m_autoChooser.setDefaultOption(AutoConstants.kDefaultAuto.prettyName, AutoConstants.kDefaultAuto);
@@ -248,15 +249,6 @@ public class RobotContainer {
                 SmartDashboard.putBoolean("PIDs On", false);
                 SmartDashboard.putData(CommandScheduler.getInstance());
 
-                // Configure the button bindings
-                configureButtonBindings();
-
-                // on limelight attached, switch to camera mode
-                NetworkTableInstance.getDefault().addListener(NetworkTableInstance.getDefault().getTopic("limelight"),
-                                EnumSet.of(NetworkTableEvent.Kind.kConnected), event -> {
-                                        LimelightHelpers.setCameraMode_Driver(null);
-                                });
-
                 // Configure default commands
                 m_driveSubsystem.setDefaultCommand(
                                 // A split-stick arcade command, with forward/backward controlled by the left
@@ -272,6 +264,56 @@ public class RobotContainer {
 
                 // in order the command all the time, make a new one set as default.
                 // m_ledSubsystem.setDefaultCommand(new ExampleLEDCommand(m_ledSubsystem));
+
+                // --> on init/cross subsystem triggers:
+
+                // on limelight attached, switch to camera mode
+                NetworkTableInstance.getDefault().addListener(NetworkTableInstance.getDefault().getTopic("limelight"),
+                                EnumSet.of(NetworkTableEvent.Kind.kConnected), event -> {
+                                        LimelightHelpers.setCameraMode_Driver(null);
+                                });
+
+                // startup code
+                if (!DriverStation.isFMSAttached()) {
+                        PathPlannerServer.startServer(5811);
+                }
+                m_driveSubsystem.limit(DriveConstants.kDriveSpeedLimit);
+
+                // autoInit events
+                Trigger autoTrigger = new Trigger(() -> RobotState.isEnabled() && RobotState.isAutonomous());
+
+                autoTrigger.onTrue(m_armSubsystem.setArmLockCommand(false));
+                autoTrigger.onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.BrakeNoRamp));
+
+                // teleopInit events
+                Trigger teleopTrigger = new Trigger(() -> RobotState.isEnabled() && RobotState.isTeleop());
+
+                teleopTrigger.and(m_operatorController.leftStick()).onTrue(m_armSubsystem.setArmLockCommand(true));
+                teleopTrigger.and(m_operatorController.leftStick().negate())
+                                .onTrue(m_armSubsystem.setArmLockCommand(false));
+                teleopTrigger.onTrue(m_driveSubsystem.setDriveProfileCmd(DriveConstants.kDriveProfileDefault));
+
+                // whole time teleop events
+                teleopTrigger.whileTrue(Commands.run(() -> {
+                        if (m_turretSubsystem.atSetpoint() && m_shoulderSubsystem.atSetpoint()
+                                        && m_armSubsystem.atSetpoint()) {
+                                m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+                                SmartDashboard.putBoolean("PIDs On", false);
+                        } else {
+                                m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0.5);
+                                SmartDashboard.putBoolean("PIDs On", true);
+                        }
+                }, new Subsystem[0]).withName("UpdatePIDStatus"));
+
+                // teleopInit or autoInit events
+                teleopTrigger.or(autoTrigger).onTrue(Commands.parallel(
+                                Commands.runOnce(() -> m_ledSubsystem.start(), m_ledSubsystem),
+                                m_armSubsystem.lockLength(),
+                                m_shoulderSubsystem.lockAngle(),
+                                m_turretSubsystem.lockAngle()).withName("EnabledInitSequence"));
+
+                // Configure the button bindings
+                configureButtonBindings();
 
         }
 
@@ -289,9 +331,9 @@ public class RobotContainer {
 
                 // nuclear codes (for endgame solenoids)
                 m_driverController.back().onTrue(
-                                m_stoppyBarSubsystem.setStop(true));
+                                m_stoppyBarSubsystem.setStopCommand(true));
                 m_driverController.start().onTrue(
-                                m_stoppyBarSubsystem.setStop(false));
+                                m_stoppyBarSubsystem.setStopCommand(false));
 
                 m_driverController.a().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastNoRamp));
                 m_driverController.b().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.BrakeNoRamp));
@@ -315,10 +357,11 @@ public class RobotContainer {
                 m_operatorController.y().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cone));
                 m_operatorController.a().onTrue(m_clawSubsystem.setPickupModeCommand(PickupMode.Cube));
 
+                // for toggle switch equipped f310, if switch code must be reverted!
                 m_operatorController.leftStick()
-                                .onTrue(Commands.runOnce(() -> m_armSubsystem.setArmLock(true), m_armSubsystem));
+                                .onTrue(m_armSubsystem.setArmLockCommand(true));
                 m_operatorController.leftStick()
-                                .onFalse((Commands.runOnce(() -> m_armSubsystem.setArmLock(false), m_armSubsystem)));
+                                .onFalse(m_armSubsystem.setArmLockCommand(true));
 
                 m_operatorController.rightStick()
                                 .onTrue(Commands.runOnce(() -> m_driveSubsystem.resetGyro(), m_driveSubsystem));
@@ -344,20 +387,18 @@ public class RobotContainer {
                                 Commands.run(() -> m_ledSubsystem.stop(), new Subsystem[0]).withName("StopLEDs"));
 
                 // destructive!
-                m_arcadePad.share().onTrue(Commands.run(() -> {
-                        m_driveSubsystem.resetEncoders();
-                        m_driveSubsystem.calibrateGyro();
-                        m_armSubsystem.resetEncoders();
-                        m_shoulderSubsystem.resetEncoders();
-                        m_turretSubsystem.resetEncoders();
-                }, m_armSubsystem, m_turretSubsystem, m_shoulderSubsystem, m_driveSubsystem).withName("ResetEncoders"));
+                m_arcadePad.share().onTrue(Commands.parallel(
+                                m_driveSubsystem.resetEncodersCommand(),
+                                m_armSubsystem.resetEncoderCommand(),
+                                m_shoulderSubsystem.resetEncoderCommand(),
+                                m_turretSubsystem.resetEncoderCommand()).withName("ResetAllEncoders"));
 
-                m_arcadePad.options().onTrue(Commands.run(() -> {
-                        m_driveSubsystem.tankDriveVolts(0, 0);
-                        m_armSubsystem.disableMotor();
-                        m_shoulderSubsystem.disableMotor();
-                        m_turretSubsystem.disableMotor();
-                }, m_armSubsystem, m_turretSubsystem, m_shoulderSubsystem, m_driveSubsystem).withName("ReleaseMotors"));
+                // destructive!
+                m_arcadePad.options().onTrue(Commands.parallel(
+                                m_driveSubsystem.disableMotorsCommand(),
+                                m_armSubsystem.disableMotorCommand(),
+                                m_shoulderSubsystem.disableMotorCommand(),
+                                m_turretSubsystem.disableMotorCommand()).withName("DisableMotors"));
 
                 // Smart bindings -->
                 // Operator controller bindings
@@ -434,16 +475,6 @@ public class RobotContainer {
 
         }
 
-        public void updatePIDStatus() {
-                if (m_turretSubsystem.atSetpoint() && m_shoulderSubsystem.atSetpoint() && m_armSubsystem.atSetpoint()) {
-                        m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0.0);
-                        SmartDashboard.putBoolean("PIDs On", false);
-                } else {
-                        m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 0.5);
-                        SmartDashboard.putBoolean("PIDs On", true);
-                }
-        }
-
         /**
          * Use this to pass the autonomous command to the main {@link Robot} class.
          *
@@ -471,41 +502,6 @@ public class RobotContainer {
                 return m_autoBuilder.fullAuto(pathGroup).andThen(() -> m_driveSubsystem.tankDriveVolts(0, 0),
                                 m_driveSubsystem);
 
-        }
-
-        public void robotInit() {
-                if (!DriverStation.isFMSAttached()) {
-                        PathPlannerServer.startServer(5811);
-                }
-
-                // Set the drive limit
-                m_driveSubsystem.limit(DriveConstants.kDriveSpeedLimit);
-        }
-
-        /**
-         * Init autonomous, before the auto command is scheduled
-         */
-        public void autonomousInit() {
-                m_ledSubsystem.start();
-
-                m_armSubsystem.setArmLock(false);
-                m_driveSubsystem.setDriveProfile(DriveProfiles.BrakeNoRamp);
-
-                m_armSubsystem.lockLength().schedule();
-                m_shoulderSubsystem.lockAngle().schedule();
-                m_turretSubsystem.lockAngle().schedule();
-        }
-
-        public void teleopInit() {
-
-                m_armSubsystem.lockLength().schedule();
-                m_shoulderSubsystem.lockAngle().schedule();
-                m_turretSubsystem.lockAngle().schedule();
-
-                m_ledSubsystem.start();
-
-                m_armSubsystem.setArmLock(m_operatorController.leftStick().getAsBoolean());
-                m_driveSubsystem.setDriveProfile(DriveConstants.kDriveProfileDefault);
         }
 
 }

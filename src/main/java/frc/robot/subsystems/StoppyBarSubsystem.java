@@ -22,8 +22,12 @@ public class StoppyBarSubsystem extends SubsystemBase {
     setName("StoppyBarSubsystem");
   }
 
-  @Override
-  public void periodic() {
+  private void setStop(boolean on) {
+    if (on) {
+      m_doubleSolenoid.set(Value.kForward);
+    } else {
+      m_doubleSolenoid.set(Value.kReverse);
+    }
   }
 
   /**
@@ -32,18 +36,16 @@ public class StoppyBarSubsystem extends SubsystemBase {
    * @param on whether the stoppy bar should be set on
    * @return a command which updates the stoppy bar and LEDs, runs once
    */
-  public CommandBase setStop(boolean on) {
-    return this.runOnce(() -> {
-      if (on) {
-        m_doubleSolenoid.set(Value.kForward);
-      } else {
-        m_doubleSolenoid.set(Value.kReverse);
-      }
-    }).withName("SetStoppyBar");
+  public CommandBase setStopCommand(boolean on) {
+    return this.runOnce(() -> setStop(on)).withName("SetStoppyBar");
   }
 
   public boolean stoppyOn() {
     return m_doubleSolenoid.get() == Value.kForward;
+  }
+
+  @Override
+  public void periodic() {
   }
 
   @Override

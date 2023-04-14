@@ -30,11 +30,6 @@ public class LEDSubsystem extends SubsystemBase {
     setName("LEDSubsystem");
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
-
   public void pushUpdates() {
     m_led.setData(m_ledBuffer);
   }
@@ -80,8 +75,13 @@ public class LEDSubsystem extends SubsystemBase {
   }
 
   @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+  }
+
+  @Override
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("");
-    builder.addStringProperty("Cmd", () -> getCurrentCommand().getName(), null);
+    builder.addStringProperty("Cmd", () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "none", null);
   }
 }
