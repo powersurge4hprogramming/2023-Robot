@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.AddressableLEDSim;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.LEDConstants.*;
@@ -50,20 +51,28 @@ public class LEDSubsystem extends SubsystemBase {
     }
   }
 
-  /** Start LED outputs, switching the alliance LEDs to the correct color. */
-  public void start() {
+  private void start() {
 
     m_led.start();
+  }
+
+  /** Start LED outputs, switching the alliance LEDs to the correct color. */
+  public CommandBase startCommand() {
+    return this.runOnce(() -> start()).withName("StartLEDs");
+  }
+
+  private void stop() {
+    turnOff();
+    m_led.setData(m_ledBuffer);
+    m_led.stop();
   }
 
   /**
    * Makes transparent, blocks, then stops sending data to the LEDs. This will
    * most likely turn them off?
    */
-  public void stop() {
-    turnOff();
-    m_led.setData(m_ledBuffer);
-    m_led.stop();
+  public CommandBase stopCommand() {
+    return this.runOnce(() -> stop()).withName("StopLEDs");
   }
 
   /**

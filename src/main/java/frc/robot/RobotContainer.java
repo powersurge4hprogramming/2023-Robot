@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -39,8 +37,6 @@ import frc.robot.subsystems.drivetrain.DriveSubsystemTemplate;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -51,7 +47,6 @@ import java.util.HashMap;
 import java.util.List;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.RamseteAutoBuilder;
 import com.pathplanner.lib.server.PathPlannerServer;
 
@@ -228,11 +223,10 @@ public class RobotContainer {
                 }
 
                 m_autoBuilder = new RamseteAutoBuilder(m_driveSubsystem::getPose, m_driveSubsystem::resetOdometry,
-                                new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+                                AutoConstants.kRameseteController,
                                 DriveConstants.kDriveKinematics,
-                                new SimpleMotorFeedforward(DriveConstants.ksVolts, DriveConstants.kvVoltSecondsPerMeter,
-                                                DriveConstants.kaVoltSecondsSquaredPerMeter),
-                                m_driveSubsystem::getWheelSpeeds, new PIDConstants(DriveConstants.kPDriveVel, 0, 0),
+                                DriveConstants.kDriveFeedforward,
+                                m_driveSubsystem::getWheelSpeeds, DriveConstants.kDrivePID,
                                 m_driveSubsystem::tankDriveVolts,
                                 m_autoCmdMap, true, m_driveSubsystem);
 
@@ -269,9 +263,8 @@ public class RobotContainer {
 
                 // on limelight attached, switch to camera mode
                 NetworkTableInstance.getDefault().addListener(NetworkTableInstance.getDefault().getTopic("limelight"),
-                                EnumSet.of(NetworkTableEvent.Kind.kConnected), event -> {
-                                        LimelightHelpers.setCameraMode_Driver(null);
-                                });
+                                EnumSet.of(NetworkTableEvent.Kind.kConnected),
+                                event -> LimelightHelpers.setCameraMode_Driver(null));
 
                 // startup code
                 if (!DriverStation.isFMSAttached()) {
@@ -307,7 +300,7 @@ public class RobotContainer {
 
                 // teleopInit or autoInit events
                 teleopTrigger.or(autoTrigger).onTrue(Commands.parallel(
-                                Commands.runOnce(() -> m_ledSubsystem.start(), m_ledSubsystem),
+                                m_ledSubsystem.startCommand(),
                                 m_armSubsystem.lockLength(),
                                 m_shoulderSubsystem.lockAngle(),
                                 m_turretSubsystem.lockAngle()).withName("EnabledInitSequence"));
@@ -364,7 +357,7 @@ public class RobotContainer {
                                 .onFalse(m_armSubsystem.setArmLockCommand(true));
 
                 m_operatorController.rightStick()
-                                .onTrue(Commands.runOnce(() -> m_driveSubsystem.resetGyro(), m_driveSubsystem));
+                                .onTrue(m_driveSubsystem.runOnce(() -> m_driveSubsystem.resetGyro()));
 
                 // Speed Overrides
                 m_operatorController.start().and(m_operatorController.leftBumper())
@@ -381,10 +374,9 @@ public class RobotContainer {
                                 .whileTrue(m_shoulderSubsystem.setSpeedCmd(0.2));
 
                 // arcade pad
-                m_arcadePad.L3().onTrue(
-                                Commands.run(() -> m_ledSubsystem.start(), new Subsystem[0]).withName("StartLEDs"));
+                m_arcadePad.L3().onTrue(m_ledSubsystem.startCommand());
                 m_arcadePad.R3().onTrue(
-                                Commands.run(() -> m_ledSubsystem.stop(), new Subsystem[0]).withName("StopLEDs"));
+                                m_ledSubsystem.stopCommand());
 
                 // destructive!
                 m_arcadePad.share().onTrue(Commands.parallel(
@@ -455,8 +447,8 @@ public class RobotContainer {
 
                 // Set shoulder and arm to full starting/finishing retraction
                 m_arcadePad.b().whileTrue(Commands.sequence(
-                                new ConditionalCommand(m_armSubsystem.moveToLocation(LocationType.RetractSlightOnlyArm),
-                                                new PrintCommand(""),
+                                Commands.either(m_armSubsystem.moveToLocation(LocationType.RetractSlightOnlyArm),
+                                                Commands.none(),
                                                 () -> (m_armSubsystem
                                                                 .getLength() > LocationType.RetractSlightOnlyArm.armInches)),
                                 Commands.parallel(
