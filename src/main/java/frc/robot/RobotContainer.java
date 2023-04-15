@@ -198,10 +198,17 @@ public class RobotContainer {
                                                                                 .getPickupMode() == PickupMode.Cone))
                                                 .withName("place0HPrep"));
                 m_autoCmdMap.put("retract",
-                                Commands.parallel(
-                                                m_armSubsystem.moveToLocation(LocationType.Starting),
-                                                m_shoulderSubsystem.moveToLocation(LocationType.Starting))
-                                                .withName("retract"));
+                                Commands.sequence(
+                                                Commands.either(m_armSubsystem
+                                                                .moveToLocation(LocationType.RetractSlightOnlyArm),
+                                                                Commands.none(),
+                                                                () -> (m_armSubsystem
+                                                                                .getLength() > LocationType.RetractSlightOnlyArm.armInches)),
+                                                Commands.parallel(
+                                                                m_shoulderSubsystem
+                                                                                .moveToLocation(LocationType.Starting),
+                                                                m_armSubsystem.moveToLocation(LocationType.Starting)))
+                                                .withName("ResetStarting"));
                 m_autoCmdMap.put("chargeStation",
                                 Commands.parallel(m_turretSubsystem.moveToAngle(0),
                                                 m_armSubsystem.moveToLocation(LocationType.ChargeStation),
@@ -219,7 +226,7 @@ public class RobotContainer {
                 // add all items to Auto Selector
                 m_autoChooser.setDefaultOption(AutoConstants.kDefaultAuto.prettyName, AutoConstants.kDefaultAuto);
                 for (Auto opt : AutoConstants.kAutoList) {
-                        m_autoChooser.addOption(opt.prettyName, opt);
+                        m_autoChooser.addOption(opt.pathName, opt);
                 }
 
                 m_autoBuilder = new RamseteAutoBuilder(m_driveSubsystem::getPose, m_driveSubsystem::resetOdometry,
