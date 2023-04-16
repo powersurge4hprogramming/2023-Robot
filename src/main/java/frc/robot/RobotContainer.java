@@ -108,11 +108,10 @@ public class RobotContainer {
         // constructor, just run .fullAuto(trajectory)
         private final RamseteAutoBuilder m_autoBuilder = new RamseteAutoBuilder(m_driveSubsystem::getPose,
                         m_driveSubsystem::resetOdometry,
-                        new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+                        AutoConstants.kRameseteController,
                         DriveConstants.kDriveKinematics,
-                        new SimpleMotorFeedforward(DriveConstants.ksVolts, DriveConstants.kvVoltSecondsPerMeter,
-                                        DriveConstants.kaVoltSecondsSquaredPerMeter),
-                        m_driveSubsystem::getWheelSpeeds, new PIDConstants(DriveConstants.kPDriveVel, 0, 0),
+                        DriveConstants.kDriveFeedforward,
+                        m_driveSubsystem::getWheelSpeeds, DriveConstants.kDrivePID,
                         m_driveSubsystem::tankDriveVolts,
                         m_autoCmdMap, true, m_driveSubsystem);
 
