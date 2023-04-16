@@ -6,6 +6,10 @@ package frc.robot;
 
 import java.util.List;
 
+import com.pathplanner.lib.auto.PIDConstants;
+
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 
 /**
@@ -160,11 +164,15 @@ public final class Constants {
     // The Robot Characterization Toolsuite provides a convenient tool for obtaining
     // these
     // values for your robot. TODO
-    public static final double ksVolts = 0.22;
-    public static final double kvVoltSecondsPerMeter = 1.98;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.2;
+    private static final double ksVolts = 0.22;
+    private static final double kvVoltSecondsPerMeter = 1.98;
+    private static final double kaVoltSecondsSquaredPerMeter = 0.2;
+    public static final SimpleMotorFeedforward kDriveFeedforward = new SimpleMotorFeedforward(ksVolts,
+        kvVoltSecondsPerMeter,
+        kaVoltSecondsSquaredPerMeter);
 
-    public static final double kPDriveVel = 8.5; // TODO
+    private static final double kPDriveVel = 8.5; // TODO
+    public static final PIDConstants kDrivePID = new PIDConstants(kPDriveVel, 0, 0);
 
     public static enum DriveProfiles {
       BrakeNoRamp,
@@ -192,8 +200,9 @@ public final class Constants {
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and
     // seconds
-    public static final double kRamseteB = 2;
-    public static final double kRamseteZeta = 0.7;
+    private static final double kRamseteB = 2;
+    private static final double kRamseteZeta = 0.7;
+    public static final RamseteController kRameseteController = new RamseteController(kRamseteB, kRamseteZeta);
 
     public static final String kAutoSelectionKey = "Auto Selector";
 
