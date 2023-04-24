@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -21,19 +20,18 @@ import frc.robot.Constants.AutoConstants.AutoType;
 import frc.robot.Constants.DriveConstants.DriveProfiles;
 import frc.robot.Constants.QuartetConstants.LocationType;
 import frc.robot.Constants.QuartetConstants.ClawConstants.PickupMode;
+import frc.robot.commands.Autobalance;
 import frc.robot.commands.TurretDynamicAngle;
 import frc.robot.commands.led.LEDCompetition;
 import frc.robot.structs.LimelightHelpers;
 import frc.robot.structs.hid.CommandPXNArcadeStickController;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClawSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShoulderSubsystem;
 import frc.robot.subsystems.StoppyBarSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
-import frc.robot.subsystems.drivetrain.DriveSubsystemReal;
-import frc.robot.subsystems.drivetrain.DriveSubsystemSim;
-import frc.robot.subsystems.drivetrain.DriveSubsystemTemplate;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -61,7 +59,7 @@ import com.pathplanner.lib.server.PathPlannerServer;
  */
 public class RobotContainer {
         // <-- SUBSYSTEMS -->
-        private final DriveSubsystemTemplate m_driveSubsystem;
+        private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 
         private final ClawSubsystem m_clawSubsystem = new ClawSubsystem();
         private final ShoulderSubsystem m_shoulderSubsystem = new ShoulderSubsystem();
@@ -108,7 +106,14 @@ public class RobotContainer {
 
         // the Autonomous builder for Path planning, doesn't have trajectory
         // constructor, just run .fullAuto(trajectory)
-        private final RamseteAutoBuilder m_autoBuilder;
+        private final RamseteAutoBuilder m_autoBuilder = new RamseteAutoBuilder(m_driveSubsystem::getPose,
+                        m_driveSubsystem::resetOdometry,
+                        AutoConstants.kRameseteController,
+                        DriveConstants.kDriveKinematics,
+                        DriveConstants.kDriveFeedforward,
+                        m_driveSubsystem::getWheelSpeeds, DriveConstants.kDrivePID,
+                        m_driveSubsystem::tankDriveVolts,
+                        m_autoCmdMap, true, m_driveSubsystem);
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -118,13 +123,6 @@ public class RobotContainer {
                  * new MechQuartetSubsystem(m_armSubsystem::getLength,
                  * m_shoulderSubsystem::getAngle);
                  */
-
-                // create sim or real object
-                if (RobotBase.isSimulation()) {
-                        m_driveSubsystem = new DriveSubsystemSim();
-                } else {
-                        m_driveSubsystem = new DriveSubsystemReal();
-                }
 
                 m_autoCmdMap.put("collect0GPrep", Commands.parallel(
                                 m_turretSubsystem.moveToAngle(0),
@@ -229,14 +227,6 @@ public class RobotContainer {
                         m_autoChooser.addOption(opt.pathName, opt);
                 }
 
-                m_autoBuilder = new RamseteAutoBuilder(m_driveSubsystem::getPose, m_driveSubsystem::resetOdometry,
-                                AutoConstants.kRameseteController,
-                                DriveConstants.kDriveKinematics,
-                                DriveConstants.kDriveFeedforward,
-                                m_driveSubsystem::getWheelSpeeds, DriveConstants.kDrivePID,
-                                m_driveSubsystem::tankDriveVolts,
-                                m_autoCmdMap, true, m_driveSubsystem);
-
                 SmartDashboard.putData("Auto Selector", m_autoChooser);
 
                 SmartDashboard.putData("Arm", m_armSubsystem);
@@ -335,9 +325,12 @@ public class RobotContainer {
                 m_driverController.start().onTrue(
                                 m_stoppyBarSubsystem.setStopCommand(false));
 
+                // drive bindings
                 m_driverController.a().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastNoRamp));
                 m_driverController.b().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.BrakeNoRamp));
                 m_driverController.y().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastRamp));
+
+                m_driverController.leftBumper().whileTrue((new Autobalance(m_driveSubsystem)));
 
                 // Operator controller bindings
                 m_operatorController.leftBumper()
@@ -446,7 +439,7 @@ public class RobotContainer {
                                 m_armSubsystem.moveToLocation(LocationType.SubstationHigh))
                                 .withName("Substation"));
 
-                // Set shoulder and arm to CHUTE PICKUP
+                // Set shoulder and arm to SUBSTATION PICKUP
                 m_arcadePad.leftTrigger().whileTrue(Commands.parallel(
                                 m_shoulderSubsystem.moveToLocation(LocationType.SubstationHigh),
                                 m_armSubsystem.moveToLocation(LocationType.SubstationHigh))

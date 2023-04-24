@@ -2,8 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.drivetrain;
+package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -12,13 +13,17 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.DriveConstants.*;
 
-public class DriveSubsystemReal extends DriveSubsystemTemplate {
+public class DriveSubsystem extends SubsystemBase {
 
   // left motors
   private final CANSparkMax m_leftMotorLeader = new CANSparkMax(kLeftMotorLeaderPort,
@@ -36,17 +41,26 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
   private final RelativeEncoder m_leftEncoder = m_leftMotorLeader.getEncoder();
   private final RelativeEncoder m_rightEncoder = m_rightMotorLeader.getEncoder();
 
+  // The robot's drive
+  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotorLeader, m_rightMotorLeader);
+
+  // The gyro sensor
+  private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
+
+  // Field for visualizing robot odometry
+  private final Field2d m_field = new Field2d();
+
+  // the brake mode
+  private DriveProfiles m_driveProfile = DriveProfiles.CoastNoRamp;
+
   // Odometry class for tracking robot pose
   private final DifferentialDrivePoseEstimator m_odometry = new DifferentialDrivePoseEstimator(
       kDriveKinematics,
       m_gyro.getRotation2d(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition(),
       new Pose2d());
 
-  // The robot's drive
-  private final DifferentialDrive m_drive = new DifferentialDrive(m_leftMotorLeader, m_rightMotorLeader);
-
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystemReal() {
+  public DriveSubsystem() {
     m_leftMotorLeader.restoreFactoryDefaults();
     m_leftMotorFollower.restoreFactoryDefaults();
     m_rightMotorLeader.restoreFactoryDefaults();
@@ -73,11 +87,8 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     // reset robot to (0,0) and encoders
     resetOdometry(new Pose2d());
 
-    calibrateGyro();
-
     SmartDashboard.putData(m_field);
     SmartDashboard.putData(m_drive);
-    SmartDashboard.putData(m_gyro);
   }
 
   @Override
@@ -90,19 +101,29 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
         m_rightEncoder.getPosition());
   }
 
-  @Override
+  /**
+   * Returns the currently-estimated pose of the robot.
+   *
+   * @return The pose.
+   */
   public Pose2d getPose() {
     return m_odometry.getEstimatedPosition();
   }
 
-  @Override
+  /**
+   * Returns the current wheel speeds of the robot.
+   *
+   * @return The current wheel speeds.
+   */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(m_leftEncoder.getVelocity(), m_rightEncoder.getVelocity());
   }
 
-  // reset the initial pose to something other than the default constructor used
-  // in this classes constructor, for use before auto to know where we are
-  @Override
+  /**
+   * Resets the odometry to the specified pose.
+   *
+   * @param pose The pose to which to set the odometry.
+   */
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
     m_gyro.reset();
@@ -110,7 +131,12 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
         m_gyro.getRotation2d(), m_leftEncoder.getPosition(), m_rightEncoder.getPosition(), pose);
   }
 
-  @Override
+  /**
+   * Drives the robot using arcade controls.
+   *
+   * @param fwd the commanded forward movement
+   * @param rot the commanded rotation
+   */
   public void arcadeDrive(double fwd, double rot) {
     m_drive.arcadeDrive(fwd, rot);
 
@@ -125,19 +151,33 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
 
   }
 
-  @Override
+  /**
+   * Drives the robot using tank controls.
+   *
+   * @param left  the left movement
+   * @param right the right movement
+   */
   public void tankDrive(double left, double right) {
     m_drive.tankDrive(left, right);
   }
 
-  @Override
+  /**
+   * Controls the left and right sides of the drive directly with voltages.
+   *
+   * @param leftVolts  the commanded left output
+   * @param rightVolts the commanded right output
+   */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     m_leftMotorLeader.setVoltage(leftVolts);
     m_rightMotorLeader.setVoltage(rightVolts);
     m_drive.feed();
   }
 
-  @Override
+  /**
+   * Limits robot
+   * 
+   * @param limit the -1 to 1 limit
+   **/
   public void limit(double limit) {
     m_drive.setMaxOutput(limit);
   }
@@ -147,7 +187,6 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     m_rightEncoder.setPosition(0);
   }
 
-  @Override
   public CommandBase resetEncodersCommand() {
     return this.runOnce(() -> resetEncoders()).withName("ResetDriveEncoders");
   }
@@ -166,7 +205,6 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     m_rightMotorFollower.stopMotor();
   }
 
-  @Override
   public CommandBase disableMotorsCommand() {
     return this.runOnce(() -> disableMotors()).withName("DisableDriveMotors");
   }
@@ -176,7 +214,6 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
     updateBrakeMode();
   }
 
-  @Override
   public CommandBase setDriveProfileCmd(DriveProfiles driveProfile) {
     return this.runOnce(() -> setDriveProfile(driveProfile)).withName("SetDriveProfile");
   }
@@ -219,5 +256,35 @@ public class DriveSubsystemReal extends DriveSubsystemTemplate {
         m_rightMotorFollower.setOpenLoopRampRate(0.0);
         break;
     }
+  }
+
+  public double getAngle() {
+    return m_gyro.getAngle();
+  }
+
+  public double getPitch() {
+    return m_gyro.getPitch();
+  }
+  
+  public boolean isMoving() {
+    return m_gyro.isMoving();
+  }
+
+  public void resetGyro() {
+    m_gyro.reset();
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.setSmartDashboardType("");
+    builder.addStringProperty("Drive Profile", () -> m_driveProfile.toString(), null);
+    builder.addBooleanProperty("Gyro Connected", () -> m_gyro.isConnected(), null);
+    builder.addBooleanProperty("Gyro Calibrating", () -> m_gyro.isCalibrating(), null);
+    builder.addDoubleProperty("Gyro Angle", () -> m_gyro.getAngle(), null);
+    builder.addDoubleProperty("Gyro Yaw", () -> m_gyro.getYaw(), null);
+    builder.addDoubleProperty("Gyro Roll", () -> m_gyro.getRoll(), null);
+    builder.addDoubleProperty("Gyro Pitch", () -> m_gyro.getPitch(), null);
+    builder.addBooleanProperty("Is Moving?", () -> m_gyro.isMoving(), null);
+    builder.addBooleanProperty("Is Rotating?", () -> m_gyro.isRotating(), null);
   }
 }
