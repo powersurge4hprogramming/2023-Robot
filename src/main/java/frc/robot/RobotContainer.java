@@ -453,7 +453,8 @@ public class RobotContainer {
                                                                 .getLength() > LocationType.RetractSlightOnlyArm.armInches)),
                                 Commands.parallel(
                                                 m_shoulderSubsystem.moveToLocation(LocationType.Starting),
-                                                m_armSubsystem.moveToLocation(LocationType.Starting)))
+                                                m_armSubsystem.moveToLocation(LocationType.Starting)),
+                                m_turretSubsystem.absoluteReset())
                                 .withName("ResetStarting"));
 
                 m_arcadePad.leftBumper().whileTrue(Commands.parallel(
