@@ -258,11 +258,6 @@ public class RobotContainer {
 
                 // --> on init/cross subsystem triggers:
 
-                // on limelight attached, switch to camera mode
-                NetworkTableInstance.getDefault().addListener(NetworkTableInstance.getDefault().getTopic("limelight"),
-                                EnumSet.of(NetworkTableEvent.Kind.kConnected),
-                                event -> LimelightHelpers.setCameraMode_Driver(null));
-
                 // startup code
                 if (!DriverStation.isFMSAttached()) {
                         PathPlannerServer.startServer(5811);
@@ -272,16 +267,29 @@ public class RobotContainer {
                 // autoInit events
                 Trigger autoTrigger = new Trigger(() -> RobotState.isEnabled() && RobotState.isAutonomous());
 
-                autoTrigger.onTrue(m_armSubsystem.setArmLockCommand(false));
-                autoTrigger.onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.BrakeNoRamp));
+                autoTrigger.onTrue(Commands.sequence(m_armSubsystem.lockLength(),
+                                m_armSubsystem.setArmLockCommand(false)).withName("AutoInitArmLock"));
+                autoTrigger.onTrue(Commands.sequence(
+                                Commands.run(() -> m_driveSubsystem.resetGyro(), m_driveSubsystem),
+                                m_driveSubsystem.setDriveProfileCmd(DriveProfiles.BrakeNoRamp))
+                                .withName("AutoInitDriveStartup"));
 
                 // teleopInit events
                 Trigger teleopTrigger = new Trigger(() -> RobotState.isEnabled() && RobotState.isTeleop());
 
-                teleopTrigger.and(m_operatorController.leftStick()).onTrue(m_armSubsystem.setArmLockCommand(true));
+                teleopTrigger.and(m_operatorController.leftStick()).onTrue(
+                                Commands.sequence(m_armSubsystem.lockLength(), m_armSubsystem.setArmLockCommand(true))
+                                                .withName("TeleopInitArmLock"));
                 teleopTrigger.and(m_operatorController.leftStick().negate())
-                                .onTrue(m_armSubsystem.setArmLockCommand(false));
-                teleopTrigger.onTrue(m_driveSubsystem.setDriveProfileCmd(DriveConstants.kDriveProfileDefault));
+                                .onTrue(Commands.sequence(m_armSubsystem.lockLength(),
+                                                m_armSubsystem.setArmLockCommand(false))
+                                                .withName("TeleopInitArmUnlock"));
+                teleopTrigger.onTrue(Commands.sequence(
+                                Commands.runOnce(() -> m_driveSubsystem.resetGyro(), m_driveSubsystem),
+                                m_driveSubsystem.setDriveProfileCmd(DriveConstants.kDriveProfileDefault))
+                                .withName("TeleopInitDriveStartup"));
+                teleopTrigger.onTrue(
+                                Commands.runOnce(() -> LimelightHelpers.setCameraMode_Driver(null), new Subsystem[0]));
 
                 // whole time teleop events
                 teleopTrigger.whileTrue(Commands.run(() -> {
@@ -298,7 +306,6 @@ public class RobotContainer {
                 // teleopInit or autoInit events
                 teleopTrigger.or(autoTrigger).onTrue(Commands.parallel(
                                 m_ledSubsystem.startCommand(),
-                                m_armSubsystem.lockLength(),
                                 m_shoulderSubsystem.lockAngle(),
                                 m_turretSubsystem.lockAngle()).withName("EnabledInitSequence"));
 
@@ -317,8 +324,6 @@ public class RobotContainer {
          * {@link JoystickButton}.
          */
         private void configureButtonBindings() {
-                // Drive bindings
-
                 // nuclear codes (for endgame solenoids)
                 m_driverController.back().onTrue(
                                 m_stoppyBarSubsystem.setStopCommand(true));
@@ -326,11 +331,24 @@ public class RobotContainer {
                                 m_stoppyBarSubsystem.setStopCommand(false));
 
                 // drive bindings
+                m_driverController.leftTrigger().whileTrue(m_driveSubsystem.runEnd(
+                                () -> {
+                                        if (m_driveSubsystem.getUltrasonicDistance() > 0.30) {
+                                                m_driveSubsystem.arcadeDrive(
+                                                                -m_driverController.getLeftY(),
+                                                                (-m_driverController.getRightX() * 0.6));
+                                        } else {
+                                                m_driveSubsystem.tankDriveVolts(0, 0);
+                                        }
+                                },
+                                () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveWithDistBlock"));
+
                 m_driverController.a().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastNoRamp));
                 m_driverController.b().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.BrakeNoRamp));
                 m_driverController.y().onTrue(m_driveSubsystem.setDriveProfileCmd(DriveProfiles.CoastRamp));
 
-                m_driverController.leftBumper().whileTrue((new Autobalance(m_driveSubsystem)));
+                // m_driverController.leftBumper().whileTrue((new
+                // Autobalance(m_driveSubsystem)));
 
                 // Operator controller bindings
                 m_operatorController.leftBumper()
@@ -354,7 +372,7 @@ public class RobotContainer {
                 m_operatorController.leftStick()
                                 .onTrue(m_armSubsystem.setArmLockCommand(true));
                 m_operatorController.leftStick()
-                                .onFalse(m_armSubsystem.setArmLockCommand(true));
+                                .onFalse(m_armSubsystem.setArmLockCommand(false));
 
                 m_operatorController.rightStick()
                                 .onTrue(m_driveSubsystem.runOnce(() -> m_driveSubsystem.resetGyro()));

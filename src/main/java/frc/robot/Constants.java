@@ -67,7 +67,7 @@ public final class Constants {
 
       public static final double kStartingDegrees = 180;
 
-      public static final double kMaxRotations = 2;
+      public static final double kMaxRotations = 1.5;
 
     }
 
@@ -95,21 +95,22 @@ public final class Constants {
 
     public static final class ArmConstants {
       // for enconder
-      // private static final double kGearRatio = 1.0 / 20;
-      // private static final double kSpoolRadius = 2* Math.PI * (3.0 / 4 / 2.0) +
-      // 0.040;
-      // public static final double kDistancePerRevInches = kGearRatio * kSpoolRadius;
-      public static final double kDistancePerRevInches = 0.1481470777; // This is empirically determined via testing
+      private static final double kGearRatio = 1.0 / 20;
+      private static final double kSpoolRadius = 2 * Math.PI * (3.0 / 4 / 2.0) +
+          0.040;
+     // public static final double kDistancePerRevInches = kGearRatio * kSpoolRadius;
+       public static final double kDistancePerRevInches = 0.1481470777*1.8; // This is
+      // empirically determined via testing
 
       public static final int kMotorPort = 16;
 
       public static final double kPositionTolerance = 1.25;
       public static final double kVelocityTolerance = 60;
-      public static final double kP = 0.15; // 1.0 defualt
+      public static final double kP = 0.4; // 1.0 defualt
       public static final double kD = 0.06;
-      public static final double kF = 0.00;
+      public static final double kF = 0.00001;
       public static final double kMin = -1;
-      public static final double kMax = 0.90;
+      public static final double kMax = 1;
 
       public static final int kLockSolenoidFwd = 14;
       public static final int kLockSolenoidBkwd = 15;
@@ -142,7 +143,7 @@ public final class Constants {
     public static final int kRightMotorLeaderPort = 6;
     public static final int kRightMotorFollowerPort = 9;
 
-    public static final double kDriveSpeedLimit = 0.65;
+    public static final double kDriveSpeedLimit = 0.30;
 
     private static final double kTrackWidthMeters = 0.530352;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
@@ -180,7 +181,7 @@ public final class Constants {
       CoastNoRamp
     }
 
-    public static final DriveProfiles kDriveProfileDefault = DriveProfiles.CoastNoRamp;
+    public static final DriveProfiles kDriveProfileDefault = DriveProfiles.CoastRamp;
   }
 
   public static final class StoppyBarConstants {

@@ -14,6 +14,7 @@ import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -46,6 +47,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   // The gyro sensor
   private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
+
+  private final AnalogPotentiometer m_ultrasonicSensor = new AnalogPotentiometer(3,5,0);
 
   // Field for visualizing robot odometry
   private final Field2d m_field = new Field2d();
@@ -140,7 +143,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void arcadeDrive(double fwd, double rot) {
     m_drive.arcadeDrive(fwd, rot);
 
-    if (true) {
+    if (false) {
       double leftSpeed = m_leftMotorLeader.get();
       if (Math.abs(leftSpeed) > 0.04) {
         m_leftMotorLeader.set(Math.signum(leftSpeed) * (Math.abs(leftSpeed)) - 0.03);
@@ -258,8 +261,16 @@ public class DriveSubsystem extends SubsystemBase {
     }
   }
 
+  /**
+   * 
+   * @return meters distance
+   */
+  public double getUltrasonicDistance() {
+    return m_ultrasonicSensor.get();
+  }
+
   public double getAngle() {
-    return m_gyro.getAngle();
+    return -m_gyro.getAngle();
   }
 
   public double getPitch() {
@@ -278,6 +289,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("");
     builder.addStringProperty("Drive Profile", () -> m_driveProfile.toString(), null);
+    builder.addDoubleProperty("Analog Dist", () -> m_ultrasonicSensor.get(), null);
     builder.addBooleanProperty("Gyro Connected", () -> m_gyro.isConnected(), null);
     builder.addBooleanProperty("Gyro Calibrating", () -> m_gyro.isCalibrating(), null);
     builder.addDoubleProperty("Gyro Angle", () -> m_gyro.getAngle(), null);
