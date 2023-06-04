@@ -49,7 +49,6 @@ public class ExampleLEDCommand extends CommandBase {
   public void execute() {
     // this code runs every 0.02 seconds, do not count anything here or use while,
     // you will break the robot. Instead use timers.
-
     if (m_timer.get() < 0.5) {
       // do nothing in first half second
     } else if (m_timer.get() < 1.0) {

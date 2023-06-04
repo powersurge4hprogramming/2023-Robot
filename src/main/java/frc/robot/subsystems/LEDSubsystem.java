@@ -50,6 +50,20 @@ public class LEDSubsystem extends SubsystemBase {
       m_ledBuffer.setLED(index, color);
     }
   }
+  
+  /**
+   * Sets the LEDs to the specified color.
+   * 
+   * @param indexes the indexes of LEDs to be switched
+   * @param color   the color to be sent to the LEDs (unconverted)
+   */
+  public void setIndexColor(int index, Color color) {
+    // Buffer converts RGB to BGR, and we want BRG. So this will do RBG -> GBR?
+    if (RobotBase.isReal()) {
+      color = new Color(color.red, color.blue, color.green);
+    }
+      m_ledBuffer.setLED(index, color);
+  }
 
   private void start() {
 

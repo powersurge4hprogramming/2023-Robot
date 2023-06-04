@@ -22,6 +22,7 @@ import frc.robot.Constants.QuartetConstants.LocationType;
 import frc.robot.Constants.QuartetConstants.ClawConstants.PickupMode;
 import frc.robot.commands.Autobalance;
 import frc.robot.commands.TurretDynamicAngle;
+import frc.robot.commands.led.CaydenLEDCommand;
 import frc.robot.commands.led.LEDCompetition;
 import frc.robot.structs.LimelightHelpers;
 import frc.robot.structs.hid.CommandPXNArcadeStickController;
@@ -250,8 +251,10 @@ public class RobotContainer {
                                                                 (-m_driverController.getRightX() * 0.8)),
                                                 () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveArcade"));
 
-                m_ledSubsystem.setDefaultCommand(new LEDCompetition(m_ledSubsystem, m_stoppyBarSubsystem::stoppyOn,
-                                m_clawSubsystem::getPickupMode));
+           /*      m_ledSubsystem.setDefaultCommand(new LEDCompetition(m_ledSubsystem, m_stoppyBarSubsystem::stoppyOn,
+                                m_clawSubsystem::getPickupMode)); */
+                
+                                m_ledSubsystem.setDefaultCommand(new CaydenLEDCommand(m_ledSubsystem));  
 
                 // in order the command all the time, make a new one set as default.
                 // m_ledSubsystem.setDefaultCommand(new ExampleLEDCommand(m_ledSubsystem));
