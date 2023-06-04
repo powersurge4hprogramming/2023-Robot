@@ -247,7 +247,7 @@ public class RobotContainer {
                                 m_driveSubsystem.runEnd(
                                                 () -> m_driveSubsystem.arcadeDrive(
                                                                 -m_driverController.getLeftY(),
-                                                                (-m_driverController.getRightX() * 0.6)),
+                                                                (-m_driverController.getRightX() * 0.8)),
                                                 () -> m_driveSubsystem.tankDriveVolts(0, 0)).withName("DriveArcade"));
 
                 m_ledSubsystem.setDefaultCommand(new LEDCompetition(m_ledSubsystem, m_stoppyBarSubsystem::stoppyOn,
@@ -333,10 +333,10 @@ public class RobotContainer {
                 // drive bindings
                 m_driverController.leftTrigger().whileTrue(m_driveSubsystem.runEnd(
                                 () -> {
-                                        if (m_driveSubsystem.getUltrasonicDistance() > 0.30) {
+                                        if (m_driveSubsystem.getUltrasonicDistance() > 0.70) {
                                                 m_driveSubsystem.arcadeDrive(
                                                                 -m_driverController.getLeftY(),
-                                                                (-m_driverController.getRightX() * 0.6));
+                                                                (-m_driverController.getRightX() * 0.8));
                                         } else {
                                                 m_driveSubsystem.tankDriveVolts(0, 0);
                                         }

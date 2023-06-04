@@ -48,7 +48,7 @@ public class DriveSubsystem extends SubsystemBase {
   // The gyro sensor
   private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
 
-  private final AnalogPotentiometer m_ultrasonicSensor = new AnalogPotentiometer(3,5,0);
+  private final AnalogPotentiometer m_ultrasonicSensor = new AnalogPotentiometer(3, 5, 0);
 
   // Field for visualizing robot odometry
   private final Field2d m_field = new Field2d();
@@ -276,7 +276,7 @@ public class DriveSubsystem extends SubsystemBase {
   public double getPitch() {
     return m_gyro.getPitch();
   }
-  
+
   public boolean isMoving() {
     return m_gyro.isMoving();
   }
